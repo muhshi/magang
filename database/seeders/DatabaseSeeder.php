@@ -16,8 +16,22 @@ class DatabaseSeeder extends Seeder
         // User::factory(10)->create();
 
         User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+            'name' => 'Admin',
+            'email' => 'admin@gmail.com',
+            'password' => bcrypt('admin'),
         ]);
+        User::factory()->create([
+            'name' => 'Muhshi',
+            'email' => 'amuhshi@gmail.com',
+            'password' => bcrypt('muhshi'),
+        ]);
+        User::factory()->create([
+            'name' => 'Masykuri Zaen',
+            'email' => 'zaen@gmail.com',
+            'password' => bcrypt('zaen'),
+        ]);
+
+        $this->call(OfficeSeeder::class);
+        $this->call(ShiftSeeder::class);
     }
 }

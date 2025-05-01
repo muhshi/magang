@@ -21,6 +21,9 @@ class ProjectResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
+    protected static ?string $navigationGroup = 'Project Management';
+    protected static ?int $navigationSort = 10;
+
     public static function form(Form $form): Form
     {
         return $form
@@ -38,7 +41,7 @@ class ProjectResource extends Resource
                     ->helperText('Create standard To Do, In Progress, Review, and Done statuses automatically')
                     ->default(true)
                     ->dehydrated(false)
-                    ->visible(fn ($livewire) => $livewire instanceof Pages\CreateProject)
+                    ->visible(fn($livewire) => $livewire instanceof Pages\CreateProject)
             ]);
     }
 
@@ -83,7 +86,7 @@ class ProjectResource extends Resource
         return [
             RelationManagers\TicketStatusesRelationManager::class,
             RelationManagers\MembersRelationManager::class,
-            RelationManagers\EpicsRelationManager::class,
+            //RelationManagers\EpicsRelationManager::class,
             RelationManagers\TicketsRelationManager::class,
         ];
     }
@@ -96,28 +99,28 @@ class ProjectResource extends Resource
             'edit' => Pages\EditProject::route('/{record}/edit')
         ];
     }
-    
+
     // Add this method to show all projects for super_admin, but only member projects for regular users
     public static function getEloquentQuery(): Builder
     {
         $query = parent::getEloquentQuery();
-        
+
         // Check if the current user has the super_admin role
         // Adjust this condition based on how you check for roles in your application
-        $userIsSuperAdmin = auth()->user() && (
+        $userIsSuperAdmin = Auth::user() && (
             // If using Spatie Permission package
-            (method_exists(auth()->user(), 'hasRole') && auth()->user()->hasRole('super_admin'))
+            (method_exists(Auth::user(), 'hasRole') && Auth::user()->roles[0]->name === 'super_admin')
             // Or if using a simple role column
-            || (isset(auth()->user()->role) && auth()->user()->role === 'super_admin')
+            || (isset(Auth::user()->role) && Auth::user()->role === 'super_admin')
         );
-        
+
         if (!$userIsSuperAdmin) {
             // If not a super_admin, only show projects where user is a member
             $query->whereHas('members', function (Builder $query) {
-                $query->where('user_id', auth()->id());
+                $query->where('user_id', Auth::user()->id);
             });
         }
-        
+
         return $query;
     }
 }

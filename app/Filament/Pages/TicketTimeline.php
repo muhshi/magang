@@ -17,7 +17,7 @@ class TicketTimeline extends Page
     protected static ?string $navigationIcon = 'heroicon-o-calendar';
     protected static ?string $navigationLabel = 'Timeline';
     protected static ?string $title = 'Ticket Timeline';
-    protected static ?int $navigationSort = 2;
+    protected static ?int $navigationSort = 1;
 
     protected static string $view = 'filament.pages.ticket-timeline';
     protected static ?string $navigationGroup = 'Project Visualization';
