@@ -77,13 +77,15 @@ class ProjectBoard extends Page
         }
 
         $this->ticketStatuses = $this->selectedProject->ticketStatuses()
-            ->with(['tickets' => function ($query) {
-                $query->with(['assignee', 'status'])
-                    ->when(!auth()->user()->hasRole(['super_admin']), function ($q) {
-                        $q->where('user_id', auth()->id());
-                    })
-                    ->orderBy('created_at', 'desc');
-            }])
+            ->with([
+                'tickets' => function ($query) {
+                    $query->with(['assignee', 'status'])
+                        ->when(!auth()->user()->hasRole(['super_admin']), function ($q) {
+                            $q->where('user_id', auth()->id());
+                        })
+                        ->orderBy('created_at', 'desc');
+                }
+            ])
             ->orderBy('id')
             ->get();
     }
@@ -173,7 +175,8 @@ class ProjectBoard extends Page
 
     private function canViewTicket(?Ticket $ticket): bool
     {
-        if (!$ticket) return false;
+        if (!$ticket)
+            return false;
 
         return auth()->user()->hasRole(['super_admin'])
             || $ticket->user_id === auth()->id();
@@ -181,7 +184,8 @@ class ProjectBoard extends Page
 
     private function canEditTicket(?Ticket $ticket): bool
     {
-        if (!$ticket) return false;
+        if (!$ticket)
+            return false;
 
         return auth()->user()->hasRole(['super_admin'])
             || $ticket->user_id === auth()->id();
@@ -189,9 +193,15 @@ class ProjectBoard extends Page
 
     private function canManageTicket(?Ticket $ticket): bool
     {
-        if (!$ticket) return false;
+        if (!$ticket)
+            return false;
 
         return auth()->user()->hasRole(['super_admin'])
             || $ticket->user_id === auth()->id();
+    }
+
+    public static function canAccess(): bool
+    {
+        return !auth()->user()->hasRole(['Calon Magang']);
     }
 }

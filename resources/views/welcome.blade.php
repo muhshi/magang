@@ -1,115 +1,144 @@
-<!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>{{ config('app.name', 'Dewakoding Project Management') }}</title>
+<!DOCTYPE HTML>
+<!--
+	Mangga Muda | BPS Demak
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>Mangga Muda | BPS Demak</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="assets/css/main.css" />
+		<noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
+	</head>
+	<body class="is-preload">
 
-        <!-- Fonts -->
-        <link rel="preconnect" href="https://fonts.bunny.net">
-        <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600,700" rel="stylesheet" />
-        
-        <!-- Tailwind CSS CDN -->
-        <script src="https://cdn.tailwindcss.com"></script>
-        <script>
-            tailwind.config = {
-                theme: {
-                    extend: {
-                        fontFamily: {
-                            sans: ['Instrument Sans', 'sans-serif'],
-                        },
-                    }
-                }
-            }
-        </script>
-        <style type="text/tailwindcss">
-            .gradient-background {
-                @apply bg-gradient-to-r from-blue-500 to-blue-600;
-            }
-            .text-gradient {
-                @apply bg-gradient-to-r from-blue-500 to-blue-600 bg-clip-text text-transparent;
-            }
-        </style>
-    </head>
-    <body class="antialiased bg-gray-50 text-gray-900">
-        <div class="min-h-screen flex flex-col items-center">
-            <header class="w-full py-6 px-6 sm:px-10 flex justify-between items-center">
-                <div class="flex items-center space-x-2">
-                    <svg class="w-8 h-8 text-blue-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M5 8H19M5 8C3.89543 8 3 7.10457 3 6C3 4.89543 3.89543 4 5 4H19C20.1046 4 21 4.89543 21 6C21 7.10457 20.1046 8 19 8M5 8V18C5 19.1046 5.89543 20 7 20H17C18.1046 20 19 19.1046 19 18V8M10 12H14"></path>
-                    </svg>
-                    <span class="text-xl font-semibold">DewaKoding</span>
+		<!-- Wrapper -->
+			<div id="wrapper">
+
+				<!-- Header -->
+					<header id="header" class="alt">
+						<span class="logo"><img src="images/mangga.svg" alt="" width="150px" /></span>
+						<h1>MANGGA MUDA</h1>
+						<p>Manajemen Magang dengan Mudah<br />
+						built by <a href="https://github.com/muhshi">@muhshi</a> for <a href="https://demakkab.bps.go.id/">BPS Kabupaten Demak</a>.</p>
+					</header>
+
+				<!-- Nav -->
+					<nav id="nav">
+						<ul>
+							<li><a href="#intro" class="active">Introduction</a></li>
+							<li><a href="#first">Fitur</a></li>
+							<li><a href="#cta">Daftar Sekarang</a></li>
+						</ul>
+					</nav>
+
+				<!-- Main -->
+                <div id="main">
+
+                    <!-- Introduction -->
+                    <section id="intro" class="main">
+                        <div class="spotlight">
+                            <div class="content">
+                                <header class="major">
+                                    <h2>Mangga Muda</h2>
+                                </header>
+                                <p><strong>Manajemen Magang Jadi Lebih Mudah, Cepat, dan Terstruktur.</strong><br>
+                                Mangga Muda adalah platform digital untuk mengelola program magang secara efisien dan profesional. Mulai dari proses pendaftaran hingga pemantauan kegiatan harian, semuanya dalam satu sistem yang terintegrasi.</p>
+                                <ul class="actions">
+                                    <li><a href="#first" class="button primary">Lihat Fitur</a></li>
+                                </ul>
+                            </div>
+                            <span class="image"><img src="images/mangga.png" alt="Logo Mangga Muda" /></span>
+                        </div>
+                    </section>
+                
+                    <!-- Fitur Utama -->
+                    <section id="first" class="main special">
+                        <header class="major">
+                            <h2>Fitur Unggulan</h2>
+                        </header>
+                        <ul class="features">
+                            <li>
+                                <span class="icon solid major style1 fa-user-plus"></span>
+                                <h3>Registrasi Magang</h3>
+                                <p>Pendaftaran peserta magang secara daring, cepat, dan dilengkapi notifikasi otomatis.</p>
+                            </li>
+                            <li>
+                                <span class="icon solid major style3 fa-calendar-check"></span>
+                                <h3>Presensi Digital</h3>
+                                <p>Pencatatan kehadiran yang praktis dan real-time dengan data yang akurat.</p>
+                            </li>
+                            <li>
+                                <span class="icon solid major style5 fa-tasks"></span>
+                                <h3>Monitoring Kegiatan</h3>
+                                <p>Pemantauan pekerjaan harian peserta magang secara rapi dan terdokumentasi.</p>
+                            </li>
+                        </ul>
+                        <footer class="major">
+                            <ul class="actions special">
+                                <li><a href="#cta" class="button">Mulai Sekarang</a></li>
+                            </ul>
+                        </footer>
+                    </section>
+                
+                    <!-- Get Started CTA -->
+                    <section id="cta" class="main special">
+                        <header class="major">
+                            <h2>Siap Mulai?</h2>
+                            <p>Kelola seluruh program magang di instansi Anda dengan lebih mudah dan terstruktur.</p>
+                        </header>
+                        <footer class="major">
+                            <ul class="actions special">
+                                <li><a href="/admin/register" class="button primary">Daftar Sekarang</a></li>
+                                <li><a href="/admin" class="button">Login</a></li>
+                            </ul>
+                        </footer>
+                    </section>
+                
                 </div>
                 
-                @if (Route::has('login'))
-                    <div>
-                        @auth
-                            <a href="{{ url('/dashboard') }}" class="text-gray-700 hover:text-blue-600 px-4 py-2 rounded-md text-sm font-medium">Dashboard</a>
-                        @else
-                            <a href="{{ route('login') }}" class="text-gray-700 hover:text-blue-600 px-4 py-2 rounded-md text-sm font-medium">Log in</a>
 
-                            @if (Route::has('register'))
-                                <a href="{{ route('register') }}" class="text-gray-700 hover:text-blue-600 px-4 py-2 rounded-md text-sm font-medium">Register</a>
-                            @endif
-                        @endauth
-                    </div>
-                @endif
-            </header>
+				<!-- Footer -->
+                <footer id="footer">
+                    <section>
+                        <h2>Tentang Mangga Muda</h2>
+                        <p><strong>Mangga Muda</strong> adalah aplikasi manajemen magang digital yang dikembangkan oleh BPS Kabupaten Demak untuk mempermudah proses pendaftaran, presensi, dan pemantauan kegiatan peserta magang secara efisien dan terstruktur.</p>
+                        <ul class="actions">
+                            <li><a href="#intro" class="button">Pelajari Lebih Lanjut</a></li>
+                        </ul>
+                    </section>
+                    <section>
+                        <h2>Kontak Kami</h2>
+                        <dl class="alt">
+                            <dt>Alamat</dt>
+                            <dd>Jl. Sultan Hadiwijaya No.40, Mangunjiwan, Demak, Jawa Tengah</dd>
+                            <dt>Email</dt>
+                            <dd><a href="mailto:bps3317@bps.go.id">bps3321@bps.go.id</a></dd>
+                        </dl>
+                        <ul class="icons">
+                            <li><a href="https://www.instagram.com/bpskabdemak" class="icon brands fa-instagram alt"><span class="label">Instagram</span></a></li>
+                            <li><a href="https://www.facebook.com/bpskabdemak" class="icon brands fa-facebook-f alt"><span class="label">Facebook</span></a></li>
+                            <li><a href="https://youtube.com/@bpskabdemak" class="icon brands fa-youtube alt"><span class="label">YouTube</span></a></li>
+                            <li><a href="https://demakkab.bps.go.id" class="icon solid fa-globe alt"><span class="label">Website</span></a></li>
+                        </ul>
+                    </section>
+                    <p class="copyright">
+                        &copy; 2025 <strong>BPS Kabupaten Demak</strong>. Desain oleh: <a href="https://html5up.net">HTML5 UP</a>. Kustomisasi oleh: Tim Inovasi BPS Demak.
+                    </p>
+                </footer>
+                
+			</div>
 
-            <main class="flex-1 flex flex-col items-center justify-center w-full px-6 sm:px-10 py-12">
-                <div class="max-w-4xl w-full">
-                    <div class="text-center mb-12">
-                        <h1 class="text-4xl md:text-5xl font-bold mb-4">Project Management <span class="text-gradient">Simplified</span></h1>
-                        <p class="text-xl text-gray-600 max-w-4xl mx-auto">Streamline your workflow with our intuitive and collaborative project management tool, designed for teams of all sizes.</p>
-                    </div>
+		<!-- Scripts -->
+			<script src="assets/js/jquery.min.js"></script>
+			<script src="assets/js/jquery.scrollex.min.js"></script>
+			<script src="assets/js/jquery.scrolly.min.js"></script>
+			<script src="assets/js/browser.min.js"></script>
+			<script src="assets/js/breakpoints.min.js"></script>
+			<script src="assets/js/util.js"></script>
+			<script src="assets/js/main.js"></script>
 
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
-                        <div class="bg-white p-6 rounded-lg shadow-md border border-gray-100">
-                            <div class="flex items-center mb-4">
-                                <svg class="w-6 h-6 text-blue-600 mr-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M9 5H7C5.89543 5 5 5.89543 5 7V19C5 20.1046 5.89543 21 7 21H17C18.1046 21 19 20.1046 19 19V7C19 5.89543 18.1046 5 17 5H15M9 5C9 6.10457 9.89543 7 11 7H13C14.1046 7 15 6.10457 15 5M9 5C9 3.89543 9.89543 3 11 3H13C14.1046 3 15 3.89543 15 5M12 12H15M12 16H15M9 12H9.01M9 16H9.01"></path>
-                                </svg>
-                                <h2 class="text-lg font-semibold">Task Management</h2>
-                            </div>
-                            <p class="text-gray-600">Create, assign, and track tasks with ease. Set priorities and deadlines to keep your team on track.</p>
-                        </div>
-
-                        <div class="bg-white p-6 rounded-lg shadow-md border border-gray-100">
-                            <div class="flex items-center mb-4">
-                                <svg class="w-6 h-6 text-blue-600 mr-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M17 20H22V18C22 16.3431 20.6569 15 19 15C18.0444 15 17.1931 15.4468 16.6438 16.1429M17 20H7M17 20V18C17 17.3438 16.8736 16.717 16.6438 16.1429M7 20H2V18C2 16.3431 3.34315 15 5 15C5.95561 15 6.80686 15.4468 7.35625 16.1429M7 20V18C7 17.3438 7.12642 16.717 7.35625 16.1429M7.35625 16.1429C8.0935 14.301 9.89482 13 12 13C14.1052 13 15.9065 14.301 16.6438 16.1429M15 7C15 8.65685 13.6569 10 12 10C10.3431 10 9 8.65685 9 7C9 5.34315 10.3431 4 12 4C13.6569 4 15 5.34315 15 7ZM21 10C21 11.1046 20.1046 12 19 12C17.8954 12 17 11.1046 17 10C17 8.89543 17.8954 8 19 8C20.1046 8 21 8.89543 21 10ZM7 10C7 11.1046 6.10457 12 5 12C3.89543 12 3 11.1046 3 10C3 8.89543 3.89543 8 5 8C6.10457 8 7 8.89543 7 10Z"></path>
-                                </svg>
-                                <h2 class="text-lg font-semibold">Team Collaboration</h2>
-                            </div>
-                            <p class="text-gray-600">Foster teamwork with real-time updates. Keep everyone in the loop.</p>
-                        </div>
-
-                        <div class="bg-white p-6 rounded-lg shadow-md border border-gray-100">
-                            <div class="flex items-center mb-4">
-                                <svg class="w-6 h-6 text-blue-600 mr-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M9 19V13C9 11.8954 8.10457 11 7 11H5C3.89543 11 3 11.8954 3 13V19C3 20.1046 3.89543 21 5 21H7C8.10457 21 9 20.1046 9 19ZM9 19V9C9 7.89543 9.89543 7 11 7H13C14.1046 7 15 7.89543 15 9V19M9 19C9 20.1046 9.89543 21 11 21H13C14.1046 21 15 20.1046 15 19M15 19V5C15 3.89543 15.8954 3 17 3H19C20.1046 3 21 3.89543 21 5V19C21 20.1046 20.1046 21 19 21H17C15.8954 21 15 20.1046 15 19Z"></path>
-                                </svg>
-                                <h2 class="text-lg font-semibold">Progress Tracking</h2>
-                            </div>
-                            <p class="text-gray-600">Visualize project progress with intuitive boards and reports. Identify bottlenecks and optimize workflows.</p>
-                        </div>
-                    </div>
-
-                    <div class="flex flex-col items-center">
-                        <a href="/admin" class="gradient-background text-white font-bold py-3 px-8 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 text-lg">
-                            Access Admin Panel
-                        </a>
-                        <p class="mt-4 text-sm text-gray-500">Manage your projects and team from our powerful administration dashboard</p>
-                    </div>
-                </div>
-            </main>
-
-            <footer class="w-full py-8 px-6 sm:px-10">
-                <div class="max-w-4xl mx-auto text-center">
-                    <p class="text-gray-600">© {{ date('Y') }} DewaKoding. All rights reserved.</p>
-                    <p class="text-sm text-gray-500 mt-2">Built with Laravel and Filament</p>
-                </div>
-            </footer>
-        </div>
-    </body>
+	</body>
 </html>

@@ -34,13 +34,13 @@ return [
     'permission_prefixes' => [
         'resource' => [
             'view',
-            'view_any',
+            // 'view_any',
             'create',
             'update',
             'restore',
             'restore_any',
-            'replicate',
-            'reorder',
+            // 'replicate',
+            // 'reorder',
             'delete',
             'delete_any',
             'force_delete',
@@ -72,7 +72,8 @@ return [
         ],
 
         'widgets' => [
-            'AccountWidget', 'FilamentInfoWidget',
+            'AccountWidget',
+            'FilamentInfoWidget',
         ],
 
         'resources' => [],
