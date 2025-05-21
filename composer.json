@@ -10,6 +10,7 @@
         "bezhansalleh/filament-shield": "^3.3",
         "dotswan/filament-map-picker": "^1.8",
         "filament/filament": "^3.2",
+        "flowframe/laravel-trend": "^0.4.0",
         "laravel/framework": "^12.0",
         "laravel/pulse": "^1.4",
         "laravel/tinker": "^2.10.1",

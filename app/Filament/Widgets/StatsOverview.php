@@ -4,7 +4,6 @@ namespace App\Filament\Widgets;
 
 use App\Models\Project;
 use App\Models\Ticket;
-use App\Models\User;
 use App\Models\Leave; // asumsi presensi lewat Leave
 use Carbon\Carbon;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
@@ -16,13 +15,13 @@ class StatsOverview extends BaseWidget
     use HasWidgetShield;
 
     protected static ?string $pollingInterval = '30s';
+    protected static ?int $sort = 5;
 
     protected function getStats(): array
     {
         return array_merge(
             $this->getProjectManagementStats(),
             $this->getAttendanceStats(),
-            $this->getInternshipRegistrationStats()
         );
     }
 
@@ -72,26 +71,6 @@ class StatsOverview extends BaseWidget
                 ->description('Jumlah pegawai yang izin')
                 ->descriptionIcon('heroicon-m-hand-raised')
                 ->color('warning'),
-        ];
-    }
-
-    protected function getInternshipRegistrationStats(): array
-    {
-        $totalApplicants = User::role('Calon Magang')->count();
-        $newApplicantsThisWeek = User::role('Calon Magang')
-            ->where('created_at', '>=', Carbon::now()->subDays(7))
-            ->count();
-
-        return [
-            Stat::make('Total Calon Magang', $totalApplicants)
-                ->description('Semua pendaftar magang')
-                ->descriptionIcon('heroicon-m-user')
-                ->color('gray'),
-
-            Stat::make('Pendaftar Minggu Ini', $newApplicantsThisWeek)
-                ->description('Bertambah 7 hari terakhir')
-                ->descriptionIcon('heroicon-m-arrow-trending-up')
-                ->color('success'),
         ];
     }
 }

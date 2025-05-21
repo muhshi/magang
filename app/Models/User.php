@@ -64,4 +64,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(Leave::class);
     }
+
+    public function internships(): HasMany
+    {
+        return $this->hasMany(Internship::class);
+    }
 }

@@ -23,7 +23,7 @@
 						<span class="logo"><img src="images/mangga.svg" alt="" width="150px" /></span>
 						<h1>MANGGA MUDA</h1>
 						<p>Manajemen Magang dengan Mudah<br />
-						built by <a href="https://github.com/muhshi">@muhshi</a> for <a href="https://demakkab.bps.go.id/">BPS Kabupaten Demak</a>.</p>
+						built by <a href="https://instagram.com/bpskabdemak">@bpsdemak</a> for <a href="https://demakkab.bps.go.id/">BPS Kabupaten Demak</a>.</p>
 					</header>
 
 				<!-- Nav -->
@@ -54,7 +54,7 @@
                             <span class="image"><img src="images/mangga.png" alt="Logo Mangga Muda" /></span>
                         </div>
                     </section>
-                
+
                     <!-- Fitur Utama -->
                     <section id="first" class="main special">
                         <header class="major">
@@ -83,7 +83,7 @@
                             </ul>
                         </footer>
                     </section>
-                
+
                     <!-- Get Started CTA -->
                     <section id="cta" class="main special">
                         <header class="major">
@@ -97,9 +97,9 @@
                             </ul>
                         </footer>
                     </section>
-                
+
                 </div>
-                
+
 
 				<!-- Footer -->
                 <footer id="footer">
@@ -129,7 +129,7 @@
                         &copy; 2025 <strong>BPS Kabupaten Demak</strong>. Desain oleh: <a href="https://html5up.net">HTML5 UP</a>. Kustomisasi oleh: Tim Inovasi BPS Demak.
                     </p>
                 </footer>
-                
+
 			</div>
 
 		<!-- Scripts -->
