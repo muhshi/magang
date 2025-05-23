@@ -5,6 +5,7 @@ namespace App\Filament\Pages;
 use App\Models\Epic;
 use App\Models\Project;
 use App\Models\Ticket;
+use BezhanSalleh\FilamentShield\Traits\HasPageShield;
 use Filament\Pages\Page;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Form;
@@ -17,6 +18,7 @@ use Livewire\Attributes\On;
 
 class EpicsOverview extends Page
 {
+    use HasPageShield;
     protected static ?string $navigationIcon = 'heroicon-o-flag';
     protected static string $view = 'filament.pages.epics-overview';
     protected static ?string $navigationGroup = 'Project Management';

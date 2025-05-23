@@ -3,10 +3,12 @@
 namespace App\Filament\Widgets;
 
 use App\Models\Internship;
+use BezhanSalleh\FilamentShield\Traits\HasWidgetShield;
 use Filament\Widgets\ChartWidget;
 
 class InternshipPieChart extends ChartWidget
 {
+    use HasWidgetShield;
     protected static ?string $heading = 'Distribusi Pendaftar Magang (Gender)';
     protected static ?int $sort = 1; // urutan tampil
 

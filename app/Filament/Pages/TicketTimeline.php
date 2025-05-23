@@ -11,9 +11,11 @@ use Illuminate\Support\Collection;
 use Illuminate\Contracts\View\View;
 use BezhanSalleh\FilamentShield\Contracts\HasShieldPermission;
 use Auth;
+use BezhanSalleh\FilamentShield\Traits\HasPageShield;
 
 class TicketTimeline extends Page
 {
+    use HasPageShield;
     protected static ?string $navigationIcon = 'heroicon-o-calendar';
     protected static ?string $navigationLabel = 'Timeline';
     protected static ?string $title = 'Ticket Timeline';

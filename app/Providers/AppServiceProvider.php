@@ -6,6 +6,7 @@ use App\Observers\UserObserver;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
 use App\Models\User;
+use BezhanSalleh\FilamentLanguageSwitch\LanguageSwitch;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 
@@ -27,6 +28,12 @@ class AppServiceProvider extends ServiceProvider
         if (app()->environment('production')) {
             URL::forceScheme('https'); // paksa semua route & asset pakai HTTPS
         }
+
+        LanguageSwitch::configureUsing(function (LanguageSwitch $switch) {
+            $switch
+                ->locales(['en', 'id']) // Ganti dengan kode bahasa yang diinginkan
+                ->visible(outsidePanels: true);
+        });
 
         Gate::define('viewPulse', function (User $user) {
             return Auth::user()->roles[0]->name === 'super_admin';

@@ -3,12 +3,14 @@
 namespace App\Filament\Widgets;
 
 use App\Models\Internship;
+use BezhanSalleh\FilamentShield\Traits\HasWidgetShield;
 use Filament\Widgets\ChartWidget;
 use Flowframe\Trend\Trend;
 use Flowframe\Trend\TrendValue;
 
 class InternshipBarChart extends ChartWidget
 {
+    use HasWidgetShield;
     protected static ?string $heading = 'Total Pendaftar Menurut Bulan';
     protected static ?int $sort = 2;
 

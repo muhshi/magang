@@ -7,6 +7,7 @@ use App\Models\Project;
 use App\Models\Ticket;
 use App\Models\TicketStatus;
 use App\Models\User;
+use BezhanSalleh\FilamentShield\Traits\HasPageShield;
 use Filament\Actions\Action;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\RichEditor;
@@ -20,6 +21,7 @@ use Livewire\Attributes\On;
 
 class ProjectBoard extends Page
 {
+    use HasPageShield;
     protected static ?string $navigationIcon = 'heroicon-o-view-columns';
 
     protected static string $view = 'filament.pages.project-board';

@@ -3,6 +3,7 @@
 namespace App\Filament\Widgets;
 
 use App\Models\User;
+use BezhanSalleh\FilamentShield\Traits\HasWidgetShield;
 use Carbon\Carbon as CarbonCarbon;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
@@ -10,6 +11,7 @@ use Illuminate\Support\Carbon;
 
 class InternshipOverview extends BaseWidget
 {
+    use HasWidgetShield;
     protected function getStats(): array
     {
         return
