@@ -5,6 +5,8 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\InternshipResource\Pages;
 use App\Filament\Resources\InternshipResource\RelationManagers;
 use App\Models\Internship;
+use Asmit\FilamentUpload\Enums\PdfViewFit;
+use Asmit\FilamentUpload\Forms\Components\AdvancedFileUpload;
 use Filament\Forms;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\FileUpload;
@@ -110,8 +112,14 @@ class InternshipResource extends Resource
 
                 Section::make('Dokumen Pendukung')
                     ->schema([
-                        FileUpload::make('letter_file')
+                        AdvancedFileUpload::make('letter_file')
                             ->label('Surat Pengantar (PDF/DOC)')
+                            ->pdfPreviewHeight(400)
+                            ->pdfDisplayPage(1)
+                            ->pdfToolbar(true)
+                            ->pdfZoomLevel(100)
+                            ->pdfFitType(PdfViewFit::FIT)
+                            ->pdfNavPanes(true)
                             ->acceptedFileTypes(['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'])
                             ->directory('magang/letter')
                             ->visibility('public')

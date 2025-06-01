@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "a425a35351d9f3da62f4fdc7868fb015",
+    "content-hash": "4de46921eb79175743a64a560102b62c",
     "packages": [
         {
             "name": "anourvalar/eloquent-serialize",
@@ -71,6 +71,100 @@
                 "source": "https://github.com/AnourValar/eloquent-serialize/tree/1.3.1"
             },
             "time": "2025-04-06T06:54:34+00:00"
+        },
+        {
+            "name": "asmit/filament-upload",
+            "version": "v1.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/AsmitNepali/filament-upload.git",
+                "reference": "fa89fcb3b96b908ba14456a3eebdff9cfb38f48b"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/AsmitNepali/filament-upload/zipball/fa89fcb3b96b908ba14456a3eebdff9cfb38f48b",
+                "reference": "fa89fcb3b96b908ba14456a3eebdff9cfb38f48b",
+                "shasum": ""
+            },
+            "require": {
+                "filament/support": "^3.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Asmit\\FilamentUpload\\FilamentUploadServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Asmit\\FilamentUpload\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "AsmitNepali",
+                    "email": "mail2asmitnepali@gmail.com"
+                }
+            ],
+            "description": "Filament PDF file upload and preview.",
+            "support": {
+                "issues": "https://github.com/AsmitNepali/filament-upload/issues",
+                "source": "https://github.com/AsmitNepali/filament-upload/tree/v1.0.1"
+            },
+            "time": "2025-05-11T17:38:21+00:00"
+        },
+        {
+            "name": "asmit/resized-column",
+            "version": "v1.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/AsmitNepali/resized-column.git",
+                "reference": "06300fd1529f911b7d819d1c5142094667a2aa2a"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/AsmitNepali/resized-column/zipball/06300fd1529f911b7d819d1c5142094667a2aa2a",
+                "reference": "06300fd1529f911b7d819d1c5142094667a2aa2a",
+                "shasum": ""
+            },
+            "require": {
+                "filament/support": "^3.2"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Asmit\\ResizedColumn\\ResizedColumnServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Asmit\\ResizedColumn\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "AsmitNepali",
+                    "email": "mail2asmitnepali@gmail.com"
+                }
+            ],
+            "description": "Resizeable column for filament",
+            "support": {
+                "issues": "https://github.com/AsmitNepali/resized-column/issues",
+                "source": "https://github.com/AsmitNepali/resized-column/tree/v1.0.1"
+            },
+            "time": "2025-05-18T15:37:19+00:00"
         },
         {
             "name": "bezhansalleh/filament-language-switch",

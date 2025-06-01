@@ -5,6 +5,7 @@ namespace App\Providers\Filament;
 use App\Filament\Pages\Map;
 use App\Filament\Pages\ProjectBoard;
 use App\Filament\Widgets\InternshipOverview;
+use Asmit\ResizedColumn\ResizedColumnPlugin;
 use Filament\Http\Middleware\Authenticate;
 use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
 use Filament\Http\Middleware\AuthenticateSession;
@@ -79,6 +80,8 @@ class AdminPanelProvider extends PanelProvider
                         'default' => 1,
                         'sm' => 2,
                     ]),
+                ResizedColumnPlugin::make()
+                ->preserveOnDB(),
             ])
             ->authMiddleware([
                 Authenticate::class,
