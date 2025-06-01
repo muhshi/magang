@@ -2,15 +2,13 @@
 
 namespace App\Filament\Resources\ProjectResource\RelationManagers;
 
+use App\Models\Epic;
 use App\Models\TicketStatus;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
-use App\Models\Epic;
 
 class TicketsRelationManager extends RelationManager
 {
@@ -19,7 +17,7 @@ class TicketsRelationManager extends RelationManager
     public function form(Form $form): Form
     {
         $projectId = $this->getOwnerRecord()->id;
-        
+
         $defaultStatus = TicketStatus::where('project_id', $projectId)->first();
         $defaultStatusId = $defaultStatus ? $defaultStatus->id : null;
 
@@ -46,12 +44,12 @@ class TicketsRelationManager extends RelationManager
                             ->pluck('name', 'id')
                             ->toArray();
                     })
-                    ->searchable()
                     ->nullable(),
                 Forms\Components\Select::make('user_id')
                     ->label('Assignee')
                     ->options(function () {
                         $projectId = $this->getOwnerRecord()->id;
+
                         return $this->getOwnerRecord()->members()->pluck('name', 'users.id')->toArray();
                     })
                     ->searchable()
@@ -80,7 +78,7 @@ class TicketsRelationManager extends RelationManager
                     ->sortable(),
                 Tables\Columns\TextColumn::make('status.name')
                     ->badge()
-                    ->color(fn($record) => match ($record->status?->name) {
+                    ->color(fn ($record) => match ($record->status?->name) {
                         'To Do' => 'warning',
                         'In Progress' => 'info',
                         'Review' => 'primary',
@@ -104,6 +102,7 @@ class TicketsRelationManager extends RelationManager
                     ->label('Status')
                     ->options(function () {
                         $projectId = $this->getOwnerRecord()->id;
+
                         return TicketStatus::where('project_id', $projectId)
                             ->pluck('name', 'id')
                             ->toArray();
@@ -112,6 +111,7 @@ class TicketsRelationManager extends RelationManager
                     ->label('Assignee')
                     ->options(function () {
                         $projectId = $this->getOwnerRecord()->id;
+
                         return $this->getOwnerRecord()->members()->pluck('name', 'users.id')->toArray();
                     }),
             ])
@@ -133,6 +133,7 @@ class TicketsRelationManager extends RelationManager
                                 ->label('Status')
                                 ->options(function (RelationManager $livewire) {
                                     $projectId = $livewire->getOwnerRecord()->id;
+
                                     return TicketStatus::where('project_id', $projectId)
                                         ->pluck('name', 'id')
                                         ->toArray();

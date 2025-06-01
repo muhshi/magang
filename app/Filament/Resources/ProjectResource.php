@@ -11,9 +11,6 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
-use Filament\Resources\Pages\Page;
-use Illuminate\Support\Facades\Auth;
 
 class ProjectResource extends Resource
 {
@@ -36,12 +33,21 @@ class ProjectResource extends Resource
                 Forms\Components\TextInput::make('ticket_prefix')
                     ->required()
                     ->maxLength(255),
+                Forms\Components\DatePicker::make('start_date')
+                    ->label('Start Date')
+                    ->native(false)
+                    ->displayFormat('d/m/Y'),
+                Forms\Components\DatePicker::make('end_date')
+                    ->label('End Date')
+                    ->native(false)
+                    ->displayFormat('d/m/Y')
+                    ->afterOrEqual('start_date'),
                 Forms\Components\Toggle::make('create_default_statuses')
                     ->label('Use Default Ticket Statuses')
-                    ->helperText('Create standard To Do, In Progress, Review, and Done statuses automatically')
+                    ->helperText('Create standard Backlog, To Do, In Progress, Review, and Done statuses automatically')
                     ->default(true)
                     ->dehydrated(false)
-                    ->visible(fn($livewire) => $livewire instanceof Pages\CreateProject)
+                    ->visible(fn ($livewire) => $livewire instanceof Pages\CreateProject),
             ]);
     }
 
@@ -53,6 +59,27 @@ class ProjectResource extends Resource
                     ->searchable(),
                 Tables\Columns\TextColumn::make('ticket_prefix')
                     ->searchable(),
+                Tables\Columns\TextColumn::make('start_date')
+                    ->date('d/m/Y')
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('end_date')
+                    ->date('d/m/Y')
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('remaining_days')
+                    ->label('Remaining Days')
+                    ->getStateUsing(function (Project $record): ?string {
+                        if (!$record->end_date) {
+                            return null;
+                        }
+
+                        return $record->remaining_days . ' days';
+                    })
+                    ->badge()
+                    ->color(fn (Project $record): string =>
+                        !$record->end_date ? 'gray' :
+                        ($record->remaining_days <= 0 ? 'danger' :
+                        ($record->remaining_days <= 7 ? 'warning' : 'success'))
+                    ),
                 Tables\Columns\TextColumn::make('members_count')
                     ->counts('members')
                     ->label('Members'),
@@ -96,11 +123,12 @@ class ProjectResource extends Resource
         return [
             'index' => Pages\ListProjects::route('/'),
             'create' => Pages\CreateProject::route('/create'),
-            'edit' => Pages\EditProject::route('/{record}/edit')
+            'edit' => Pages\EditProject::route('/{record}/edit'),
         ];
     }
 
     // Add this method to show all projects for super_admin, but only member projects for regular users
+
     public static function getEloquentQuery(): Builder
     {
         $query = parent::getEloquentQuery();
@@ -112,10 +140,16 @@ class ProjectResource extends Resource
             (method_exists(Auth::user(), 'hasRole') && Auth::user()->roles[0]->name === 'super_admin')
             // Or if using a simple role column
             || (isset(Auth::user()->role) && Auth::user()->role === 'super_admin')
+
+        // $userIsSuperAdmin = auth()->user() && (
+        //     (method_exists(auth()->user(), 'hasRole') && auth()->user()->hasRole('super_admin'))
+        //     || (isset(auth()->user()->role) && auth()->user()->role === 'super_admin')
         );
 
         if (!$userIsSuperAdmin) {
             // If not a super_admin, only show projects where user is a member
+
+        if (! $userIsSuperAdmin) {
             $query->whereHas('members', function (Builder $query) {
                 $query->where('user_id', Auth::user()->id);
             });
@@ -123,4 +157,5 @@ class ProjectResource extends Resource
 
         return $query;
     }
+}
 }

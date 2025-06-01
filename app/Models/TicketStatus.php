@@ -14,13 +14,15 @@ class TicketStatus extends Model
     protected $fillable = [
         'project_id',
         'name',
+        'sort_order',
+        'color'
     ];
 
     public function project(): BelongsTo
     {
         return $this->belongsTo(Project::class);
     }
-    
+
     public function tickets(): HasMany
     {
         return $this->hasMany(Ticket::class);

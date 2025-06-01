@@ -4,18 +4,25 @@ namespace App\Filament\Widgets;
 
 use App\Models\Project;
 use App\Models\Ticket;
+<<<<<<< HEAD
 use App\Models\Leave; // asumsi presensi lewat Leave
+=======
+use App\Models\User;
+use BezhanSalleh\FilamentShield\Traits\HasWidgetShield;
+>>>>>>> upstream/main
 use Carbon\Carbon;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
-use BezhanSalleh\FilamentShield\Traits\HasWidgetShield;
 
 class StatsOverview extends BaseWidget
 {
     use HasWidgetShield;
 
     protected static ?string $pollingInterval = '30s';
+<<<<<<< HEAD
     protected static ?int $sort = 5;
+=======
+>>>>>>> upstream/main
 
     protected function getStats(): array
     {
@@ -28,8 +35,22 @@ class StatsOverview extends BaseWidget
     protected function getProjectManagementStats(): array
     {
         $totalProjects = Project::count();
+<<<<<<< HEAD
         $totalTickets = Ticket::count();
         $newTicketsLastWeek = Ticket::where('created_at', '>=', Carbon::now()->subDays(7))->count();
+=======
+
+        // Total Tickets
+        $totalTickets = Ticket::count();
+
+        // Tickets created in the last 7 days
+        $newTicketsLastWeek = Ticket::where('created_at', '>=', Carbon::now()->subDays(7))->count();
+
+        // Users count
+        $usersCount = User::count();
+
+        // Tickets without assignee
+>>>>>>> upstream/main
         $unassignedTickets = Ticket::whereNull('user_id')->count();
 
         return [
@@ -52,6 +73,7 @@ class StatsOverview extends BaseWidget
                 ->description('Tickets without an assignee')
                 ->descriptionIcon('heroicon-m-user-minus')
                 ->color($unassignedTickets > 0 ? 'danger' : 'success'),
+<<<<<<< HEAD
         ];
     }
 
@@ -73,4 +95,13 @@ class StatsOverview extends BaseWidget
                 ->color('warning'),
         ];
     }
+=======
+
+            Stat::make('Team Members', $usersCount)
+                ->description('Registered users')
+                ->descriptionIcon('heroicon-m-users')
+                ->color('gray'),
+        ];
+    }
+>>>>>>> upstream/main
 }

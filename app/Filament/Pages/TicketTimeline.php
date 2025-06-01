@@ -2,10 +2,9 @@
 
 namespace App\Filament\Pages;
 
-use App\Models\Ticket;
 use App\Models\Project;
+use App\Models\Ticket;
 use Carbon\Carbon;
-use DateTime;
 use Filament\Pages\Page;
 use Illuminate\Support\Collection;
 use Illuminate\Contracts\View\View;
@@ -17,18 +16,25 @@ class TicketTimeline extends Page
 {
     use HasPageShield;
     protected static ?string $navigationIcon = 'heroicon-o-calendar';
+
     protected static ?string $navigationLabel = 'Timeline';
+
     protected static ?string $title = 'Ticket Timeline';
     protected static ?int $navigationSort = 1;
 
     protected static string $view = 'filament.pages.ticket-timeline';
+
     protected static ?string $navigationGroup = 'Project Visualization';
 
     public ?string $projectId = null;
 
     public Collection $projects;
 
-    public function mount(): void
+    public ?Project $selectedProject = null;
+
+    protected static ?string $slug = 'ticket-timeline/{project_id?}';
+
+    public function mount($project_id = null): void
     {
         $user = Auth::user();
 
@@ -38,13 +44,45 @@ class TicketTimeline extends Page
             $this->projects = $user->projects;
         }
 
-        if ($this->projects->isNotEmpty() && !$this->projectId) {
-            $this->projectId = $this->projects->first()->id;
+        if ($project_id && $this->projects->contains('id', $project_id)) {
+            $this->projectId = $project_id;
+            $this->selectedProject = Project::find($project_id);
+        } elseif ($this->projects->isNotEmpty() && ! is_null($project_id)) {
+            Notification::make()
+                ->title('Project Not Found')
+                ->danger()
+                ->send();
+            $this->redirect(static::getUrl());
+        }
+    }
+
+    public function updatedProjectId($value): void
+    {
+        if ($value) {
+            $this->selectProject($value);
+        } else {
+            $this->selectedProject = null;
+            $this->redirect(static::getUrl());
+        }
+    }
+
+    public function selectProject($projectId): void
+    {
+        $this->projectId = $projectId;
+        $this->selectedProject = Project::find($projectId);
+
+        if ($this->selectedProject) {
+            $url = static::getUrl(['project_id' => $projectId]);
+            $this->redirect($url);
         }
     }
 
     public function getTicketsProperty(): Collection
     {
+        if (!$this->projectId || !$this->selectedProject) {
+            return collect();
+        }
+
         $query = Ticket::query()
             ->with(['status', 'project'])
             ->whereNotNull('due_date')
@@ -62,6 +100,10 @@ class TicketTimeline extends Page
 
     public function getMonthHeaders(): array
     {
+        if (!$this->selectedProject) {
+            return [];
+        }
+
         $tickets = $this->tickets;
 
         if ($tickets->isEmpty()) {
@@ -71,6 +113,7 @@ class TicketTimeline extends Page
                 $months[] = $current->format('M Y');
                 $current->addMonth();
             }
+
             return $months;
         }
 
@@ -112,6 +155,12 @@ class TicketTimeline extends Page
 
     public function getTimelineData(): array
     {
+        if (!$this->selectedProject) {
+            return [
+                'tasks' => [],
+            ];
+        }
+
         $tickets = $this->tickets;
 
         if ($tickets->isEmpty()) {
@@ -127,7 +176,7 @@ class TicketTimeline extends Page
         $now = Carbon::now();
 
         foreach ($tickets as $index => $ticket) {
-            if (!$ticket->due_date) {
+            if (! $ticket->due_date) {
                 continue;
             }
 
@@ -163,22 +212,22 @@ class TicketTimeline extends Page
 
                     $barSpans[$monthIndex] = [
                         'start_position' => $startPosition,
-                        'width_percentage' => $widthPercentage
+                        'width_percentage' => $widthPercentage,
                     ];
                 }
             }
 
             $status = strtolower($ticket->status->name ?? 'default');
             $statusLabel = ucfirst($status);
-            $isOverdue = $endDate < $now && !in_array($status, ['completed', 'done', 'closed', 'resolved']);
+            $isOverdue = $endDate < $now && ! in_array($status, ['completed', 'done', 'closed', 'resolved']);
 
             $remainingDaysText = '';
             if ($remainingDays > 0) {
                 $remainingDaysText = "{$remainingDays} days left";
             } elseif ($remainingDays === 0) {
-                $remainingDaysText = "Due today";
+                $remainingDaysText = 'Due today';
             } else {
-                $remainingDaysText = abs($remainingDays) . " days overdue";
+                $remainingDaysText = abs($remainingDays).' days overdue';
             }
 
             $tasks[] = [
@@ -193,15 +242,17 @@ class TicketTimeline extends Page
                 'remaining_days_text' => $remainingDaysText,
                 'status' => $status,
                 'status_label' => $statusLabel,
-                'is_overdue' => $isOverdue
+                'is_overdue' => $isOverdue,
             ];
         }
 
         usort($tasks, function ($a, $b) {
-            if ($a['is_overdue'] && !$b['is_overdue'])
+            if ($a['is_overdue'] && ! $b['is_overdue']) {
                 return -1;
-            if (!$a['is_overdue'] && $b['is_overdue'])
+            }
+            if (! $a['is_overdue'] && $b['is_overdue']) {
                 return 1;
+            }
 
             return $a['remaining_days'] <=> $b['remaining_days'];
         });
