@@ -1,6 +1,7 @@
 :80 {
   root * /app/public
-  php_fastcgi unix//run/php/php-fpm.sock
+  php_fastcgi {
+    root /app/public
+  }
   file_server
 }
-
