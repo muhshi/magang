@@ -60,6 +60,27 @@ class User extends Authenticatable
         return $this->hasMany(Ticket::class);
     }
 
+    public function assignedTickets(): BelongsToMany
+    {
+        return $this->belongsToMany(Ticket::class, 'ticket_users');
+    }
+
+    public function createdTickets(): HasMany
+    {
+        return $this->hasMany(Ticket::class, 'created_by');
+    }
+
+    // Helper methods
+    public function isAssignedToTicket(Ticket $ticket): bool
+    {
+        return $this->assignedTickets()->where('ticket_id', $ticket->id)->exists();
+    }
+
+    public function assignToTicket(Ticket $ticket): void
+    {
+        $this->assignedTickets()->syncWithoutDetaching($ticket->id);
+    }
+
     public function leaves(): HasMany
     {
         return $this->hasMany(Leave::class);

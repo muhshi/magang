@@ -6,14 +6,18 @@ use App\Models\Project;
 use Filament\Widgets\Widget;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
+use BezhanSalleh\FilamentShield\Traits\HasWidgetShield;
 
 class ProjectTimeline extends Widget
 {
+    use HasWidgetShield;
     protected static string $view = 'filament.widgets.project-timeline';
     
     protected int | string | array $columnSpan = 'full';
 
     static ?int $sort = 2;
+    
+    public string $filter = 'active';
     
     public function getProjects()
     {
@@ -21,6 +25,10 @@ class ProjectTimeline extends Widget
             ->whereNotNull('start_date')
             ->whereNotNull('end_date')
             ->orderBy('name');
+            
+        if ($this->filter === 'active') {
+            $query->where('end_date', '>=', Carbon::today());
+        }
             
         $userIsSuperAdmin = auth()->user() && (
             (method_exists(auth()->user(), 'hasRole') && auth()->user()->hasRole('super_admin'))
@@ -36,10 +44,40 @@ class ProjectTimeline extends Widget
         return $query->get();
     }
     
+    public function setFilter($filter)
+    {
+        $this->filter = $filter;
+    }
+    
+    public function getTotalProjects()
+    {
+        $query = Project::query()
+            ->whereNotNull('start_date')
+            ->whereNotNull('end_date');
+            
+        $userIsSuperAdmin = auth()->user() && (
+            (method_exists(auth()->user(), 'hasRole') && auth()->user()->hasRole('super_admin'))
+            || (isset(auth()->user()->role) && auth()->user()->role === 'super_admin')
+        );
+
+        if (!$userIsSuperAdmin) {
+            $query->whereHas('members', function ($query) {
+                $query->where('user_id', auth()->id());
+            });
+        }
+            
+        return [
+            'all' => $query->count(),
+            'active' => $query->where('end_date', '>=', Carbon::today())->count(),
+            'completed' => $query->where('end_date', '<', Carbon::today())->count(),
+        ];
+    }
+    
     protected function getViewData(): array
     {
         $projects = $this->getProjects();
         $today = Carbon::today();
+        $counts = $this->getTotalProjects();
         
         $timelineData = [];
         
@@ -117,7 +155,9 @@ class ProjectTimeline extends Widget
         });
         
         return [
-            'projects' => $timelineData
+            'projects' => $timelineData,
+            'filter' => $this->filter,
+            'counts' => $counts,
         ];
     }
 }

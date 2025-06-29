@@ -19,6 +19,7 @@
         "laravel/pulse": "^1.4",
         "laravel/tinker": "^2.10.1",
         "maatwebsite/excel": "^3.1",
+        "maatwebsite/excel": "^3.1",
         "phpoffice/phpspreadsheet": "^1.29",
         "laravel/octane": "^2.9"
     },

@@ -29,6 +29,9 @@ class EpicsOverview extends Page
     protected static bool $shouldRegisterNavigation = false;
     protected static ?int $navigationSort = 3;
 
+    // UPDATED: Add URL parameter support
+    protected static ?string $slug = 'epics-overview/{project_id?}';
+
     public Collection $epics;
 
     public array $expandedEpics = [];
@@ -37,12 +40,22 @@ class EpicsOverview extends Page
 
     public Collection $availableProjects;
 
-    public function mount(): void
+    // UPDATED: Handle project_id from URL
+    public function mount($project_id = null): void
     {
         $this->loadAvailableProjects();
 
-        if ($this->availableProjects->isNotEmpty() && !$this->selectedProjectId) {
-            $this->selectedProjectId = $this->availableProjects->first()->id;
+        // Handle project_id from URL
+        if ($project_id && $this->availableProjects->contains('id', $project_id)) {
+            $this->selectedProjectId = (int) $project_id;
+        } elseif ($project_id && !$this->availableProjects->contains('id', $project_id)) {
+            // Project not found or user doesn't have access
+            Notification::make()
+                ->title('Project Not Found')
+                ->body('The selected project was not found or you do not have access to it.')
+                ->danger()
+                ->send();
+            $this->redirect(static::getUrl());
         }
 
 
@@ -67,7 +80,7 @@ class EpicsOverview extends Page
             'project',
             'project',
             'tickets' => function ($query) {
-                $query->with(['status', 'assignee']);
+                $query->with(['status', 'assignees', 'creator']);
             },
         ])
             ->orderBy('start_date', 'asc');
@@ -80,6 +93,24 @@ class EpicsOverview extends Page
 
 
         $this->epics = $query->get();
+    }
+
+    // UPDATED: Handle project selection and update URL
+    public function updatedSelectedProjectId($value): void
+    {
+        $this->selectedProjectId = $value ? (int) $value : null;
+
+        if ($this->selectedProjectId) {
+            // Redirect to URL with project_id
+            $url = static::getUrl(['project_id' => $this->selectedProjectId]);
+            $this->redirect($url);
+        } else {
+            // Redirect to URL without project_id
+            $this->redirect(static::getUrl());
+        }
+
+        $this->loadEpics();
+        $this->expandedEpics = $this->epics->pluck('id')->toArray();
     }
 
     public function toggleEpic(int $epicId): void
@@ -97,18 +128,57 @@ class EpicsOverview extends Page
     }
 
 
-    public function form(Form $form): Form
+    // Helper method to get ticket statistics for an epic
+    public function getEpicStats(Epic $epic): array
     {
-        return $form
-            ->schema([
-                Select::make('selectedProjectId')
-                    ->label('Project')
-                    ->options($this->availableProjects->pluck('name', 'id'))
-                    ->live()
-                    ->afterStateUpdated(function () {
-                        $this->loadEpics();
-                    }),
-            ]);
+        $tickets = $epic->tickets;
+        $totalTickets = $tickets->count();
+
+        if ($totalTickets === 0) {
+            return [
+                'total' => 0,
+                'completed' => 0,
+                'in_progress' => 0,
+                'todo' => 0,
+                'progress_percentage' => 0,
+            ];
+        }
+
+        $completed = $tickets->filter(function ($ticket) {
+            return in_array($ticket->status?->name, ['Done', 'Completed', 'Closed']);
+        })->count();
+
+        $inProgress = $tickets->filter(function ($ticket) {
+            return in_array($ticket->status?->name, ['In Progress', 'Review']);
+        })->count();
+
+        $todo = $tickets->filter(function ($ticket) {
+            return in_array($ticket->status?->name, ['To Do', 'Open', 'New']);
+        })->count();
+
+        return [
+            'total' => $totalTickets,
+            'completed' => $completed,
+            'in_progress' => $inProgress,
+            'todo' => $todo,
+            'progress_percentage' => $totalTickets > 0 ? round(($completed / $totalTickets) * 100) : 0,
+        ];
+    }
+
+    // Helper method to get assignees display for a ticket
+    public function getTicketAssigneesDisplay($ticket): string
+    {
+        if ($ticket->assignees->isEmpty()) {
+            return 'Unassigned';
+        }
+
+        $names = $ticket->assignees->pluck('name')->toArray();
+
+        if (count($names) <= 2) {
+            return implode(', ', $names);
+        }
+
+        return $names[0] . ', ' . $names[1] . ' +' . (count($names) - 2) . ' more';
     }
 
 
