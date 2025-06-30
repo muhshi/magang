@@ -1,7 +1,13 @@
+{
+	frankenphp
+	order cgi-php before file_server
+}
+
 :80 {
-  root * /app/public
-  php_fastcgi {
-    root /app/public
-  }
-  file_server
+	# Set the webroot to the public directory
+	root * /app/public
+	# Enable compression
+	encode zstd br gzip
+	# Execute PHP files in the current directory and fallback to index.php
+	php_server
 }
