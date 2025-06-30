@@ -36,10 +36,10 @@ class CreateInternship extends CreateRecord
             Mail::to('bpsdemak3321@gmail.com')->send(new NotifikasiMasukKeKantor($freshRecord));
         } else {
             // Optional: log jika file belum ada
-            \Log::warning('File belum tersedia untuk email magang', [
-                'letter' => $freshRecord->letter_file,
-                'photo' => $freshRecord->photo_file,
-            ]);
+            // \Log::warning('File belum tersedia untuk email magang', [
+            //     'letter' => $freshRecord->letter_file,
+            //     'photo' => $freshRecord->photo_file,
+            // ]);
         }
 
         // Kirim WhatsApp ke admin
