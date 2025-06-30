@@ -14,6 +14,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use App\Models\Epic;
+use Illuminate\Support\Facades\Auth;
 
 class TicketResource extends Resource
 {
