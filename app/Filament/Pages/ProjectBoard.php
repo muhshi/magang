@@ -5,14 +5,10 @@ namespace App\Filament\Pages;
 use App\Filament\Resources\TicketResource;
 use App\Models\Project;
 use App\Models\Ticket;
-use App\Models\TicketStatus;
-use App\Models\User;
-use BezhanSalleh\FilamentShield\Traits\HasPageShield;
 use Filament\Actions\Action;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\On;
 use App\Filament\Actions\ExportTicketsAction;
 use App\Exports\TicketsExport;
@@ -21,7 +17,6 @@ use Illuminate\Support\Facades\Storage;
 
 class ProjectBoard extends Page
 {
-    use HasPageShield;
     protected static ?string $navigationIcon = 'heroicon-o-view-columns';
 
     protected static string $view = 'filament.pages.project-board';
@@ -48,13 +43,10 @@ class ProjectBoard extends Page
 
     public function mount($project_id = null): void
     {
-        /** @var \App\Models\User $user */
-        $user = Auth::user();
-
-        if (Auth::user()->roles[0]->name === 'super_admin') {
+        if (auth()->user()->hasRole(['super_admin'])) {
             $this->projects = Project::all();
         } else {
-            $this->projects = $user->projects;
+            $this->projects = auth()->user()->projects;
         }
 
         if ($project_id && $this->projects->contains('id', $project_id)) {
@@ -72,7 +64,6 @@ class ProjectBoard extends Page
 
     public function selectProject(int $projectId): void
     {
-        $this->selectedProjectId = $projectId;
         $this->selectedTicket = null;
         $this->ticketStatuses = collect();
         $this->selectedProjectId = $projectId;
