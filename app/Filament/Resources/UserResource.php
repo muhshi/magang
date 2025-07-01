@@ -19,7 +19,8 @@ class UserResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-users';
     // Untuk Users
-    protected static ?string $navigationGroup = 'Users Management';
+    protected static ?string $navigationGroup = 'Manajemen Pengguna';
+
     protected static ?int $navigationSort = 20;
 
     protected static ?string $navigationLabel = 'Users';
@@ -38,10 +39,11 @@ class UserResource extends Resource
                 Forms\Components\DateTimePicker::make('email_verified_at'),
                 Forms\Components\TextInput::make('password')
                     ->password()
-                    ->dehydrateStateUsing(fn ($state) => ! empty($state) ? Hash::make($state) : null
+                    ->dehydrateStateUsing(
+                        fn($state) => !empty($state) ? Hash::make($state) : null
                     )
-                    ->dehydrated(fn ($state) => ! empty($state))
-                    ->required(fn (string $operation): bool => $operation === 'create')
+                    ->dehydrated(fn($state) => !empty($state))
+                    ->required(fn(string $operation): bool => $operation === 'create')
                     ->maxLength(255),
                 Forms\Components\Select::make('roles')
                     ->relationship('roles', 'name')
@@ -67,13 +69,13 @@ class UserResource extends Resource
                     ->label('Roles')
                     ->badge()
                     ->separator(',')
-                    ->tooltip(fn (User $record): string => $record->roles->pluck('name')->join(', ') ?: 'No Roles')
+                    ->tooltip(fn(User $record): string => $record->roles->pluck('name')->join(', ') ?: 'No Roles')
                     ->sortable(),
 
                 Tables\Columns\TextColumn::make('projects_count')
                     ->label('Projects')
                     ->counts('projects')
-                    ->tooltip(fn (User $record): string => $record->projects->pluck('name')->join(', ') ?: 'No Projects')
+                    ->tooltip(fn(User $record): string => $record->projects->pluck('name')->join(', ') ?: 'No Projects')
                     ->sortable(),
 
                 Tables\Columns\TextColumn::make('assigned_tickets_count')
@@ -108,15 +110,15 @@ class UserResource extends Resource
             ->filters([
                 Tables\Filters\Filter::make('has_projects')
                     ->label('Has Projects')
-                    ->query(fn (Builder $query): Builder => $query->whereHas('projects')),
+                    ->query(fn(Builder $query): Builder => $query->whereHas('projects')),
 
                 Tables\Filters\Filter::make('has_assigned_tickets')
                     ->label('Has Assigned Tickets')
-                    ->query(fn (Builder $query): Builder => $query->whereHas('assignedTickets')),
+                    ->query(fn(Builder $query): Builder => $query->whereHas('assignedTickets')),
 
                 Tables\Filters\Filter::make('has_created_tickets')
                     ->label('Has Created Tickets')
-                    ->query(fn (Builder $query): Builder => $query->whereHas('createdTickets')),
+                    ->query(fn(Builder $query): Builder => $query->whereHas('createdTickets')),
 
                 // Filter by role
                 Tables\Filters\SelectFilter::make('roles')
@@ -127,7 +129,7 @@ class UserResource extends Resource
 
                 Tables\Filters\Filter::make('email_unverified')
                     ->label('Email Unverified')
-                    ->query(fn (Builder $query): Builder => $query->whereNull('email_verified_at')),
+                    ->query(fn(Builder $query): Builder => $query->whereNull('email_verified_at')),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
@@ -136,7 +138,7 @@ class UserResource extends Resource
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
-                    
+
                     // NEW: Bulk action to assign role
                     Tables\Actions\BulkAction::make('assignRole')
                         ->label('Assign Role')
@@ -149,7 +151,7 @@ class UserResource extends Resource
                                 ->preload()
                                 ->searchable()
                                 ->required(),
-                            
+
                             Forms\Components\Radio::make('role_mode')
                                 ->label('Assignment Mode')
                                 ->options([

@@ -21,11 +21,12 @@ class ProjectBoard extends Page
 
     protected static string $view = 'filament.pages.project-board';
 
-    protected static ?string $title = 'Project Board';
 
     protected static ?string $navigationLabel = 'Project Board';
 
-    protected static ?string $navigationGroup = 'Project Management';
+    protected static ?string $navigationGroup = 'Manajemen Tugas';
+
+    protected static ?string $title = 'Papan Tugas';
 
     protected static ?int $navigationSort = 2;
 

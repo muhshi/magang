@@ -17,14 +17,14 @@ class TicketTimeline extends Page
     use HasPageShield;
     protected static ?string $navigationIcon = 'heroicon-o-calendar';
 
-    protected static ?string $navigationLabel = 'Timeline';
+    protected static ?string $navigationLabel = 'Timeline Project';
 
-    protected static ?string $title = 'Ticket Timeline';
     protected static ?int $navigationSort = 1;
 
     protected static string $view = 'filament.pages.ticket-timeline';
 
-    protected static ?string $navigationGroup = 'Project Management';
+    protected static ?string $navigationGroup = 'Manajemen Tugas';
+
 
     public ?string $projectId = null;
 
@@ -47,7 +47,7 @@ class TicketTimeline extends Page
         if ($project_id && $this->projects->contains('id', $project_id)) {
             $this->projectId = $project_id;
             $this->selectedProject = Project::find($project_id);
-        } elseif ($this->projects->isNotEmpty() && ! is_null($project_id)) {
+        } elseif ($this->projects->isNotEmpty() && !is_null($project_id)) {
             Notification::make()
                 ->title('Project Not Found')
                 ->danger()
@@ -176,7 +176,7 @@ class TicketTimeline extends Page
         $now = Carbon::now();
 
         foreach ($tickets as $index => $ticket) {
-            if (! $ticket->due_date) {
+            if (!$ticket->due_date) {
                 continue;
             }
 
@@ -219,7 +219,7 @@ class TicketTimeline extends Page
 
             $status = strtolower($ticket->status->name ?? 'default');
             $statusLabel = ucfirst($status);
-            $isOverdue = $endDate < $now && ! in_array($status, ['completed', 'done', 'closed', 'resolved']);
+            $isOverdue = $endDate < $now && !in_array($status, ['completed', 'done', 'closed', 'resolved']);
 
             $remainingDaysText = '';
             if ($remainingDays > 0) {
@@ -227,7 +227,7 @@ class TicketTimeline extends Page
             } elseif ($remainingDays === 0) {
                 $remainingDaysText = 'Due today';
             } else {
-                $remainingDaysText = abs($remainingDays).' days overdue';
+                $remainingDaysText = abs($remainingDays) . ' days overdue';
             }
 
             $tasks[] = [
@@ -247,10 +247,10 @@ class TicketTimeline extends Page
         }
 
         usort($tasks, function ($a, $b) {
-            if ($a['is_overdue'] && ! $b['is_overdue']) {
+            if ($a['is_overdue'] && !$b['is_overdue']) {
                 return -1;
             }
-            if (! $a['is_overdue'] && $b['is_overdue']) {
+            if (!$a['is_overdue'] && $b['is_overdue']) {
                 return 1;
             }
 

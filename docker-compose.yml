@@ -1,6 +1,9 @@
 services:
   magang-franken:
     container_name: magang-franken
+    environment:      # <-- TAMBAHKAN BLOK INI
+      - PUID=1000
+      - PGID=1000
     image: image_magang-franken
     build:
       context: .
@@ -9,5 +12,12 @@ services:
       - "8001:80"
     volumes:
       - .:/app
-    env_file:
-      - .env
+    networks:
+      - default # Jaringan default untuk service ini
+      - mysql-stack_mysql_network # Menghubungkan ke jaringan stack MySQL
+
+# Mendefinisikan jaringan yang akan digunakan
+networks:
+  default:
+  mysql-stack_mysql_network:
+    external: true

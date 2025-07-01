@@ -33,6 +33,8 @@ class InternshipResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-s-identification';
 
+    protected static ?string $label = "Pendaftaran Magang";
+
     public static function form(Form $form): Form
     {
         return $form
