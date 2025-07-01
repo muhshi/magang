@@ -39,7 +39,7 @@ class TicketResource extends Resource
                 })
                     ->orWhere('created_by', auth()->id())
                     ->orWhereHas('project.members', function ($query) {
-                        $query->where('users.id', Auth::user()->id);
+                        $query->where('users.id', auth()->id());
                     });
             });
         }
@@ -57,11 +57,9 @@ class TicketResource extends Resource
                 Forms\Components\Select::make('project_id')
                     ->label('Project')
                     ->options(function () {
-                        if (Auth::user()->roles[0]->name === 'super_admin') {
+                        if (auth()->user()->hasRole(['super_admin'])) {
                             return Project::pluck('name', 'id')->toArray();
                         }
-
-                        return auth()->user()->projects()->pluck('id')->toArray();
 
                         return auth()->user()->projects()->pluck('name', 'projects.id')->toArray();
                     })
@@ -80,9 +78,6 @@ class TicketResource extends Resource
                     ->label('Status')
                     ->options(function ($get) {
                         $projectId = $get('project_id');
-                        if (!$projectId)
-                            return [];
-
                         if (!$projectId) {
                             return [];
                         }
@@ -169,11 +164,6 @@ class TicketResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
-            ->modifyQueryUsing(function (Builder $query) {
-                if (Auth::user()->roles[0]->name != 'super_admin') {
-                    $query->where('user_id', Auth::user()->id);
-                }
-            })
             ->columns([
                 Tables\Columns\TextColumn::make('uuid')
                     ->label('Ticket ID')
@@ -231,10 +221,9 @@ class TicketResource extends Resource
                 Tables\Filters\SelectFilter::make('project_id')
                     ->label('Project')
                     ->options(function () {
-                        if (Auth::user()->roles[0]->name === 'super_admin') {
+                        if (auth()->user()->hasRole(['super_admin'])) {
                             return Project::pluck('name', 'id')->toArray();
                         }
-
 
                         return auth()->user()->projects()->pluck('name', 'projects.id')->toArray();
                     })
@@ -288,7 +277,6 @@ class TicketResource extends Resource
                     ->searchable()
                     ->preload(),
 
-
                 Tables\Filters\Filter::make('due_date')
                     ->form([
                         Forms\Components\DatePicker::make('due_from'),
@@ -314,7 +302,8 @@ class TicketResource extends Resource
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make()
-                        ->visible(Auth::user()->roles[0]->name === 'super_admin'),
+                        ->visible(auth()->user()->hasRole(['super_admin'])),
+
                     Tables\Actions\BulkAction::make('updateStatus')
                         ->label('Update Status')
                         ->icon('heroicon-o-arrow-path')
