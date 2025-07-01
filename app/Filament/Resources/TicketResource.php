@@ -61,7 +61,7 @@ class TicketResource extends Resource
                             return Project::pluck('name', 'id')->toArray();
                         }
 
-                        return auth()->Auth::user()->projects()->pluck('id')->toArray();
+                        return auth()->user()->projects()->pluck('id')->toArray();
 
                         return auth()->user()->projects()->pluck('name', 'projects.id')->toArray();
                     })
