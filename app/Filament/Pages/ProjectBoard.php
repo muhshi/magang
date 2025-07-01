@@ -61,7 +61,7 @@ class ProjectBoard extends Page
             $this->selectedProjectId = (int) $project_id;
             $this->selectedProject = Project::find($project_id);
             $this->loadTicketStatuses();
-        } elseif ($this->projects->isNotEmpty() && ! is_null($project_id)) {
+        } elseif ($this->projects->isNotEmpty() && !is_null($project_id)) {
             Notification::make()
                 ->title('Project Not Found')
                 ->danger()
@@ -100,17 +100,19 @@ class ProjectBoard extends Page
 
     public function loadTicketStatuses(): void
     {
-        if (! $this->selectedProject) {
+        if (!$this->selectedProject) {
             $this->ticketStatuses = collect();
 
             return;
         }
 
         $this->ticketStatuses = $this->selectedProject->ticketStatuses()
-            ->with(['tickets' => function ($query) {
-                 $query->with(['assignees', 'status'])
-                    ->orderBy('created_at', 'desc');
-            }])
+            ->with([
+                'tickets' => function ($query) {
+                    $query->with(['assignees', 'status'])
+                        ->orderBy('created_at', 'desc');
+                }
+            ])
             ->orderBy('sort_order')
             ->get();
     }
@@ -147,7 +149,7 @@ class ProjectBoard extends Page
     {
         $ticket = Ticket::with(['assignees', 'status', 'project'])->find($ticketId);
 
-        if (! $ticket) {
+        if (!$ticket) {
             Notification::make()
                 ->title('Ticket Not Found')
                 ->danger()
@@ -170,7 +172,7 @@ class ProjectBoard extends Page
     {
         $ticket = Ticket::find($ticketId);
 
-        if (! $this->canEditTicket($ticket)) {
+        if (!$this->canEditTicket($ticket)) {
             Notification::make()
                 ->title('Permission Denied')
                 ->body('You do not have permission to edit this ticket.')
@@ -200,15 +202,15 @@ class ProjectBoard extends Page
                 ->icon('heroicon-m-arrow-path')
                 ->action('refreshBoard')
                 ->color('warning'),
-            
+
             ExportTicketsAction::make()
-                ->visible(fn () => $this->selectedProject !== null),
+                ->visible(fn() => $this->selectedProject !== null),
         ];
     }
 
     private function canViewTicket(?Ticket $ticket): bool
     {
-        if (! $ticket) {
+        if (!$ticket) {
             return false;
         }
 
@@ -219,7 +221,7 @@ class ProjectBoard extends Page
 
     private function canEditTicket(?Ticket $ticket): bool
     {
-        if (! $ticket) {
+        if (!$ticket) {
             return false;
         }
 
@@ -230,7 +232,7 @@ class ProjectBoard extends Page
 
     private function canManageTicket(?Ticket $ticket): bool
     {
-        if (! $ticket) {
+        if (!$ticket) {
             return false;
         }
 
@@ -252,7 +254,7 @@ class ProjectBoard extends Page
         }
 
         $tickets = collect();
-        
+
         if ($this->selectedProject) {
             $tickets = $this->selectedProject->tickets()
                 ->with(['assignees', 'status', 'project', 'epic'])
@@ -262,7 +264,7 @@ class ProjectBoard extends Page
             $ticketIds = $this->ticketStatuses->flatMap(function ($status) {
                 return $status->tickets->pluck('id');
             });
-            
+
             $tickets = Ticket::whereIn('id', $ticketIds)
                 ->with(['assignees', 'status', 'project', 'epic'])
                 ->orderBy('created_at', 'asc')
@@ -299,13 +301,13 @@ class ProjectBoard extends Page
                         document.body.removeChild(a);
                     });
             ");
-            
+
             Notification::make()
                 ->title('Export Successful')
                 ->body('Your Excel file is being downloaded.')
                 ->success()
                 ->send();
-            
+
         } catch (\Exception $e) {
             Notification::make()
                 ->title('Export Failed')
@@ -317,6 +319,19 @@ class ProjectBoard extends Page
 
     public static function canAccess(): bool
     {
-        return !auth()->user()->hasRole(['Calon Magang']);
+        // Pastikan user sudah login
+        if (!auth()->check()) {
+            return false;
+        }
+
+        $user = auth()->user();
+
+        // Tolak akses jika user HANYA punya satu role, yaitu 'Calon Magang'
+        if ($user->hasRole('Calon Magang') && $user->roles->count() === 1) {
+            return false;
+        }
+
+        // Izinkan akses untuk semua kondisi lainnya
+        return true;
     }
 }
