@@ -5,6 +5,7 @@ namespace App\Providers\Filament;
 use App\Filament\Pages\Map;
 use App\Filament\Pages\ProjectBoard;
 use App\Filament\Widgets\InternshipOverview;
+use Asmit\ResizedColumn\ResizedColumnPlugin;
 use Filament\Http\Middleware\Authenticate;
 use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
 use Filament\Http\Middleware\AuthenticateSession;
@@ -22,13 +23,14 @@ use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
-use Filament\Support\Assets\Css;
 
 class AdminPanelProvider extends PanelProvider
 {
     public function panel(Panel $panel): Panel
     {
         return $panel
+            ->spa()
+            ->databaseTransactions()
             ->default()
             ->id('admin')
             ->path('admin')
@@ -49,7 +51,6 @@ class AdminPanelProvider extends PanelProvider
             ->widgets([
                 Widgets\AccountWidget::class,
                 Widgets\FilamentInfoWidget::class,
-
             ])
             ->middleware([
                 EncryptCookies::class,
@@ -79,6 +80,8 @@ class AdminPanelProvider extends PanelProvider
                         'default' => 1,
                         'sm' => 2,
                     ]),
+                ResizedColumnPlugin::make()
+                ->preserveOnDB(),
             ])
             ->authMiddleware([
                 Authenticate::class,

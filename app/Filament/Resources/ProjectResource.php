@@ -21,7 +21,10 @@ class ProjectResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
-    protected static ?string $navigationGroup = 'Project Management';
+    protected static ?string $navigationGroup = 'Manajemen Tugas';
+
+    protected static ?string $label = 'Projek Utama';
+
     protected static ?int $navigationSort = 10;
 
     public static function form(Form $form): Form
@@ -31,7 +34,7 @@ class ProjectResource extends Resource
                 Forms\Components\TextInput::make('name')
                     ->required()
                     ->maxLength(255),
-                Forms\Components\Textarea::make('description')
+                Forms\Components\RichEditor::make('description')
                     ->columnSpanFull(),
                 Forms\Components\TextInput::make('ticket_prefix')
                     ->required()
@@ -86,7 +89,7 @@ class ProjectResource extends Resource
         return [
             RelationManagers\TicketStatusesRelationManager::class,
             RelationManagers\MembersRelationManager::class,
-            //RelationManagers\EpicsRelationManager::class,
+                //RelationManagers\EpicsRelationManager::class,
             RelationManagers\TicketsRelationManager::class,
         ];
     }
@@ -108,7 +111,7 @@ class ProjectResource extends Resource
         // Check if the current user has the super_admin role
         // Adjust this condition based on how you check for roles in your application
         $userIsSuperAdmin = Auth::user() && (
-            // If using Spatie Permission package
+                // If using Spatie Permission package
             (method_exists(Auth::user(), 'hasRole') && Auth::user()->roles[0]->name === 'super_admin')
             // Or if using a simple role column
             || (isset(Auth::user()->role) && Auth::user()->role === 'super_admin')

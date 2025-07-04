@@ -24,7 +24,9 @@ class LeaveResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-c-arrow-left-end-on-rectangle';
 
-    protected static ?string $navigationGroup = 'Attendance Management';
+    protected static ?string $navigationGroup = 'Manajemen Presensi';
+
+    protected static ?string $label = 'Cuti';
 
     protected static function mutateFormDataBeforeCreate(array $data): array
     {

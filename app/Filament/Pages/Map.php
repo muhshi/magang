@@ -10,7 +10,9 @@ class Map extends Page
 {
     use HasPageShield;
     protected static ?string $navigationIcon = 'heroicon-o-map';
-    protected static ?string $navigationGroup = 'Attendance Management';
+    protected static ?string $navigationGroup = 'Manajemen Presensi';
+
+    protected static ?string $label = 'Map Utama';
     protected static string $view = 'filament.pages.map';
 
     public static function canAccess(): bool

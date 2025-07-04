@@ -129,6 +129,27 @@ The comment system enhances team collaboration:
 - Supports rich text formatting for improved readability
 - Enables better context sharing and decision documentation
 
+## Running with Laravel Octane and FrankenPHP
+
+This project comes pre-configured with Laravel Octane and FrankenPHP for improved performance. Here's how to use it:
+
+### Prerequisites
+
+The required packages are already included in the project dependencies:
+- `laravel/octane` (in composer.json)
+- `chokidar` (in package.json for file watching)
+
+They will be installed automatically when you run `composer install` and `npm install` during the standard installation process.
+
+### Running the Application
+
+#### Development Mode
+
+To run the application in development mode with auto-reloading, simply use the provided composer script:
+   ```
+   php artisan octane:start --server=frankenphp --watch
+   ```
+
 ## License
 
 This project is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
