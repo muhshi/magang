@@ -1,123 +1,133 @@
-/*
-	Stellar by HTML5 UP
-	html5up.net | @ajlkn
-	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
-*/
+$(document).ready(function () {
+    
+    "use strict";
+    
+    // Preloader
+    
+    $(window).load(function () { // makes sure the whole site is loaded
+        $('.page-preloader spinner').fadeOut(); // will first fade out the loading animation
+        $('.page-preloader').delay(350).fadeOut('slow');
+        // will fade out the white DIV that covers the website.
+        $('body').delay(350).css({
+            'overflow': 'visible'
+        });
+    })
+    
+    // Animated typing text
 
-(function($) {
+    $(".animated-text").typed({
+        strings: [
+            "fully responsive",
+            "onepage template",
+            "mobile first",
+            "startup template"
+        ],
+        typeSpeed: 40,
+        loop: true,
+    });
 
-	var	$window = $(window),
-		$body = $('body'),
-		$main = $('#main');
+    // PopUp Effect
 
-	// Breakpoints.
-		breakpoints({
-			xlarge:   [ '1281px',  '1680px' ],
-			large:    [ '981px',   '1280px' ],
-			medium:   [ '737px',   '980px'  ],
-			small:    [ '481px',   '736px'  ],
-			xsmall:   [ '361px',   '480px'  ],
-			xxsmall:  [ null,      '360px'  ]
-		});
+    $('.popup-youtube, .popup-vimeo, .popup-gmaps').magnificPopup({
+        disableOn: 700,
+        type: 'iframe',
+        mainClass: 'mfp-fade',
+        removalDelay: 160,
+        preloader: false,
 
-	// Play initial animations on page load.
-		$window.on('load', function() {
-			window.setTimeout(function() {
-				$body.removeClass('is-preload');
-			}, 100);
-		});
+        fixedContentPos: false
+    });
 
-	// Nav.
-		var $nav = $('#nav');
+    $.extend(true, $.magnificPopup.defaults, {
+        iframe: {
+            patterns: {
+                youtube: {
+                    index: 'youtube.com/',
+                    id: 'v=',
+                    src: 'http://www.youtube.com/embed/%id%?autoplay=1'
+                }
+            }
+        }
+    });
 
-		if ($nav.length > 0) {
+    // Owl Clients
 
-			// Shrink effect.
-				$main
-					.scrollex({
-						mode: 'top',
-						enter: function() {
-							$nav.addClass('alt');
-						},
-						leave: function() {
-							$nav.removeClass('alt');
-						},
-					});
+    $("#owl-clients").owlCarousel({
 
-			// Links.
-				var $nav_a = $nav.find('a');
+        autoPlay: 3000, //Set AutoPlay to 3 seconds
 
-				$nav_a
-					.scrolly({
-						speed: 1000,
-						offset: function() { return $nav.height(); }
-					})
-					.on('click', function() {
+        items: 3,
+        itemsDesktop: [1199, 3],
+        itemsDesktopSmall: [979, 3]
 
-						var $this = $(this);
+    });
 
-						// External link? Bail.
-							if ($this.attr('href').charAt(0) != '#')
-								return;
+    // Owl Testimonils
 
-						// Deactivate all links.
-							$nav_a
-								.removeClass('active')
-								.removeClass('active-locked');
+    $("#owl-testimonials").owlCarousel({
+        navigation: false, // Show next and prev buttons
+        slideSpeed: 600,
+        paginationSpeed: 400,
+        singleItem: true,
+        transitionStyle: "goDown",
+        autoPlay: true
+    });
 
-						// Activate link *and* lock it (so Scrollex doesn't try to activate other links as we're scrolling to this one's section).
-							$this
-								.addClass('active')
-								.addClass('active-locked');
+    // Snazzy Maps
+    google.maps.event.addDomListener(window, 'load', init);
 
-					})
-					.each(function() {
+    function init() {
+        // Basic options for a simple Google Map
+        // For more options see: https://developers.google.com/maps/documentation/javascript/reference#MapOptions
+        var mapOptions = {
+            // How zoomed in you want the map to start at (always required)
+            zoom: 15,
 
-						var	$this = $(this),
-							id = $this.attr('href'),
-							$section = $(id);
+            // The latitude and longitude to center the map (always required)
+            center: new google.maps.LatLng(33.5912284, -7.5210958, 17.18), // Casablanca
 
-						// No section for this link? Bail.
-							if ($section.length < 1)
-								return;
+            // Disables the default Google Maps UI components
+            disableDefaultUI: true,
+            scrollwheel: false,
 
-						// Scrollex.
-							$section.scrollex({
-								mode: 'middle',
-								initialize: function() {
+            // How you would like to style the map. 
+            // This is where you would paste any style found on Snazzy Maps.
+            styles: [{
+                "stylers": [{
+                    "hue": "#f23c7e"
+                }, {
+                    "saturation": 150
+                }]
+            }, {
+                "featureType": "road",
+                "elementType": "geometry",
+                "stylers": [{
+                    "lightness": 50
+                }, {
+                    "visibility": "simplified"
+                }]
+            }, {
+                "featureType": "road",
+                "elementType": "labels",
+                "stylers": [{
+                    "visibility": "off"
+                }]
+            }]
+        };
 
-									// Deactivate section.
-										if (browser.canUse('transition'))
-											$section.addClass('inactive');
+        // Get the HTML DOM element that will contain your map 
+        // We are using a div with id="map" seen below in the <body>
+        var mapElement = document.getElementById('map');
 
-								},
-								enter: function() {
-
-									// Activate section.
-										$section.removeClass('inactive');
-
-									// No locked links? Deactivate all links and activate this section's one.
-										if ($nav_a.filter('.active-locked').length == 0) {
-
-											$nav_a.removeClass('active');
-											$this.addClass('active');
-
-										}
-
-									// Otherwise, if this section's link is the one that's locked, unlock it.
-										else if ($this.hasClass('active-locked'))
-											$this.removeClass('active-locked');
-
-								}
-							});
-
-					});
-
-		}
-
-	// Scrolly.
-		$('.scrolly').scrolly({
-			speed: 1000
-		});
-
-})(jQuery);
+        // Create the Google Map using out element and options defined above
+        var map = new google.maps.Map(mapElement, mapOptions);
+        var myLatLng = new google.maps.LatLng(33.592501, -7.522318);
+        // Custom Map Marker Icon - Customize the map-marker.png file to customize your icon
+        var marker = new google.maps.Marker({
+            position: myLatLng,
+            map: map,
+            title: 'Hello World!'
+        });
+    }
+    
+});
