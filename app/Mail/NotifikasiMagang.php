@@ -25,8 +25,23 @@ class NotifikasiMagang extends Mailable
 
     public function build()
     {
-        return $this->subject('Notifikasi Pendaftaran Magang')
+        // Mulai dengan membuat email dasar
+        $email = $this->subject('Update Status Pendaftaran Magang Anda')
             ->view('emails.notifikasi-magang');
+
+        // Jika diterima dan ada file surat, lampirkan
+        if (
+            $this->internship->status === 'accepted' &&
+            !empty($this->internship->acceptance_letter_file) &&
+            file_exists(public_path("storage/{$this->internship->acceptance_letter_file}"))
+        ) {
+            $email->attach(
+                public_path("storage/{$this->internship->acceptance_letter_file}"),
+                ['as' => 'Surat Penerimaan Magang.pdf'] // Anda bisa memberi nama file lampiran
+            );
+        }
+
+        return $email;
     }
 
     /**

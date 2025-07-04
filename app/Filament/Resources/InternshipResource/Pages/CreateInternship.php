@@ -33,7 +33,7 @@ class CreateInternship extends CreateRecord
             file_exists(public_path("storage/{$freshRecord->letter_file}")) &&
             file_exists(public_path("storage/{$freshRecord->photo_file}"))
         ) {
-            Mail::to('bpsdemak3321@gmail.com')->send(new NotifikasiMasukKeKantor($freshRecord));
+            Mail::to('bps3321@bps.go.id')->send(new NotifikasiMasukKeKantor($freshRecord));
         } else {
             // Optional: log jika file belum ada
             // \Log::warning('File belum tersedia untuk email magang', [

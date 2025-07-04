@@ -16,6 +16,7 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
+use Filament\Forms\Get;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Actions\EditAction;
@@ -150,17 +151,33 @@ class InternshipResource extends Resource
                             ->label('Keterampilan yang Dimiliki')
                             ->columnSpanFull(),
                     ]),
-                Section::make()
-                    ->schema(
-                        [
-                            Select::make('status')
-                                ->options([
-                                    'accepted' => 'Approved',
-                                    'rejected' => 'Rejected',
-                                ]),
-                            Textarea::make('note')->columnSpanFull(),
-                        ]
-                    )
+                Section::make('Approval Admin') // Ganti nama section agar lebih jelas
+                    ->schema([
+                        Select::make('status')
+                            ->options([
+                                'accepted' => 'Approved',
+                                'rejected' => 'Rejected',
+                            ])
+                            ->live(), // <--- Tambahkan ini untuk membuat form reaktif
+
+                        Textarea::make('note')
+                            ->label('Catatan (Opsional)')
+                            ->columnSpanFull(),
+
+                        AdvancedFileUpload::make('acceptance_letter_file')
+                            ->label('Upload Surat Penerimaan (Wajib jika Approved)')
+                            ->pdfPreviewHeight(400)
+                            ->pdfDisplayPage(1)
+                            ->pdfToolbar(true)
+                            ->pdfZoomLevel(100)
+                            ->pdfFitType(PdfViewFit::FIT)
+                            ->pdfNavPanes(true)
+                            ->directory('magang/acceptance-letters') // Simpan di direktori terpisah
+                            ->visibility('private')
+                            ->required(fn(Get $get): bool => $get('status') === 'accepted') // Wajib jika status 'accepted'
+                            ->visible(fn(Get $get): bool => $get('status') === 'accepted'), // Muncul jika status 'accepted'
+
+                    ])
                     ->hidden(Auth::user()->roles[0]->name !== 'super_admin'),
             ]);
     }
@@ -225,6 +242,12 @@ class InternshipResource extends Resource
         return [
             //
         ];
+    }
+
+    public static function getEloquentQuery(): Builder
+    {
+        // Mengambil pendaftar yang statusnya 'pending'
+        return parent::getEloquentQuery()->where('status', 'pending');
     }
 
     public static function getPages(): array

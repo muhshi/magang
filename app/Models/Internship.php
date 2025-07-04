@@ -28,6 +28,7 @@ class Internship extends Model
         'motivation',
         'skills',
         'status',
+        'acceptance_letter_file',
     ];
 
     public function user(): BelongsTo

@@ -33,7 +33,7 @@ class AppServiceProvider extends ServiceProvider
 
         LanguageSwitch::configureUsing(function (LanguageSwitch $switch) {
             $switch
-                ->locales(['en', 'id']) // Ganti dengan kode bahasa yang diinginkan
+                ->locales(['id']) // Ganti dengan kode bahasa yang diinginkan
                 ->visible(outsidePanels: true);
         });
 

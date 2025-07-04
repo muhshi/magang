@@ -22,8 +22,14 @@ class EditInternship extends EditRecord
 
     protected function afterSave(): void
     {
-        if (in_array($this->record->status, ['accepted', 'rejected'])) {
-            Mail::to($this->record->email)->send(new NotifikasiMagang($this->record));
+        $pendaftar = $this->record;
+
+        // Kirim email jika statusnya accepted atau rejected
+        if ($pendaftar->status === 'accepted' || $pendaftar->status === 'rejected') {
+            Mail::to($pendaftar->email)->send(new NotifikasiMagang($pendaftar));
         }
+        // if (in_array($this->record->status, ['accepted', 'rejected'])) {
+        //     Mail::to($this->record->email)->send(new NotifikasiMagang($this->record));
+        // }
     }
 }
