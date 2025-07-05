@@ -16,7 +16,7 @@
 
     <meta name="keywords" content="landing,startup,flat">
 
-    <meta name="author" content="Made By GN DESIGNS">
+    <meta name="author" content="BPS Kabupaten Demak">
 
 
 
@@ -115,8 +115,7 @@
 
                 <a class="navbar-brand" href="#brand">
 
-                    <img src="assets/img/logo.png" class="logo" alt="logo">
-
+                    <img src="assets/img/logo.png" alt="logo" style="max-height: 70px">
                 </a>
 
             </div>
@@ -133,11 +132,7 @@
 
                     <li class="active scroll"><a href="#home">Home</a></li>
 
-                    <li class="scroll"><a href="#about">About</a></li>
-
-                    <li class="scroll"><a href="#services">Services</a></li>
-
-                    <li class="scroll"><a href="#price">Price</a></li>
+                    <li class="scroll"><a href="#about">Fitur</a></li>
 
                     <li class="scroll"><a href="#team">Team</a></li>
 
@@ -147,8 +142,8 @@
 
                     <li class="button-holder">
 
-                        <button type="button" class="btn btn-blue navbar-btn" data-toggle="modal"
-                            data-target="#SignIn">Sign in</button>
+                        <button type="button" href="/admin" class="btn btn-blue navbar-btn"
+                            >Sign in</button>
 
                     </li>
 
@@ -189,9 +184,7 @@
                         profesional. Mulai dari proses pendaftaran hingga pemantauan kegiatan harian, semuanya dalam
                         satu sistem yang terintegrasi.</p>
 
-                    <a href="#" class="btn btn-transparent">Get Started</a>
-
-                    <a class="btn btn-blue popup-youtube" href="https://www.youtube.com/watch?v=Q8TXgCzxEnw">
+                    <a class="btn btn-blue popup-youtube" href="https://www.youtube.com/watch?v=qIaFUy6EiDQ">
 
                         <i class="material-icons">play_circle_filled</i>Watch Video
 
@@ -211,7 +204,7 @@
 
                         <div class="form-group text-center">
 
-                            <button type="submit" class="btn btn-blue btn-block">Start Now</button>
+                            <a href="/admin" class="btn btn-blue btn-block">Start Now</a>
 
                         </div>
 
@@ -293,454 +286,6 @@
 
     </section>
 
-
-
-    <!--========================================
-
-           Story
-
-    ========================================-->
-
-
-
-    <section id="story">
-
-        <div class="container-fluid">
-
-            <div class="row">
-
-                <!-- Img -->
-
-                <div class="col-md-6 story-bg">
-
-                </div>
-
-                <!-- Story Caption -->
-
-                <div class="col-md-6">
-
-                    <div class="story-content">
-
-                        <h2>Our Success Story</h2>
-
-                        <p class="story-quote">
-
-                            " Success is finding satisfaction in giving a little more than you take."
-
-                        </p>
-
-                        <div class="story-text">
-
-                            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Officiis amet consequatur
-                                incidunt, alias odit quisquam laborum nemo nisi, vel, tempora eligendi enim voluptate
-                                accusamus libero voluptas commodi ex rerum dolorem!</p>
-
-                        </div>
-
-                        <a href="#" class="btn btn-white">Learn More</a>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </section>
-
-
-
-    <!--========================================
-
-           Services
-
-    ========================================-->
-
-
-
-    <section id="services" class="section-padding">
-
-        <div class="container">
-
-            <h2>Our Services</h2>
-
-            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Odio, optio.</p>
-
-            <div class="row">
-
-                <div class="col-md-3">
-
-                    <div class="icon-box">
-
-                        <i class="material-icons">thumb_up</i>
-
-                        <h4>Great Quality</h4>
-
-                        <p>Quality ipsum dolor sit amet, consectetur adipisicing elit. Beatae quod error quis.</p>
-
-                    </div>
-
-                </div>
-
-                <div class="col-md-3">
-
-                    <div class="icon-box">
-
-                        <i class="material-icons">euro_symbol</i>
-
-                        <h4>Best Price</h4>
-
-                        <p>Price ipsum dolor sit amet, consectetur adipisicing elit. Beatae quod error quis.</p>
-
-                    </div>
-
-                </div>
-
-                <div class="col-md-3">
-
-                    <div class="icon-box">
-
-                        <i class="material-icons">forum</i>
-
-                        <h4>24/7 Support</h4>
-
-                        <p>Support ipsum dolor sit amet, consectetur adipisicing elit. Beatae quod error quis.</p>
-
-                    </div>
-
-                </div>
-
-                <div class="col-md-3">
-
-                    <div class="icon-box">
-
-                        <i class="material-icons">view_carousel</i>
-
-                        <h4>UX/UI Design</h4>
-
-                        <p>Quality ipsum dolor sit amet, consectetur adipisicing elit. Beatae quod error quis.</p>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </section>
-
-
-
-    <!--========================================
-
-           Features
-
-    ========================================-->
-
-
-
-    <section id="features">
-
-        <div class="container">
-
-            <div class="row">
-
-                <div class="col-md-6">
-
-                    <h2>Awesome Features</h2>
-
-                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Explicabo, repudiandae mollitia iure
-                        magni accusamus, alias veniam.</p>
-
-                    <hr>
-
-                    <div class="feat-media">
-
-                        <!-- Feature -->
-
-                        <div class="media">
-
-                            <div class="media-left">
-
-                                <a href="#">
-
-                                    <i class="material-icons">monetization_on</i>
-
-                                </a>
-
-                            </div>
-
-                            <div class="media-body">
-
-                                <h4 class="media-heading">Easy On Your Wallet</h4>
-
-                                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Deleniti nam vel provident
-                                    quae.</p>
-
-                            </div>
-
-                        </div>
-
-                        <!-- Feature -->
-
-                        <div class="media">
-
-                            <div class="media-left">
-
-                                <a href="#">
-
-                                    <i class="material-icons">access_time</i>
-
-                                </a>
-
-                            </div>
-
-                            <div class="media-body">
-
-                                <h4 class="media-heading">Time Saver</h4>
-
-                                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Deleniti nam vel provident
-                                    quae.</p>
-
-                            </div>
-
-                        </div>
-
-                        <!-- Feature -->
-
-                        <div class="media">
-
-                            <div class="media-left">
-
-                                <a href="#">
-
-                                    <i class="material-icons">computer</i>
-
-                                </a>
-
-                            </div>
-
-                            <div class="media-body">
-
-                                <h4 class="media-heading">Fully Responsive</h4>
-
-                                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Deleniti nam vel provident
-                                    quae.</p>
-
-                            </div>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-                <!-- Features Img -->
-
-                <div class="col-md-6 col-md-push-2">
-
-                    <img src="assets/img/dashboard.png" class="img-responsive" alt="feature">
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </section>
-
-
-
-    <!--========================================
-
-           Price
-
-    ========================================-->
-
-
-
-    <section id="price" class="section-padding">
-
-        <div class="container">
-
-            <h2>Choose Your Plan</h2>
-
-            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Odio, optio.</p>
-
-            <div class="row">
-
-                <!-- Pricing Start Here -->
-
-                <div class="pricing-container">
-
-                    <div class="col-md-4">
-
-                        <!--== SINGLE USER: Plan ==-->
-
-                        <div class="plan">
-
-                            <div class="pricing-header">
-
-                                <h3>Single User</h3>
-
-                                <h3>
-
-                                    <span class="currency">$</span>
-
-                                    <span class="amount">20</span>
-
-                                    <span class="period">/mo</span>
-
-                                </h3>
-
-                            </div>
-
-                            <div class="pricing-body">
-
-                                <ul class="list-unstyled">
-
-                                    <li><i class="material-icons">done</i><b>265MB</b> Memory</li>
-
-                                    <li><i class="material-icons">done</i><b>1</b> User</li>
-
-                                    <li><i class="material-icons">done</i><b>1</b> Website</li>
-
-                                    <li><i class="material-icons">done</i><b>1</b> Domain</li>
-
-                                    <li><i class="material-icons">done</i><b>Unlimeted</b> Bandwitch</li>
-
-                                    <li><i class="material-icons">done</i><b>24/7</b> Support</li>
-
-                                </ul>
-
-                            </div>
-
-                            <div class="pricing-footer">
-
-                                <a href="#" class="btn btn-blue">Select</a>
-
-                            </div>
-
-                        </div>
-
-                    </div>
-
-                    <div class="col-md-4">
-
-                        <!--== MULTIPLE USER: Plan ==-->
-
-                        <div class="plan active">
-
-                            <div class="pricing-header">
-
-                                <h3>Multiple Users</h3>
-
-                                <h3>
-
-                                    <span class="currency">$</span>
-
-                                    <span class="amount">40</span>
-
-                                    <span class="period">/mo</span>
-
-                                </h3>
-
-                            </div>
-
-                            <div class="pricing-body">
-
-                                <ul class="list-unstyled">
-
-                                    <li><i class="material-icons">done</i><b>512MB</b> Memory</li>
-
-                                    <li><i class="material-icons">done</i><b>3</b> User</li>
-
-                                    <li><i class="material-icons">done</i><b>5</b> Website</li>
-
-                                    <li><i class="material-icons">done</i><b>7</b> Domain</li>
-
-                                    <li><i class="material-icons">done</i><b>Unlimeted</b> Bandwitch</li>
-
-                                    <li><i class="material-icons">done</i><b>24/7</b> Support</li>
-
-                                </ul>
-
-                            </div>
-
-                            <div class="pricing-footer">
-
-                                <a href="#" class="btn btn-blue">Select</a>
-
-                            </div>
-
-                        </div>
-
-                    </div>
-
-                    <div class="col-md-4">
-
-                        <!--== Developer: Plan ==-->
-
-                        <div class="plan">
-
-                            <div class="pricing-header">
-
-                                <h3>Developer</h3>
-
-                                <h3>
-
-                                    <span class="currency">$</span>
-
-                                    <span class="amount">60</span>
-
-                                    <span class="period">/mo</span>
-
-                                </h3>
-
-                            </div>
-
-                            <div class="pricing-body">
-
-                                <ul class="list-unstyled">
-
-                                    <li><i class="material-icons">done</i><b>1024MB</b> Memory</li>
-
-                                    <li><i class="material-icons">done</i><b>5</b> User</li>
-
-                                    <li><i class="material-icons">done</i><b>10</b> Website</li>
-
-                                    <li><i class="material-icons">done</i><b>10</b> Domain</li>
-
-                                    <li><i class="material-icons">done</i><b>Unlimeted</b> Bandwitch</li>
-
-                                    <li><i class="material-icons">done</i><b>24/7</b> Support</li>
-
-                                </ul>
-
-                            </div>
-
-                            <div class="pricing-footer">
-
-                                <a href="#" class="btn btn-blue">Select</a>
-
-                            </div>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </section>
-
-
-
     <!--========================================
 
            Team
@@ -753,9 +298,9 @@
 
         <div class="container">
 
-            <h2>Team Of Professionals</h2>
+            <h2>Tim Pembimbing Magang BPS Kabupaten Demak</h2>
 
-            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Odio, optio.</p>
+            <p>Tim Pembimbing Magang BPS Kabupaten Demak merupakan tim yang berpengalaman dalam bidang magang dan pekerjaan di BPS Kabupaten Demak.</p>
 
             <div class="row">
 
@@ -769,11 +314,11 @@
 
                         <div class="caption">
 
-                            <h4>Adam White</h4>
+                            <h4>Aji</h4>
 
-                            <h6>Founder Ceo</h6>
+                            <h6>Ketua Pembimbing Magang</h6>
 
-                            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit.</p>
+                            <p>Ahlinya ahli</p>
 
                             <hr>
 
@@ -809,7 +354,7 @@
 
                         <div class="caption">
 
-                            <h4>Jasmine Doe</h4>
+                            <h4>Rini Astuti</h4>
 
                             <h6>Web Designer</h6>
 
@@ -849,7 +394,7 @@
 
                         <div class="caption">
 
-                            <h4>Mike White</h4>
+                            <h4>M. Aziz</h4>
 
                             <h6>Developer</h6>
 
@@ -889,7 +434,7 @@
 
                         <div class="caption">
 
-                            <h4>Jarl Doe</h4>
+                            <h4>M Abdul Muhshi</h4>
 
                             <h6>Photographer</h6>
 
@@ -941,9 +486,9 @@
 
             <div class="row">
 
-                <h2>Clients Trust Us</h2>
+                <h2>Universitas dan Sekolah yang mempercayai BPS Kabupaten Demak`</h2>
 
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Odio, optio.</p>
+                <p>Beberapa Universitas dan Sekolah yang mempercayakan anak didik mereka untuk magang di BPS Kabupaten Demak</p>
 
                 <!--// Clients Images //-->
 
@@ -1021,45 +566,6 @@
 
     </section>
 
-
-
-    <!--========================================
-
-           Newsletter
-
-    ========================================-->
-
-
-
-    <section id="newsletter">
-
-        <div class="container">
-
-            <div class="row">
-
-                <h3>Subscribe to get early access!</h3>
-
-                <div class="form-container">
-
-                    <form class="form-inline">
-
-                        <input type="email" class="form-control" id="newsletter-form" placeholder="Email"
-                            required="required">
-
-                        <button type="submit" class="btn btn-white">Subscribe</button>
-
-                    </form>
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </section>
-
-
-
     <!--========================================
 
            Contact
@@ -1136,54 +642,6 @@
 
         </div>
 
-        <!-- Google Map -->
-
-        <div id="map"></div>
-
-        <!-- Contact Form -->
-
-        <div class="contact-forms">
-
-            <div class="container">
-
-                <h2>Drop us a Line</h2>
-
-                <form class="contact-form">
-
-                    <div class="col-md-6">
-
-                        <div class="form-group">
-
-                            <input type="text" class="form-control" placeholder="Full Name" required="required">
-
-                        </div>
-
-                        <div class="form-group">
-
-                            <input type="email" class="form-control" placeholder="Email" required="required">
-
-                        </div>
-
-                    </div>
-
-                    <div class="col-md-6">
-
-                        <div class="form-group">
-
-                            <textarea class="form-control" rows="3" placeholder="Message"></textarea>
-
-                        </div>
-
-                    </div>
-
-                    <button type="submit" class="btn btn-blue">Send Message</button>
-
-                </form>
-
-            </div>
-
-        </div>
-
     </section>
 
 
@@ -1204,11 +662,8 @@
 
                 <div class="footer-caption">
 
-                    <img src="assets/img/logo.png" class="img-responsive center-block" alt="logo">
 
-                    <hr>
-
-                    <h5 class="pull-left">Vortex, &copy;2016 All rights reserved</h5>
+                    <h5 class="pull-left">MANGGA MUDA, &copy;2025 BPS Kabupaten Demak</h5>
 
                     <ul class="liste-unstyled pull-right">
 
@@ -1229,73 +684,7 @@
         </div>
 
     </footer>
-
-
-
-    <!--========================================
-
-           Modal
-
-    ========================================-->
-
-
-
-    <!-- Modal -->
-
-    <div class="modal fade" id="SignIn" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-
-        <div class="modal-dialog" role="document">
-
-            <div class="modal-content">
-
-                <div class="modal-header">
-
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
-                            aria-hidden="true">&times;</span></button>
-
-                    <h4 class="modal-title text-center" id="myModalLabel">Sign In</h4>
-
-                </div>
-
-                <div class="modal-body">
-
-                    <form class="signup-form">
-
-                        <div class="form-group">
-
-                            <input type="text" class="form-control" placeholder="User Name" required="required">
-
-                        </div>
-
-                        <div class="form-group">
-
-                            <input type="text" class="form-control" placeholder="Password" required="required">
-
-                        </div>
-
-                        <div class="form-group text-center">
-
-                            <button type="submit" class="btn btn-blue btn-block">Log In</button>
-
-                        </div>
-
-                    </form>
-
-                </div>
-
-                <div class="modal-footer text-center">
-
-                    <a href="#">Forgot your password /</a>
-
-                    <a href="#">Signup</a>
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </div>
+`
 
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
 
