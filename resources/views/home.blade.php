@@ -20,10 +20,11 @@
 
 
 
+
     <title>BPS Demak - Mangga Muda</title>
 
 
-
+    <link rel="icon" href="assets/img/logoBPS.png" type="image/x-icon">
     <!-- // PLUGINS (css files) // -->
 
     <link href="assets/js/plugins/bootsnav_files/skins/color.css" rel="stylesheet">
@@ -43,8 +44,10 @@
     <link href="assets/js/plugins/Magnific-Popup-master/Magnific-Popup-master/dist/magnific-popup.css" rel="stylesheet">
 
     <!--// ICONS //-->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+        integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
 
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.css" rel="stylesheet">
 
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
@@ -142,8 +145,7 @@
 
                     <li class="button-holder">
 
-                        <button type="button" href="/admin" class="btn btn-blue navbar-btn"
-                            >Sign in</button>
+                        <button type="button" href="/admin" class="btn btn-blue navbar-btn">Sign in</button>
 
                     </li>
 
@@ -300,7 +302,8 @@
 
             <h2>Tim Pembimbing Magang BPS Kabupaten Demak</h2>
 
-            <p>Tim Pembimbing Magang BPS Kabupaten Demak merupakan tim yang berpengalaman dalam bidang magang dan pekerjaan di BPS Kabupaten Demak.</p>
+            <p>Tim Pembimbing Magang BPS Kabupaten Demak merupakan tim yang berpengalaman dalam bidang magang dan
+                pekerjaan di BPS Kabupaten Demak.</p>
 
             <div class="row">
 
@@ -326,7 +329,7 @@
 
                                 <ul class="liste-unstyled">
 
-                                    <li><a href="#facebook"><i class="fa fa-facebook"></i></a></li>
+                                    <li><a href="#facebook"><i class="fa-brands fa-facebook"></i></a></li>
 
                                     <li><a href="#twitter"><i class="fa fa-twitter"></i></a></li>
 
@@ -488,7 +491,8 @@
 
                 <h2>Universitas dan Sekolah yang mempercayai BPS Kabupaten Demak`</h2>
 
-                <p>Beberapa Universitas dan Sekolah yang mempercayakan anak didik mereka untuk magang di BPS Kabupaten Demak</p>
+                <p>Beberapa Universitas dan Sekolah yang mempercayakan anak didik mereka untuk magang di BPS Kabupaten
+                    Demak</p>
 
                 <!--// Clients Images //-->
 
@@ -598,9 +602,9 @@
 
                         <i class="material-icons">place</i>
 
-                        <h4>Address</h4>
+                        <h4>Alamat</h4>
 
-                        <p>PABox 13592, Lorem Street Ipsum Dolor, Victoria 8007, USA</p>
+                        <p>Jl. Sultan Hadiwijaya No. 23, Mangunjiwan, Demak</p>
 
                     </div>
 
@@ -612,11 +616,11 @@
 
                         <i class="material-icons">phone</i>
 
-                        <h4>Call Us On</h4>
+                        <h4>Panggil kami</h4>
 
-                        <p>1-834-527-6940</p>
+                        <p>(0291) 685445</p>
 
-                        <p>1-834-527-6940</p>
+                        <p>(0291) 681754</p>
 
                     </div>
 
@@ -628,11 +632,11 @@
 
                         <i class="material-icons">email</i>
 
-                        <h4>Email us on</h4>
+                        <h4>Email kami pada</h4>
 
-                        <p>lorem@xyz.com</p>
+                        <p>bps3321@bps.go.id</p>
 
-                        <p>lorem@xyz.com</p>
+                        <p>pst@bps.go.id</p>
 
                     </div>
 
@@ -667,13 +671,16 @@
 
                     <ul class="liste-unstyled pull-right">
 
-                        <li><a href="#facebook"><i class="fa fa-facebook"></i></a></li>
+                        <li><a href="https://www.facebook.com/bpsdemak3321"><i class="fa-brands fa-facebook"></i></a>
+                        </li>
 
-                        <li><a href="#twitter"><i class="fa fa-twitter"></i></a></li>
+                        <li><a href="https://www.tiktok.com/@bpskabdemak"><i class="fa-brands fa-tiktok"></i></a></li>
 
-                        <li><a href="#linkedin"><i class="fa fa-linkedin"></i></a></li>
+                        <li><a href="https://instagram.com/bpskabdemak"><i class="fa-brands fa-instagram"></i></a>
+                        </li>
 
-                        <li><a href="#instagram"><i class="fa fa-instagram"></i></a></li>
+                        <li><a href="https://www.youtube.com/channel/UCUSLymM56wEiJvc5dBWodeA"><i
+                                    class="fa-brands fa-youtube"></i></a></li>
 
                     </ul>
 
@@ -684,7 +691,7 @@
         </div>
 
     </footer>
-`
+    `
 
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
 
@@ -699,8 +706,6 @@
     <script src="assets/js/plugins/bootsnav_files/js/bootsnav.js"></script>
 
     <script src="assets/js/plugins/typed.js-master/typed.js-master/dist/typed.min.js"></script>
-
-    <script src="https://maps.googleapis.com/maps/api/js"></script>
 
     <script src="assets/js/plugins/Magnific-Popup-master/Magnific-Popup-master/dist/jquery.magnific-popup.js"></script>
 
