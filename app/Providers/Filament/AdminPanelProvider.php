@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Pages\EditProfile;
 use App\Filament\Pages\Map;
 use App\Filament\Pages\ProjectBoard;
 use App\Filament\Widgets\InternshipOverview;
@@ -11,6 +12,7 @@ use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
+use Filament\Navigation\MenuItem;
 use Filament\Pages;
 use Filament\Pages\Dashboard;
 use Filament\Panel;
@@ -37,6 +39,14 @@ class AdminPanelProvider extends PanelProvider
 
             ->login()
             ->registration()
+            ->userMenuItems([
+                MenuItem::make()
+                    ->label('Profile')
+                    ->url(fn(): string => EditProfile::getUrl())
+                    ->icon('heroicon-o-user-circle'),
+                // Menambahkan kembali item menu Logout
+                'logout' => MenuItem::make()->label('Log out'),
+            ])
             ->colors([
                 'primary' => Color::Blue,
             ])
@@ -65,29 +75,29 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->plugins([
                 FilamentShieldPlugin::make()
-                ->gridColumns([
-                    'default' => 1,
-                    'sm' => 2,
-                    'lg' => 3,
-                ])
-                ->sectionColumnSpan(1)
-                ->checkboxListColumns([
-                    'default' => 1,
-                    'sm' => 2,
-                    'lg' => 3,
+                    ->gridColumns([
+                        'default' => 1,
+                        'sm' => 2,
+                        'lg' => 3,
+                    ])
+                    ->sectionColumnSpan(1)
+                    ->checkboxListColumns([
+                        'default' => 1,
+                        'sm' => 2,
+                        'lg' => 3,
                     ])
                     ->resourceCheckboxListColumns([
                         'default' => 1,
                         'sm' => 2,
                     ]),
                 ResizedColumnPlugin::make()
-                ->preserveOnDB(),
+                    ->preserveOnDB(),
             ])
             ->authMiddleware([
                 Authenticate::class,
             ])
             ->passwordReset()
-            ->emailVerification()
-            ->profile();
+            ->emailVerification();
+
     }
 }
