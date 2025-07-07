@@ -1,6 +1,7 @@
 <?php
 
 use App\Exports\AttendanceExport;
+use App\Http\Controllers\CertificateController;
 use App\Livewire\Presensi;
 use Illuminate\Support\Facades\Route;
 use Maatwebsite\Excel\Facades\Excel;
@@ -16,6 +17,10 @@ Route::get('/home', function () {
 Route::get('/info', function () {
     return phpinfo();
 });
+
+Route::get('/admin/internships/{internship}/certificate', [CertificateController::class, 'generate'])
+    ->middleware('auth') // Pastikan hanya user yang login bisa akses
+    ->name('certificate.generate');
 
 Route::get('/login', function () {
     return redirect('admin/login');

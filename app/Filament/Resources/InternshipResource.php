@@ -244,11 +244,11 @@ class InternshipResource extends Resource
         ];
     }
 
-    public static function getEloquentQuery(): Builder
-    {
-        // Mengambil pendaftar yang statusnya 'pending'
-        return parent::getEloquentQuery()->where('status', 'pending');
-    }
+    // public static function getEloquentQuery(): Builder
+    // {
+    //     // Mengambil pendaftar yang statusnya 'pending'
+    //     return parent::getEloquentQuery()->where('status', 'pending');
+    // }
 
     public static function getPages(): array
     {
