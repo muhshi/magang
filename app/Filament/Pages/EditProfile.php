@@ -73,14 +73,21 @@ class EditProfile extends Page implements HasForms
             ->model($this->profile)
             ->statePath('data') // Arahkan data ke properti $data
             ->schema([
-                Section::make('Profile Information')
-                    ->description('Update informasi profil Anda.')
+                Section::make('Foto Profil')
                     ->schema([
                         FileUpload::make('photo')
                             ->label('Photo')
                             ->image()
                             ->directory('profile-photos')
-                            ->avatar(), // Tampilan avatar/bundar
+                            ->imagePreviewHeight('250')
+                            ->helperText('Unggah pas foto 4x6 resmi dengan latar belakang merah atau biru.')
+                            // Mengatur agar foto berada di tengah
+                            ->alignCenter()
+                            // Mengambil lebar penuh
+                            ->columnSpanFull(),
+                    ]),
+                Section::make('Informasi Detail')
+                    ->schema([
                         TextInput::make('school_name')
                             ->label('Nama Universitas/Sekolah')
                             ->required(),
@@ -89,11 +96,13 @@ class EditProfile extends Page implements HasForms
                             ->tel(),
                         Textarea::make('address')
                             ->label('Alamat')
-                            ->rows(3),
+                            ->rows(3)
+                            ->columnSpanFull(), // Alamat mengambil lebar penuh
                         Textarea::make('bio')
                             ->label('Bio Singkat')
-                            ->rows(3),
-                    ])->columns(2),
+                            ->rows(3)
+                            ->columnSpanFull(), // Bio mengambil lebar penuh
+                    ])->columns(2), // Section ini tetap menggunakan 2 kolom
             ]);
     }
 
