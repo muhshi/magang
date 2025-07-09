@@ -3,7 +3,7 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\CertificateResource\Pages;
-use App\Models\Internship; // PERBAIKAN: Ganti model ke Internship
+use App\Models\Internship;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables\Actions\Action;
@@ -11,35 +11,32 @@ use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Auth;
 
 class CertificateResource extends Resource
 {
-    // PERBAIKAN: Arahkan resource ini untuk menggunakan model Internship
     protected static ?string $model = Internship::class;
 
-    // PERBAIKAN: Atur ikon, nama, dan URL di sidebar
     protected static ?string $navigationIcon = 'heroicon-o-academic-cap';
     protected static ?string $navigationLabel = 'Sertifikat';
     protected static ?string $slug = 'sertifikat';
 
-    /**
-     * Kita tidak butuh form create/edit, jadi biarkan kosong.
-     */
     public static function form(Form $form): Form
     {
         return $form->schema([]);
     }
 
-    /**
-     * PERBAIKAN: Definisikan tabel untuk menampilkan daftar peserta yang layak.
-     */
     public static function table(Table $table): Table
     {
         return $table
             ->columns([
                 ImageColumn::make('user.profile.photo')
                     ->label('Foto')
-                    ->circular(),
+                    // PERBAIKAN: Secara eksplisit beri tahu untuk pakai disk 'public'
+                    ->disk('public')
+                    ->circular()
+                    // Beri gambar fallback jika foto tidak ada atau URL salah
+                    ->defaultImageUrl(url('/images/mangga.png')),
                 TextColumn::make('full_name')
                     ->label('Nama Lengkap')
                     ->searchable(),
@@ -58,21 +55,27 @@ class CertificateResource extends Resource
                     ->url(fn(Internship $record): string => route('certificate.generate', $record))
                     ->openUrlInNewTab(),
             ])
-            // Hapus bulk actions karena tidak diperlukan
             ->bulkActions([]);
     }
 
     /**
-     * PERBAIKAN: Filter data agar hanya menampilkan peserta yang statusnya 'accepted'.
+     * PERBAIKAN: Tambahkan logika query berdasarkan peran pengguna.
      */
     public static function getEloquentQuery(): Builder
     {
-        return parent::getEloquentQuery()->where('status', 'accepted');
+        // Mulai dengan query dasar: hanya yang statusnya 'accepted'
+        $query = parent::getEloquentQuery()->where('status', 'accepted');
+
+        // Jika user BUKAN super_admin...
+        if (Auth::user()->roles[0]->name !== 'super_admin') {
+            // ...tampilkan hanya sertifikat miliknya sendiri.
+            $query->where('user_id', Auth::user()->id);
+        }
+
+        // Kembalikan query yang sudah dimodifikasi.
+        return $query;
     }
 
-    /**
-     * PERBAIKAN: Arahkan ke halaman list yang benar.
-     */
     public static function getPages(): array
     {
         return [
