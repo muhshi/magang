@@ -76,7 +76,7 @@ class EditProfile extends Page implements HasForms
                 Section::make('Foto Profil')
                     ->schema([
                         FileUpload::make('photo')
-                            ->label('Photo')
+                            ->label('Photo [Digunakan untuk sertifikat]')
                             ->image()
                             ->directory('profile-photos')
                             ->imagePreviewHeight('250')

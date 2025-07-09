@@ -31,9 +31,7 @@ class ListInternships extends ListRecords
         // PERBAIKAN: Hanya tampilkan tabs jika user adalah super_admin
         if (Auth::user()->roles[0]->name === 'super_admin' || Auth::user()->roles[0]->name === 'Pegawai BPS') {
             return [
-                'all' => Tab::make('Semua')
-                    ->badge(Internship::query()->count())
-                    ->badgeColor('primary'),
+
 
                 'pending' => Tab::make('Pending')
                     ->modifyQueryUsing(fn(Builder $query) => $query->where('status', 'pending'))
@@ -52,6 +50,10 @@ class ListInternships extends ListRecords
                     ->badge(Internship::query()->where('status', 'rejected')->count())
                     ->badgeColor('danger')
                     ->icon('heroicon-o-x-circle'),
+
+                'all' => Tab::make('Semua')
+                    ->badge(Internship::query()->count())
+                    ->badgeColor('primary'),
             ];
         }
 
