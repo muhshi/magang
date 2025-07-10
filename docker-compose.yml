@@ -6,14 +6,13 @@ services:
     environment:
       - PUID=1000
       - PGID=1000
-    image: image_magang-franken
     build:
       context: .
       dockerfile: Dockerfile
     ports:
       - "8001:80"
     volumes:
-      - /home/bpsdemak/apps/magang:/app
+      - .:/app
     networks:
       - default
       - mysql-stack_mysql_network
@@ -25,10 +24,12 @@ services:
     environment:
       - PUID=1000
       - PGID=1000
-    image: image_magang-franken
+    build:
+      context: .
+      dockerfile: Dockerfile
     command: php artisan queue:work --sleep=3 --tries=3
     volumes:
-      - /home/bpsdemak/apps/magang:/app
+      - .:/app
     networks:
       - default
       - mysql-stack_mysql_network
