@@ -145,7 +145,7 @@
 
                     <li class="button-holder">
 
-                        <button type="button" href="/admin" class="btn btn-blue navbar-btn">Sign in</button>
+                        <button type="button" class="btn btn-blue navbar-btn" onclick="window.location.href='/admin'">Sign in</button>
 
                     </li>
 
