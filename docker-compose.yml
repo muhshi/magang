@@ -24,6 +24,7 @@ services:
     environment:
       - PUID=1000
       - PGID=1000
+      - QUEUE_CONNECTION=database
     build:
       context: .
       dockerfile: Dockerfile
