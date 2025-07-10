@@ -16,7 +16,7 @@ return [
     'channels' => [
         'stack' => [
             'driver' => 'stack',
-            'channels' => ['stderr'], // <--- UBAH BARIS INI! (Dari explode(...) menjadi ['stderr'])
+            'channels' => ['single'], // <--- UBAH MENJADI SEPERTI INI
             'ignore_exceptions' => false,
         ],
 

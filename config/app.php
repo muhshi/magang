@@ -149,6 +149,8 @@ return [
         // TAMBAHKAN BARIS INI UNTUK DOMPDF
         'Pdf' => Barryvdh\DomPDF\Facade\Pdf::class,
 
+        'Log' => Illuminate\Support\Facades\Log::class,
+
     ])->toArray(),
 
 ];
