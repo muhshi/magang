@@ -29,7 +29,7 @@ class CreateInternship extends CreateRecord
         SendAdminEmailJob::dispatch($freshRecord);
 
         // 2. Lemparkan Job untuk kirim WhatsApp
-        SendInternshipNotificationJob::dispatch($freshRecord);
+        SendInternshipNotificationJob::dispatch($freshRecord->id);
 
         // Selesai! Halaman akan langsung refresh dan terasa instan.
     }

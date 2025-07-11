@@ -2,7 +2,7 @@
 
 namespace App\Jobs;
 
-use App\Models\Internship; // Pastikan model Internship di-import
+use App\Models\Internship; // Pastikan use ini ada
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -14,15 +14,14 @@ class SendInternshipNotificationJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    // Kita simpan seluruh data pendaftar
-    public Internship $internship;
+    protected int $internshipId;
 
     /**
-     * Terima model Internship, bukan array
+     * Terima ID pendaftar
      */
-    public function __construct(Internship $internship)
+    public function __construct(int $internshipId)
     {
-        $this->internship = $internship;
+        $this->internshipId = $internshipId;
     }
 
     /**
@@ -30,25 +29,27 @@ class SendInternshipNotificationJob implements ShouldQueue
      */
     public function handle(): void
     {
+        // Cari pendaftar di database menggunakan ID
+        $internship = Internship::find($this->internshipId);
+
+        if (!$internship) {
+            return; // Hentikan jika data tidak ditemukan
+        }
+
         $adminNumbers = explode(',', env('ADMIN_WHATSAPP_NUMBER'));
 
-        // Siapkan data dari model yang kita terima
         $notificationData = [
-            'name' => $this->internship->full_name,
-            'email' => $this->internship->email,
-            'instansi' => $this->internship->school_name,
-            'durasi' => $this->internship->start_date . ' - ' . $this->internship->end_date,
-            'motivasi' => $this->internship->motivation,
-            'keterampilan' => $this->internship->skills,
+            'name' => $internship->full_name,
+            'email' => $internship->email,
+            'instansi' => $internship->school_name,
+            'durasi' => $internship->start_date . ' - ' . $internship->end_date,
+            'motivasi' => $internship->motivation,
+            'keterampilan' => $internship->skills,
         ];
 
         foreach ($adminNumbers as $number) {
-            try {
-                // Panggil service WA dengan data yang sudah disiapkan
-                WhatsAppService::sendInternshipNotification(trim($number), $notificationData);
-            } catch (\Exception $e) {
-                \Log::error('Job Gagal Kirim WhatsApp: ' . $e->getMessage());
-            }
+            // Logika try-catch bisa dihapus dari sini karena Job sudah menanganinya
+            WhatsAppService::sendInternshipNotification(trim($number), $notificationData);
         }
     }
 }
