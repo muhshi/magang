@@ -9,7 +9,7 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class NotifikasiMagang extends Mailable
+class NotifikasiMagang extends Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
 
@@ -50,7 +50,7 @@ class NotifikasiMagang extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Notifikasi Magang',
+            subject: 'Notifikasi Magang BPS Demak',
         );
     }
 

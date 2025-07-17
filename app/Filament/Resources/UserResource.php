@@ -12,6 +12,8 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Hash;
+use Filament\Notifications\Notification;
+use Filament\Tables\Actions\Action;
 
 class UserResource extends Resource
 {
@@ -78,20 +80,6 @@ class UserResource extends Resource
                     ->tooltip(fn(User $record): string => $record->projects->pluck('name')->join(', ') ?: 'No Projects')
                     ->sortable(),
 
-                Tables\Columns\TextColumn::make('assigned_tickets_count')
-                    ->label('Assigned Tickets')
-                    ->counts('assignedTickets')
-                    ->tooltip('Number of tickets assigned to this user')
-                    ->sortable(),
-
-                Tables\Columns\TextColumn::make('created_tickets_count')
-                    ->label('Created Tickets')
-                    ->getStateUsing(function (User $record): int {
-                        return $record->createdTickets()->count();
-                    })
-                    ->tooltip('Number of tickets created by this user')
-                    ->sortable(),
-
                 Tables\Columns\TextColumn::make('email_verified_at')
                     ->dateTime()
                     ->sortable()
@@ -112,14 +100,6 @@ class UserResource extends Resource
                     ->label('Has Projects')
                     ->query(fn(Builder $query): Builder => $query->whereHas('projects')),
 
-                Tables\Filters\Filter::make('has_assigned_tickets')
-                    ->label('Has Assigned Tickets')
-                    ->query(fn(Builder $query): Builder => $query->whereHas('assignedTickets')),
-
-                Tables\Filters\Filter::make('has_created_tickets')
-                    ->label('Has Created Tickets')
-                    ->query(fn(Builder $query): Builder => $query->whereHas('createdTickets')),
-
                 // Filter by role
                 Tables\Filters\SelectFilter::make('roles')
                     ->relationship('roles', 'name')
@@ -133,7 +113,29 @@ class UserResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
-                Tables\Actions\ViewAction::make(),
+                Action::make('selesaiMagang')
+                    ->button()
+                    ->label('Selesai Magang')
+                    ->icon('heroicon-o-check-badge')
+                    ->color('success')
+                    // Hanya tampilkan tombol ini jika user memiliki peran 'Magang BPS'
+                    ->visible(fn(User $record): bool => $record->hasRole('Magang BPS'))
+                    // Meminta konfirmasi admin sebelum menjalankan aksi
+                    ->requiresConfirmation()
+                    ->modalHeading('Selesaikan Masa Magang')
+                    ->modalDescription('Anda yakin ingin mengubah status pengguna ini menjadi "Alumni Magang"? Semua peran lainnya akan dihapus.')
+                    ->action(function (User $record) {
+                        // Menggunakan syncRoles untuk menghapus semua peran lama
+                        // dan menetapkan peran baru dalam satu langkah.
+                        $record->syncRoles('Alumni Magang');
+
+                        // Kirim notifikasi sukses ke admin
+                        Notification::make()
+                            ->title('Status Pengguna Berhasil Diperbarui')
+                            ->body("{$record->name} sekarang adalah Alumni Magang.")
+                            ->success()
+                            ->send();
+                    }),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

@@ -174,7 +174,7 @@ class InternshipResource extends Resource
                             ->pdfNavPanes(true)
                             ->directory('magang/acceptance-letters') // Simpan di direktori terpisah
                             ->visibility('private')
-                            ->required(fn(Get $get): bool => $get('status') === 'accepted') // Wajib jika status 'accepted'
+                            //->required(fn(Get $get): bool => $get('status') === 'accepted') // Wajib jika status 'accepted'
                             ->visible(fn(Get $get): bool => $get('status') === 'accepted'), // Muncul jika status 'accepted'
 
                     ])

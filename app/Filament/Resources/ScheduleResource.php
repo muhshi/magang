@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\ScheduleResource\Pages;
 use App\Filament\Resources\ScheduleResource\RelationManagers;
 use App\Models\Schedule;
+use App\Models\User;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -29,12 +30,19 @@ class ScheduleResource extends Resource
             ->schema([
                 Forms\Components\Select::make('user_id')
                     ->relationship('user', 'name')
+                    ->options(
+                        User::latest()->take(5)->get()->pluck('name', 'id')
+                    )
+                    ->searchable()
+                    ->native(false)
                     ->required(),
                 Forms\Components\Select::make('shift_id')
                     ->relationship('shift', 'name')
+                    ->native(false)
                     ->required(),
                 Forms\Components\Select::make('office_id')
                     ->relationship('office', 'name')
+                    ->native(false)
                     ->required(),
                 Forms\Components\Toggle::make('is_wfa')
                     ->required(),
