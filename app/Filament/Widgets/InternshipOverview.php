@@ -2,6 +2,7 @@
 
 namespace App\Filament\Widgets;
 
+use App\Models\Internship;
 use App\Models\User;
 use BezhanSalleh\FilamentShield\Traits\HasWidgetShield;
 use Carbon\Carbon as CarbonCarbon;
@@ -21,9 +22,7 @@ class InternshipOverview extends BaseWidget
     protected function getInternshipRegistrationStats(): array
     {
         $totalApplicants = User::role('Calon Magang')->count();
-        $newApplicantsThisWeek = User::role('Calon Magang')
-            ->where('created_at', '>=', CarbonCarbon::now()->subDays(7))
-            ->count();
+        $pendingPendaftar = Internship::where('status', 'pending')->count();
         $acceptedApplicants = User::whereHas('internships', function ($query) {
             $query->where('status', 'accepted');
         })->count();
@@ -34,10 +33,11 @@ class InternshipOverview extends BaseWidget
                 ->descriptionIcon('heroicon-m-user')
                 ->color('gray'),
 
-            Stat::make('Pendaftar Minggu Ini', $newApplicantsThisWeek)
-                ->description('Bertambah 7 hari terakhir')
-                ->descriptionIcon('heroicon-m-arrow-trending-up')
-                ->color('success'),
+            // PERBAIKAN: Stat baru untuk pendaftar yang statusnya pending
+            Stat::make('Menunggu Approval', $pendingPendaftar)
+                ->description('Pendaftar dengan status pending')
+                ->descriptionIcon('heroicon-m-clock')
+                ->color('warning'),
 
             Stat::make('Pendaftar Diterima', $acceptedApplicants)
                 ->description('Status: Magang BPS')

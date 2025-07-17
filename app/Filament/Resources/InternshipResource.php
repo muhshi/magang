@@ -165,7 +165,7 @@ class InternshipResource extends Resource
                             ->columnSpanFull(),
 
                         AdvancedFileUpload::make('acceptance_letter_file')
-                            ->label('Upload Surat Penerimaan (Wajib jika Approved)')
+                            ->label('Upload Surat Penerimaan')
                             ->pdfPreviewHeight(400)
                             ->pdfDisplayPage(1)
                             ->pdfToolbar(true)
