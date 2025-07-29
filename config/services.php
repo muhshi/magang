@@ -35,4 +35,9 @@ return [
         ],
     ],
 
+    'wa_gateway' => [
+        'url' => env('WA_GATEWAY_URL'),
+        'session' => env('WA_GATEWAY_SESSION'),
+    ],
+
 ];

@@ -3,14 +3,10 @@
 namespace App\Filament\Resources\InternshipResource\Pages;
 
 use App\Filament\Resources\InternshipResource;
-use App\Mail\NotifikasiMagang;
-use App\Mail\NotifikasiMasukKeKantor;
-use Filament\Actions;
 use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Mail;
-use App\Services\WhatsAppService;
-
+use App\Jobs\SendInternshipNotificationJob; // <-- GANTI INI
+use App\Jobs\SendAdminEmailJob;             // <-- TAMBAHKAN INI
 
 class CreateInternship extends CreateRecord
 {
@@ -24,43 +20,17 @@ class CreateInternship extends CreateRecord
 
     protected function afterCreate(): void
     {
-        $freshRecord = $this->record->fresh(); // pastikan sudah tersimpan
+        $freshRecord = $this->record->fresh();
 
-        // Pastikan file sudah ada
-        if (
-            $freshRecord->letter_file &&
-            $freshRecord->photo_file &&
-            file_exists(public_path("storage/{$freshRecord->letter_file}")) &&
-            file_exists(public_path("storage/{$freshRecord->photo_file}"))
-        ) {
-            Mail::to('bps3321@bps.go.id')->send(new NotifikasiMasukKeKantor($freshRecord));
-        } else {
-            // Optional: log jika file belum ada
-            // \Log::warning('File belum tersedia untuk email magang', [
-            //     'letter' => $freshRecord->letter_file,
-            //     'photo' => $freshRecord->photo_file,
-            // ]);
-        }
+        // Lemparkan tugas ke "Koki" di dapur (Queue)
+        // Proses ini sangat cepat, hanya memasukkan data ke tabel 'jobs'
 
-        // Kirim WhatsApp ke admin
-        // try {
-        //     $adminNumber = env('ADMIN_WHATSAPP_NUMBER', '6285399590905'); // pastikan pakai format internasional
+        // 1. Lemparkan Job untuk kirim email
+        SendAdminEmailJob::dispatch($freshRecord);
 
-        //     WhatsappService::sendInternshipNotification($adminNumber, [
-        //         'name' => $freshRecord->full_name,
-        //         'email' => $freshRecord->email,
-        //         'instansi' => $freshRecord->school_name,
-        //         'durasi' => $freshRecord->start_date . ' - ' . $freshRecord->end_date,
-        //         'motivasi' => $freshRecord->motivation,
-        //         'keterampilan' => $freshRecord->skills,
-        //         'foto_url' => $freshRecord->photo_file ? public_path("storage/{$freshRecord->photo_file}") : null,
-        //         'dokumen_url' => $freshRecord->letter_file ? public_path("storage/{$freshRecord->letter_file}") : null,
-        //         'dokumen_nama' => $freshRecord->letter_file ? basename($freshRecord->letter_file) : null,
-        //     ]);
-        // } catch (\Exception $e) {
-        //     \log::error('Gagal kirim WhatsApp magang: ' . $e->getMessage());
-        // }
+        // 2. Lemparkan Job untuk kirim WhatsApp
+        SendInternshipNotificationJob::dispatch($freshRecord->id);
+
+        // Selesai! Halaman akan langsung refresh dan terasa instan.
     }
-
-
 }

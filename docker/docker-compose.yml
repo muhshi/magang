@@ -1,0 +1,39 @@
+services:
+    magang-franken:
+        container_name: magang-franken
+        restart: unless-stopped
+        environment:
+            - PUID=1000
+            - PGID=1000
+        build:
+            context: .
+            dockerfile: Dockerfile
+        ports:
+            - '8001:80'
+        volumes:
+            - '.:/app'
+        networks:
+            - default
+            - mysql-stack_mysql_network
+    magang-worker:
+        container_name: magang-worker
+        restart: unless-stopped
+        environment:
+            - PUID=1000
+            - PGID=1000
+            - QUEUE_CONNECTION=database
+        build:
+            context: .
+            dockerfile: Dockerfile
+        command: 'php artisan queue:work --sleep=3 --tries=3'
+        volumes:
+            - '.:/app'
+        networks:
+            - default
+            - mysql-stack_mysql_network
+
+networks:
+    default: null
+    mysql-stack_mysql_network:
+        external: true
+

@@ -28,8 +28,17 @@ class EditInternship extends EditRecord
         if ($pendaftar->status === 'accepted' || $pendaftar->status === 'rejected') {
             Mail::to($pendaftar->email)->send(new NotifikasiMagang($pendaftar));
         }
-        // if (in_array($this->record->status, ['accepted', 'rejected'])) {
-        //     Mail::to($this->record->email)->send(new NotifikasiMagang($this->record));
-        // }
+
+        // 2. LOGIKA BARU: Update role pengguna jika diterima
+        if ($pendaftar->status === 'accepted') {
+            // Ambil user yang terkait dengan pendaftaran ini
+            $user = $pendaftar->user;
+
+            if ($user) {
+                // Tambahkan role baru 'Magang BPS'
+                $user->assignRole('Magang BPS');
+            }
+        }
+
     }
 }

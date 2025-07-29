@@ -165,7 +165,7 @@ class InternshipResource extends Resource
                             ->columnSpanFull(),
 
                         AdvancedFileUpload::make('acceptance_letter_file')
-                            ->label('Upload Surat Penerimaan (Wajib jika Approved)')
+                            ->label('Upload Surat Penerimaan')
                             ->pdfPreviewHeight(400)
                             ->pdfDisplayPage(1)
                             ->pdfToolbar(true)
@@ -174,7 +174,7 @@ class InternshipResource extends Resource
                             ->pdfNavPanes(true)
                             ->directory('magang/acceptance-letters') // Simpan di direktori terpisah
                             ->visibility('private')
-                            ->required(fn(Get $get): bool => $get('status') === 'accepted') // Wajib jika status 'accepted'
+                            //->required(fn(Get $get): bool => $get('status') === 'accepted') // Wajib jika status 'accepted'
                             ->visible(fn(Get $get): bool => $get('status') === 'accepted'), // Muncul jika status 'accepted'
 
                     ])
@@ -185,16 +185,9 @@ class InternshipResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
-            ->modifyQueryUsing(function (Builder $query) {
-                //if(Auth::user()->hasRole('Doctor')) -> pakai ini bisa tapi terdeteksi error sama intelephense
-                if (Auth::user()->roles[0]->name != 'super_admin') {
-                    $query->where('user_id', Auth::user()->id);
-                }
-            })
             ->columns([
                 Tables\Columns\ImageColumn::make('photo_file')
-                    ->label('Pas Foto')
-                    ->searchable(),
+                    ->label('Pas Foto'),
                 Tables\Columns\TextColumn::make('full_name')
                     ->searchable(),
                 TextColumn::make('gender')
@@ -226,9 +219,37 @@ class InternshipResource extends Resource
             ->actions([
                 Tables\Actions\ViewAction::make(),
                 EditAction::make()
-                    ->label('Approval')
                     ->button()
-                    ->color('primary'),
+                    // PERBAIKAN: Membuat label tombol dinamis
+                    ->label(function (Internship $record): string {
+                        if (Auth::user()->roles[0]->name === 'super_admin') {
+                            if ($record->status === 'accepted') {
+                                return 'Accepted';
+                            }
+                            if ($record->status === 'rejected') {
+                                return 'Rejected';
+                            }
+                        }
+                        return 'Approval';
+                    })
+                    // PERBAIKAN: Membuat warna tombol dinamis
+                    ->color(function (Internship $record): string {
+                        if (Auth::user()->roles[0]->name === 'super_admin') {
+                            if ($record->status === 'accepted') {
+                                return 'success';
+                            }
+                            if ($record->status === 'rejected') {
+                                return 'danger';
+                            }
+                        }
+                        return 'primary';
+                    })
+                    ->visible(function (Internship $record): bool {
+                        if (Auth::user()->roles[0]->name === 'super_admin') {
+                            return true;
+                        }
+                        return $record->status === 'pending';
+                    }),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -244,10 +265,21 @@ class InternshipResource extends Resource
         ];
     }
 
+    /**
+     * PERBAIKAN: Tambahkan logika query berdasarkan peran pengguna.
+     */
     public static function getEloquentQuery(): Builder
     {
-        // Mengambil pendaftar yang statusnya 'pending'
-        return parent::getEloquentQuery()->where('status', 'pending');
+        $query = parent::getEloquentQuery();
+
+        // Jika user BUKAN super_admin...
+        if (Auth::user()->roles[0]->name !== 'super_admin') {
+            // ...tampilkan hanya pendaftaran miliknya sendiri.
+            $query->where('user_id', Auth::user()->id);
+        }
+
+        // Kembalikan query yang sudah dimodifikasi.
+        return $query;
     }
 
     public static function getPages(): array
