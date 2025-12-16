@@ -8,11 +8,15 @@ use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Log;
 
 Route::get('/', function () {
+    return view('landing');
+});
+
+Route::get('/old-home', function () {
     return view('home');
 });
 
 Route::get('/home', function () {
-    return view('home');
+    return view('landing');
 });
 Route::get('/debug-log-config', function () {
     // Dump and Die: Tampilkan konfigurasi logging dan hentikan eksekusi
