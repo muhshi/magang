@@ -7,6 +7,8 @@ use App\Observers\UserObserver;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
 use App\Models\User;
+use App\Models\Internship;
+use App\Observers\InternshipObserver;
 use BezhanSalleh\FilamentLanguageSwitch\LanguageSwitch;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
@@ -39,6 +41,11 @@ class AppServiceProvider extends ServiceProvider
 
         Gate::define('viewPulse', function (User $user) {
             return Auth::user()->roles[0]->name === 'super_admin';
+        });
+
+        // Super Admin Bypass
+        Gate::before(function ($user, $ability) {
+            return $user->hasRole('super_admin') ? true : null;
         });
         //Livewire::component('edit-comment-modal', EditCommentModal::class);
 

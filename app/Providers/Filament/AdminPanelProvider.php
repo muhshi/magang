@@ -98,7 +98,15 @@ class AdminPanelProvider extends PanelProvider
                 Authenticate::class,
             ])
             ->passwordReset()
-            ->emailVerification();
+            ->emailVerification()
+            ->renderHook(
+                'panels::auth.login.form.after',
+                fn () => view('filament.login_extra')
+            )
+            ->renderHook(
+                'panels::auth.register.form.after',
+                fn () => view('filament.login_extra')
+            );
 
     }
 }

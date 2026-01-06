@@ -15,9 +15,11 @@ class Map extends Component
     {
         $schedule = Schedule::where('user_id', Auth::user()->id)->first();
         $attendance = Attendance::with('user')->get();
-        //dd($schedule);
+        
+        $office = $schedule ? $schedule->office : \App\Models\Office::first();
+
         return view('livewire.map', [
-            'schedule' => $schedule,
+            'office' => $office,
             'attendance' => $attendance,
         ]);
     }

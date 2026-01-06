@@ -46,6 +46,11 @@ class Project extends Model
             ->withTimestamps();
     }
 
+    public function users(): BelongsToMany
+    {
+        return $this->members();
+    }
+
     public function epics(): HasMany
     {
         return $this->hasMany(Epic::class);

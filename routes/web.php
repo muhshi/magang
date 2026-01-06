@@ -71,3 +71,8 @@ Route::group(['middleware' => 'auth'], function () {
         return Excel::download(new AttendanceExport, 'presensi.xlsx');
     })->name('attendance-export');
 });
+
+// Google SSO Routes
+use App\Http\Controllers\SocialiteController;
+Route::get('auth/google', [SocialiteController::class, 'redirect'])->name('auth.google');
+Route::get('auth/google/callback', [SocialiteController::class, 'callback']);

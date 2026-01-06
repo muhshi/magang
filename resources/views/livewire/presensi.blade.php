@@ -5,6 +5,7 @@
                 <div>
                     <h2 class="text-2xl font-semibold text-black dark:text-white">Presensi Magang</h2>
 
+                @if ($schedule)
                     <div class="bg-gray-100 p-4 rounded-lg shadow-lg mt-4">
                         <p><strong>Nama Peserta:</strong> {{ Auth::user()->name }}</p>
                         <p><strong>Kantor : </strong>{{ $schedule->office->name }}</p>
@@ -16,6 +17,12 @@
                             <p><strong>Status :</strong> WFO</p>
                         @endif
                     </div>
+                @else
+                    <div class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 mt-4" role="alert">
+                        <p class="font-bold">Perhatian</p>
+                        <p>Belum ada jadwal presensi aktif.</p>
+                    </div>
+                @endif
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div class="bg-gray-100 p-4 rounded-lg shadow-lg mt-4">
                             <h4 class="text-l font-bold mb-2"> Jam Datang</h4>
@@ -38,6 +45,7 @@
                     </script>
                 @endif
 
+                @if ($schedule)
                 <div class="bg-gray-100 p-4 rounded-lg shadow-lg mt-4">
                     <h2 class="text-2xl font-semibold text-black dark:text-white"> Presensi </h2>
                     <div id="map" class="mb-4 rounded-lg border border-gray-300" wire:ignore></div>
@@ -57,11 +65,14 @@
                         @endif
                     </form>
                 </div>
+                @endif
 
             </div>
         </div>
     </div>
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    
+    @if ($schedule)
     <script>
         let map;
         let marker;
@@ -125,5 +136,5 @@
             }
         }
     </script>
-
+    @endif
 </div>

@@ -13,11 +13,11 @@
     <script>
         document.addEventListener('livewire:initialized', function() {
             component = @this;
-            const office = @json([$schedule->office->latitude, $schedule->office->longitude]);
-            const radius = @json($schedule->office->radius);
+            const office = @json([$office->latitude, $office->longitude]);
+            const radius = @json($office->radius);
 
-            let map = L.map('map').setView([{{ $schedule->office->latitude }},
-                {{ $schedule->office->longitude }}
+            let map = L.map('map').setView([{{ $office->latitude }},
+                {{ $office->longitude }}
             ], 16);
 
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
