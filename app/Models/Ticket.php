@@ -22,10 +22,19 @@ class Ticket extends Model
         'uuid',
         'epic_id',
         'created_by',
+        // Spreadsheet fields
+        'priority',
+        'start_date',
+        'approval_status',
+        'approved_by',
+        'approved_at',
+        'attachment',
     ];
 
     protected $casts = [
         'due_date' => 'date',
+        'start_date' => 'date',
+        'approved_at' => 'datetime',
     ];
 
     protected static function booted()
@@ -91,6 +100,33 @@ class Ticket extends Model
     public function epic(): BelongsTo
     {
         return $this->belongsTo(Epic::class);
+    }
+
+    // Approver relationship (pembimbing yang approve)
+    public function approver(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'approved_by');
+    }
+
+    // Priority label helpers
+    public function getPriorityLabelAttribute(): string
+    {
+        return match($this->priority) {
+            'urgent' => 'Penting mendesak',
+            'important' => 'Penting tidak mendesak',
+            'flexible' => 'Fleksibel',
+            default => 'Fleksibel',
+        };
+    }
+
+    public function getPriorityColorAttribute(): string
+    {
+        return match($this->priority) {
+            'urgent' => 'danger',
+            'important' => 'warning',
+            'flexible' => 'success',
+            default => 'success',
+        };
     }
 
     // Helper methods

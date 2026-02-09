@@ -56,110 +56,92 @@ class TicketResource extends Resource
 
         return $form
             ->schema([
-                Forms\Components\Select::make('project_id')
-                    ->label('Project')
-                    ->options(function () {
-                        if (auth()->user()->hasRole(['super_admin'])) {
-                            return Project::pluck('name', 'id')->toArray();
-                        }
+                // Hidden project field (for filtering)
+                Forms\Components\Hidden::make('project_id')
+                    ->default($projectId),
 
-                        return auth()->user()->projects()->pluck('name', 'projects.id')->toArray();
-                    })
-                    ->default($projectId)
+                Forms\Components\Grid::make(2)
+                    ->schema([
+                        // A. Pembuat/Creator
+                        Forms\Components\Select::make('created_by')
+                            ->label('Pembuat/Creator')
+                            ->relationship('creator', 'name')
+                            ->default(auth()->id())
+                            ->required()
+                            ->searchable()
+                            ->preload(),
+
+                        // B. Tanggal Pengisian
+                        Forms\Components\DatePicker::make('created_at')
+                            ->label('Tanggal Pengisian')
+                            ->default(now())
+                            ->required(),
+                    ]),
+
+                // C. Deskripsi Tugas
+                Forms\Components\Textarea::make('name')
+                    ->label('Deskripsi Tugas')
                     ->required()
-                    ->searchable()
-                    ->preload()
-                    ->live()
-                    ->afterStateUpdated(function (callable $set) {
-                        $set('ticket_status_id', null);
-                        $set('assignees', []);
-                        $set('epic_id', null);
-                    }),
-
-                Forms\Components\Select::make('ticket_status_id')
-                    ->label('Status')
-                    ->options(function ($get) {
-                        $projectId = $get('project_id');
-                        if (!$projectId) {
-                            return [];
-                        }
-
-                        return TicketStatus::where('project_id', $projectId)
-                            ->pluck('name', 'id')
-                            ->toArray();
-                    })
-                    ->default($statusId)
-                    ->required()
-                    ->searchable()
-                    ->preload(),
-
-                Forms\Components\Select::make('epic_id')
-                    ->label('Epic')
-                    ->options(function (callable $get) {
-                        $projectId = $get('project_id');
-
-                        if (!$projectId) {
-                            return [];
-                        }
-
-                        return Epic::where('project_id', $projectId)
-                            ->pluck('name', 'id')
-                            ->toArray();
-                    })
-                    ->searchable()
-                    ->preload()
-                    ->nullable()
-                    ->hidden(fn(callable $get): bool => !$get('project_id')),
-
-                Forms\Components\TextInput::make('name')
-                    ->label('Ticket Name')
-                    ->required()
-                    ->maxLength(255),
-
-                Forms\Components\RichEditor::make('description')
-                    ->label('Description')
-                    ->fileAttachmentsDirectory('attachments')
+                    ->rows(4)
                     ->columnSpanFull(),
 
-                // Multi-user assignment
-                Forms\Components\Select::make('assignees')
-                    ->label('Assigned to')
-                    ->multiple()
-                    ->relationship(
-                        name: 'assignees',
-                        titleAttribute: 'name',
-                        modifyQueryUsing: function (Builder $query, callable $get) {
-                            $projectId = $get('project_id');
-                            if (!$projectId) {
-                                return $query->whereRaw('1 = 0'); // Return empty result
-                            }
+                Forms\Components\Grid::make(3)
+                    ->schema([
+                        // D. Prioritas
+                        Forms\Components\Select::make('priority')
+                            ->label('Prioritas')
+                            ->options([
+                                'urgent' => '🔴 Penting mendesak',
+                                'important' => '🟡 Penting tidak mendesak',
+                                'flexible' => '🟢 Fleksibel',
+                            ])
+                            ->default('flexible')
+                            ->required(),
 
-                            $project = Project::find($projectId);
-                            if (!$project) {
-                                return $query->whereRaw('1 = 0'); // Return empty result
-                            }
+                        // E. Mulai
+                        Forms\Components\DatePicker::make('start_date')
+                            ->label('Mulai'),
 
-                            // Only show project members
-                            return $query->whereHas('projects', function ($query) use ($projectId) {
-                                $query->where('projects.id', $projectId);
-                            });
-                        }
-                    )
-                    ->searchable()
-                    ->preload()
-                    ->helperText('Select multiple users to assign this ticket to. Only project members can be assigned.')
-                    ->hidden(fn(callable $get): bool => !$get('project_id'))
-                    ->live(),
-                Forms\Components\DatePicker::make('due_date')
-                    ->label('Due Date')
-                    ->nullable(),
+                        // F. Target Selesai
+                        Forms\Components\DatePicker::make('due_date')
+                            ->label('Target Selesai'),
+                    ]),
 
-                // Show created by field in edit mode
-                Forms\Components\Select::make('created_by')
-                    ->label('Created By')
-                    ->relationship('creator', 'name')
-                    ->disabled()
-                    ->hiddenOn('create'),
+                Forms\Components\Grid::make(2)
+                    ->schema([
+                        // G. Assignee (Multi-select)
+                        Forms\Components\Select::make('assignees')
+                            ->label('Assignee')
+                            ->multiple()
+                            ->relationship(
+                                name: 'assignees',
+                                titleAttribute: 'name',
+                            )
+                            ->searchable()
+                            ->preload()
+                            ->helperText('Pilih anak magang yang ditugaskan'),
+
+                        // H. Status
+                        Forms\Components\Select::make('ticket_status_id')
+                            ->label('Status')
+                            ->options([
+                                'belum' => 'Belum',
+                                'proses' => 'Proses',
+                                'revisi' => 'Revisi',
+                                'selesai' => 'Selesai',
+                            ])
+                            ->default('belum')
+                            ->required(),
+                    ]),
+
+                // I. Attachment
+                Forms\Components\FileUpload::make('attachment')
+                    ->label('Attachment')
+                    ->directory('task-attachments')
+                    ->preserveFilenames()
+                    ->openable()
+                    ->downloadable()
+                    ->columnSpanFull(),
             ]);
     }
 
@@ -167,57 +149,101 @@ class TicketResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('uuid')
-                    ->label('Ticket ID')
-                    ->searchable()
-                    ->copyable(),
-
-                Tables\Columns\TextColumn::make('project.name')
-                    ->label('Project')
-                    ->sortable()
-                    ->searchable(),
-
-                Tables\Columns\TextColumn::make('name')
-                    ->label('Name')
-                    ->searchable()
-                    ->limit(30),
-
-                Tables\Columns\TextColumn::make('status.name')
-                    ->label('Status')
-                    ->badge()
+                // 1. No (Row number - auto)
+                Tables\Columns\TextColumn::make('id')
+                    ->label('No')
+                    ->rowIndex()
                     ->sortable(),
 
-                // Display multiple assignees
+                // 2. Tanggal Pengisian
+                Tables\Columns\TextColumn::make('created_at')
+                    ->label('Tgl Pengisian')
+                    ->date('d/m/Y')
+                    ->sortable(),
+
+                // 3. Pembuat
+                Tables\Columns\TextColumn::make('creator.name')
+                    ->label('Pembuat')
+                    ->sortable()
+                    ->searchable()
+                    ->limit(15),
+
+                // 4. Deskripsi Tugas
+                Tables\Columns\TextColumn::make('name')
+                    ->label('Deskripsi Tugas')
+                    ->searchable()
+                    ->limit(40)
+                    ->tooltip(fn ($record) => $record->name),
+
+                // 5. Prioritas (colored badge)
+                Tables\Columns\TextColumn::make('priority')
+                    ->label('Prioritas')
+                    ->badge()
+                    ->formatStateUsing(fn (string $state): string => match($state) {
+                        'urgent' => '🔴 Mendesak',
+                        'important' => '🟡 Penting',
+                        'flexible' => '🟢 Fleksibel',
+                        default => $state,
+                    })
+                    ->color(fn (string $state): string => match($state) {
+                        'urgent' => 'danger',
+                        'important' => 'warning',
+                        'flexible' => 'success',
+                        default => 'gray',
+                    })
+                    ->sortable(),
+
+                // 6. Mulai
+                Tables\Columns\TextColumn::make('start_date')
+                    ->label('Mulai')
+                    ->date('d/m/Y')
+                    ->sortable()
+                    ->placeholder('-'),
+
+                // 7. Target Selesai
+                Tables\Columns\TextColumn::make('due_date')
+                    ->label('Target')
+                    ->date('d/m/Y')
+                    ->sortable()
+                    ->placeholder('-'),
+
+                // 8. Persetujuan (approval status badge)
+                Tables\Columns\TextColumn::make('approval_status')
+                    ->label('Persetujuan')
+                    ->badge()
+                    ->formatStateUsing(fn (?string $state): string => match($state) {
+                        'approved' => '✅ Approved',
+                        'pending' => '⏳ Pending',
+                        default => '⏳ Pending',
+                    })
+                    ->color(fn (?string $state): string => match($state) {
+                        'approved' => 'success',
+                        'pending' => 'warning',
+                        default => 'warning',
+                    }),
+
+                // 9. Assignee (multi-badge)
                 Tables\Columns\TextColumn::make('assignees.name')
-                    ->label('Assign To')
+                    ->label('Assignee')
                     ->badge()
                     ->separator(',')
                     ->limitList(2)
                     ->expandableLimitedList()
                     ->searchable(),
 
-                Tables\Columns\TextColumn::make('creator.name')
-                    ->label('Created By')
-                    ->sortable()
-                    ->searchable()
-                    ->toggleable(),
-
-                Tables\Columns\TextColumn::make('due_date')
-                    ->label('Due Date')
-                    ->date()
+                // 10. Status
+                Tables\Columns\TextColumn::make('status.name')
+                    ->label('Status')
+                    ->badge()
                     ->sortable(),
 
-                Tables\Columns\TextColumn::make('epic.name')
-                    ->label('Epic')
-                    ->sortable()
-                    ->searchable()
-                    ->default('—')
-                    ->placeholder('No Epic'),
-
-                Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                // 11. Attachment (icon link)
+                Tables\Columns\IconColumn::make('attachment')
+                    ->label('📎')
+                    ->icon(fn ($state) => $state ? 'heroicon-o-paper-clip' : null)
+                    ->url(fn ($record) => $record->attachment ? asset('storage/' . $record->attachment) : null)
+                    ->openUrlInNewTab()
+                    ->tooltip(fn ($record) => $record->attachment ? 'Download File' : 'No Attachment'),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('project_id')
@@ -232,6 +258,23 @@ class TicketResource extends Resource
                     ->searchable()
                     ->preload(),
 
+                // Priority Filter
+                Tables\Filters\SelectFilter::make('priority')
+                    ->label('Prioritas')
+                    ->options([
+                        'urgent' => '🔴 Mendesak',
+                        'important' => '🟡 Penting',
+                        'flexible' => '🟢 Fleksibel',
+                    ]),
+
+                // Approval Status Filter
+                Tables\Filters\SelectFilter::make('approval_status')
+                    ->label('Persetujuan')
+                    ->options([
+                        'pending' => '⏳ Pending',
+                        'approved' => '✅ Approved',
+                    ]),
+
                 Tables\Filters\SelectFilter::make('ticket_status_id')
                     ->label('Status')
                     ->options(function () {
@@ -242,22 +285,6 @@ class TicketResource extends Resource
                         }
 
                         return TicketStatus::where('project_id', $projectId)
-                            ->pluck('name', 'id')
-                            ->toArray();
-                    })
-                    ->searchable()
-                    ->preload(),
-
-                Tables\Filters\SelectFilter::make('epic_id')
-                    ->label('Epic')
-                    ->options(function () {
-                        $projectId = request()->input('tableFilters.project_id');
-
-                        if (!$projectId) {
-                            return [];
-                        }
-
-                        return Epic::where('project_id', $projectId)
                             ->pluck('name', 'id')
                             ->toArray();
                     })
@@ -298,6 +325,33 @@ class TicketResource extends Resource
             ])
             ->defaultSort('created_at', 'desc')
             ->actions([
+                // Approval Toggle Action (for Pembimbing & Super Admin)
+                Tables\Actions\Action::make('toggleApproval')
+                    ->label(fn ($record) => $record->approval_status === 'approved' ? 'Batalkan' : 'Approve')
+                    ->icon(fn ($record) => $record->approval_status === 'approved' ? 'heroicon-o-x-circle' : 'heroicon-o-check-circle')
+                    ->color(fn ($record) => $record->approval_status === 'approved' ? 'warning' : 'success')
+                    ->requiresConfirmation()
+                    ->modalHeading(fn ($record) => $record->approval_status === 'approved' ? 'Batalkan Approval?' : 'Approve Tugas?')
+                    ->modalDescription(fn ($record) => $record->approval_status === 'approved' 
+                        ? 'Apakah Anda yakin ingin membatalkan approval tugas ini?' 
+                        : 'Apakah Anda yakin ingin meng-approve tugas ini?')
+                    ->action(function ($record) {
+                        if ($record->approval_status === 'approved') {
+                            $record->update([
+                                'approval_status' => 'pending',
+                                'approved_by' => null,
+                                'approved_at' => null,
+                            ]);
+                        } else {
+                            $record->update([
+                                'approval_status' => 'approved',
+                                'approved_by' => auth()->id(),
+                                'approved_at' => now(),
+                            ]);
+                        }
+                    })
+                    ->visible(fn () => auth()->user()->hasRole(['super_admin', 'pembimbing'])),
+
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
             ])
