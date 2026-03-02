@@ -3,8 +3,10 @@
 namespace App\Livewire;
 
 use App\Models\Attendance;
+use App\Models\Aturan;
 use App\Models\Leave;
 use App\Models\Schedule;
+use App\Settings\SystemSettings;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
@@ -14,28 +16,73 @@ class Presensi extends Component
     public $latitude, $longitude;
     public $isWithinRadius = false;
 
+    /**
+     * Resolve data presensi: Schedule (jika ada office/shift) → SystemSettings (default).
+     */
+    private function resolvePresensiData(): array
+    {
+        $settings = app(SystemSettings::class);
+        $schedule = Schedule::where('user_id', Auth::id())->first();
+
+        // Default dari SystemSettings
+        $officeName = $settings->default_office_name;
+        $officeLat  = $settings->default_office_lat;
+        $officeLng  = $settings->default_office_lng;
+        $radius     = $settings->default_geofence_radius_m;
+        $workStart  = $settings->default_work_start;
+        $workEnd    = $settings->default_work_end;
+        $shiftName  = 'Default';
+
+        // Override dari Schedule jika ada office & shift
+        if ($schedule && $schedule->office_id && $schedule->office) {
+            $officeName = $schedule->office->name;
+            $officeLat  = $schedule->office->latitude;
+            $officeLng  = $schedule->office->longitude;
+            $radius     = $schedule->office->radius;
+        }
+        if ($schedule && $schedule->shift_id && $schedule->shift) {
+            $workStart = $schedule->shift->start_time;
+            $workEnd   = $schedule->shift->end_time;
+            $shiftName = $schedule->shift->name;
+        }
+
+        // Cek aturan aktif (WFA / Banned)
+        $isWfa    = Aturan::hasActive(Auth::id(), 'WFA');
+        $isBanned = Aturan::hasActive(Auth::id(), 'Banned');
+
+        return compact(
+            'officeName', 'officeLat', 'officeLng', 'radius',
+            'workStart', 'workEnd', 'shiftName',
+            'isWfa', 'isBanned', 'schedule'
+        );
+    }
+
     public function render()
     {
-        $attendance = Attendance::where('user_id', Auth::user()->id)->whereDate('created_at', date('Y-m-d'))->first();
-        $schedule = Schedule::where('user_id', Auth::user()->id)->first();
-        //dd($schedule);
+        $attendance = Attendance::where('user_id', Auth::id())
+            ->whereDate('created_at', date('Y-m-d'))
+            ->first();
+
+        $data = $this->resolvePresensiData();
+
         return view('livewire.presensi', [
-            'schedule' => $schedule,
+            'presensiData'   => $data,
             'isWithinRadius' => $this->isWithinRadius,
-            'attendance' => $attendance,
+            'attendance'     => $attendance,
         ]);
     }
 
-        public function store()
+    public function store()
     {
         $this->isWithinRadius = true;
         $this->validate([
-            'latitude' => 'required',
+            'latitude'  => 'required',
             'longitude' => 'required',
         ]);
 
-        $schedule = Schedule::where('user_id', Auth::id())->first();
+        $data = $this->resolvePresensiData();
 
+        // Cek cuti
         $today = Carbon::today()->format('Y-m-d');
         $approvedLeave = Leave::where('user_id', Auth::id())
             ->where('status', 'approved')
@@ -43,17 +90,13 @@ class Presensi extends Component
             ->where('end_date', '>=', $today)
             ->exists();
 
-        if($approvedLeave){
+        if ($approvedLeave) {
             session()->flash('error', 'Anda sedang mengambil cuti.');
             return;
         }
 
-        if (!$schedule) {
-            session()->flash('error', 'Jadwal presensi tidak ditemukan.');
-            return;
-        }
-
-        if ($schedule->is_banned) {
+        // Cek banned
+        if ($data['isBanned']) {
             session()->flash('error', 'Anda diblokir dari sistem presensi. Silakan hubungi admin.');
             return;
         }
@@ -64,21 +107,21 @@ class Presensi extends Component
 
         if (!$attendance) {
             Attendance::create([
-                'user_id' => Auth::id(),
-                'schedule_latitude' => $schedule->office->latitude,
-                'schedule_longitude' => $schedule->office->longitude,
-                'schedule_start_time' => $schedule->shift->start_time,
-                'schedule_end_time' => $schedule->shift->end_time,
-                'start_latitude' => $this->latitude,
-                'start_longitude' => $this->longitude,
-                'start_time' => now('Asia/Jakarta')->toTimeString(),
-                'end_time' => now('Asia/Jakarta')->toTimeString(),
+                'user_id'             => Auth::id(),
+                'schedule_latitude'   => $data['officeLat'],
+                'schedule_longitude'  => $data['officeLng'],
+                'schedule_start_time' => $data['workStart'],
+                'schedule_end_time'   => $data['workEnd'],
+                'start_latitude'      => $this->latitude,
+                'start_longitude'     => $this->longitude,
+                'start_time'          => now('Asia/Jakarta')->toTimeString(),
+                'end_time'            => now('Asia/Jakarta')->toTimeString(),
             ]);
         } else {
             $attendance->update([
-                'end_latitude' => $this->latitude,
+                'end_latitude'  => $this->latitude,
                 'end_longitude' => $this->longitude,
-                'end_time' => now('Asia/Jakarta')->toTimeString(),
+                'end_time'      => now('Asia/Jakarta')->toTimeString(),
             ]);
         }
 

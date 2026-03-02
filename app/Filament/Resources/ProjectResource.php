@@ -21,6 +21,9 @@ class ProjectResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
+    // Hidden from navigation - replaced by Penugasan
+    protected static bool $shouldRegisterNavigation = false;
+
     protected static ?string $navigationGroup = 'Manajemen Tugas';
 
     protected static ?string $label = 'Projek Utama';

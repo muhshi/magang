@@ -2,7 +2,6 @@
 
 namespace App\Filament\Resources\TicketResource\Pages;
 
-use App\Filament\Pages\ProjectBoard;
 use App\Filament\Resources\TicketResource;
 use App\Models\Ticket;
 use App\Models\TicketComment;
@@ -15,6 +14,7 @@ use Filament\Infolists\Components\Grid;
 use Filament\Infolists\Components\Group;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
+use Filament\Infolists\Components\ViewEntry;
 use Filament\Infolists\Infolist;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ViewRecord;
@@ -23,27 +23,20 @@ class ViewTicket extends ViewRecord
 {
     protected static string $resource = TicketResource::class;
 
+    protected static ?string $title = 'Detail Penugasan';
+
     public ?int $editingCommentId = null;
 
     protected function getHeaderActions(): array
     {
-        $ticket = $this->getRecord();
-        $project = $ticket->project;
-        $canComment = auth()->user()->hasRole(['super_admin'])
-            || $project->members()->where('users.id', auth()->id())->exists();
+        $canComment = auth()->user()->hasRole(['super_admin', 'pembimbing', 'Pegawai BPS', 'Magang BPS']);
 
         return [
             Actions\EditAction::make()
-                ->visible(function () {
-                    $ticket = $this->getRecord();
-
-                    return auth()->user()->hasRole(['super_admin'])
-                        || $ticket->created_by === auth()->id()
-                        || $ticket->assignees()->where('users.id', auth()->id())->exists();
-                }),
+                ->visible(fn () => auth()->user()->hasRole(['super_admin', 'pembimbing', 'Pegawai BPS'])),
 
             Actions\Action::make('addComment')
-                ->label('Add Comment')
+                ->label('Tambah Komentar')
                 ->icon('heroicon-o-chat-bubble-left-right')
                 ->color('success')
                 ->form([
@@ -59,16 +52,11 @@ class ViewTicket extends ViewRecord
                     ]);
 
                     Notification::make()
-                        ->title('Comment added successfully')
+                        ->title('Komentar berhasil ditambahkan')
                         ->success()
                         ->send();
                 })
                 ->visible($canComment),
-
-            Action::make('back')
-                ->label('Back to Board')
-                ->color('gray')
-                ->url(fn () => ProjectBoard::getUrl(['project_id' => $this->record->project_id])),
         ];
     }
 
@@ -78,24 +66,23 @@ class ViewTicket extends ViewRecord
 
         if (! $comment) {
             Notification::make()
-                ->title('Comment not found')
+                ->title('Komentar tidak ditemukan')
                 ->danger()
                 ->send();
 
             return;
         }
 
-        // Check permissions
         if (! auth()->user()->hasRole(['super_admin']) && $comment->user_id !== auth()->id()) {
             Notification::make()
-                ->title('You do not have permission to edit this comment')
+                ->title('Anda tidak memiliki izin untuk mengedit komentar ini')
                 ->danger()
                 ->send();
 
             return;
         }
 
-        $this->editingCommentId = $id; // Set ID komentar yang sedang diedit
+        $this->editingCommentId = $id;
         $this->mountAction('editComment', ['commentId' => $id]);
     }
 
@@ -105,17 +92,16 @@ class ViewTicket extends ViewRecord
 
         if (! $comment) {
             Notification::make()
-                ->title('Comment not found')
+                ->title('Komentar tidak ditemukan')
                 ->danger()
                 ->send();
 
             return;
         }
 
-        // Check permissions
         if (! auth()->user()->hasRole(['super_admin']) && $comment->user_id !== auth()->id()) {
             Notification::make()
-                ->title('You do not have permission to delete this comment')
+                ->title('Anda tidak memiliki izin untuk menghapus komentar ini')
                 ->danger()
                 ->send();
 
@@ -125,11 +111,10 @@ class ViewTicket extends ViewRecord
         $comment->delete();
 
         Notification::make()
-            ->title('Comment deleted successfully')
+            ->title('Komentar berhasil dihapus')
             ->success()
             ->send();
 
-        // Refresh the page
         $this->redirect($this->getResource()::getUrl('view', ['record' => $this->getRecord()]));
     }
 
@@ -139,85 +124,125 @@ class ViewTicket extends ViewRecord
             ->schema([
                 Grid::make(3)
                     ->schema([
+                        // Kolom 1: Info Tugas
                         Group::make([
                             Section::make()
                                 ->schema([
                                     TextEntry::make('uuid')
-                                        ->label('Ticket ID')
+                                        ->label('ID Tugas')
                                         ->copyable(),
 
                                     TextEntry::make('name')
-                                        ->label('Ticket Name'),
+                                        ->label('Deskripsi Tugas'),
 
-                                    TextEntry::make('project.name')
-                                        ->label('Project'),
+                                    TextEntry::make('employee.name')
+                                        ->label('Nama Pegawai')
+                                        ->default('-'),
+
+                                    TextEntry::make('priority')
+                                        ->label('Prioritas')
+                                        ->badge()
+                                        ->formatStateUsing(fn (?string $state): string => match($state) {
+                                            'urgent' => '🔴 Penting mendesak',
+                                            'important' => '🟡 Penting tidak mendesak',
+                                            'flexible' => '🟢 Fleksibel',
+                                            default => $state ?? '-',
+                                        })
+                                        ->color(fn (?string $state): string => match($state) {
+                                            'urgent' => 'danger',
+                                            'important' => 'warning',
+                                            'flexible' => 'success',
+                                            default => 'gray',
+                                        }),
                                 ]),
                         ])->columnSpan(1),
 
+                        // Kolom 2: Status & Assignment
                         Group::make([
                             Section::make()
                                 ->schema([
-                                    TextEntry::make('status.name')
+                                    TextEntry::make('status')
                                         ->label('Status')
                                         ->badge()
-                                        ->color(fn ($state) => match ($state) {
-                                            'To Do' => 'warning',
-                                            'In Progress' => 'info',
-                                            'Review' => 'primary',
-                                            'Done' => 'success',
+                                        ->formatStateUsing(fn (?string $state): string => match($state) {
+                                            'belum' => 'Belum Dikerjakan',
+                                            'proses' => 'Sedang Proses',
+                                            'revisi' => 'Perlu Revisi',
+                                            'selesai' => 'Selesai',
+                                            default => $state ?? 'Belum Dikerjakan',
+                                        })
+                                        ->color(fn (?string $state): string => match($state) {
+                                            'belum' => 'gray',
+                                            'proses' => 'info',
+                                            'revisi' => 'warning',
+                                            'selesai' => 'success',
                                             default => 'gray',
                                         }),
 
-                                    // FIXED: Multi-user assignees
                                     TextEntry::make('assignees.name')
-                                        ->label('Assigned To')
+                                        ->label('Yang Ditugaskan')
                                         ->badge()
                                         ->separator(',')
-                                        ->default('Unassigned'),
+                                        ->default('Belum diset'),
 
-                                    TextEntry::make('creator.name')
-                                        ->label('Created By')
-                                        ->default('Unknown'),
-
-                                    TextEntry::make('due_date')
-                                        ->label('Due Date')
-                                        ->date(),
+                                    TextEntry::make('approval_status')
+                                        ->label('Persetujuan')
+                                        ->badge()
+                                        ->formatStateUsing(fn (?string $state): string => match($state) {
+                                            'approved' => '✅ Approved',
+                                            'pending' => '⏳ Pending',
+                                            default => '⏳ Pending',
+                                        })
+                                        ->color(fn (?string $state): string => match($state) {
+                                            'approved' => 'success',
+                                            'pending' => 'warning',
+                                            default => 'warning',
+                                        }),
                                 ]),
                         ])->columnSpan(1),
 
+                        // Kolom 3: Tanggal
                         Group::make([
                             Section::make()
                                 ->schema([
                                     TextEntry::make('created_at')
-                                        ->label('Created At')
-                                        ->dateTime(),
+                                        ->label('Tgl Pengisian')
+                                        ->date('d/m/Y'),
+
+                                    TextEntry::make('start_date')
+                                        ->label('Mulai')
+                                        ->date('d/m/Y')
+                                        ->default('-'),
+
+                                    TextEntry::make('due_date')
+                                        ->label('Selesai')
+                                        ->date('d/m/Y')
+                                        ->default('-'),
 
                                     TextEntry::make('updated_at')
-                                        ->label('Updated At')
-                                        ->dateTime(),
-
-                                    TextEntry::make('epic.name')
-                                        ->label('Epic')
-                                        ->default('No Epic'),
+                                        ->label('Terakhir Diperbarui')
+                                        ->dateTime('d/m/Y H:i'),
                                 ]),
                         ])->columnSpan(1),
                     ]),
 
-                Section::make('Description')
-                    ->icon('heroicon-o-document-text')
+                // Lampiran
+                Section::make('Lampiran')
+                    ->icon('heroicon-o-paper-clip')
                     ->schema([
-                        TextEntry::make('description')
-                            ->hiddenLabel()
-                            ->html()
+                        ViewEntry::make('attachment')
+                            ->view('filament.infolists.entries.attachment-detail')
                             ->columnSpanFull(),
-                    ]),
+                    ])
+                    ->collapsible(),
 
-                Section::make('Comments')
+                // Komentar
+                Section::make('Komentar')
                     ->icon('heroicon-o-chat-bubble-left-right')
-                    ->description('Discussion about this ticket')
+                    ->description('Diskusi mengenai tugas ini')
                     ->schema([
                         TextEntry::make('comments_list')
-                            ->label('Recent Comments')
+                            ->label('Komentar Terbaru')
                             ->state(function (Ticket $record) {
                                 if (method_exists($record, 'comments')) {
                                     return $record->comments()->with('user')->latest()->get();
@@ -228,15 +253,6 @@ class ViewTicket extends ViewRecord
                             ->view('filament.resources.ticket-resource.latest-comments'),
                     ])
                     ->collapsible(),
-
-                Section::make('Status History')
-                    ->icon('heroicon-o-clock')
-                    ->collapsible()
-                    ->schema([
-                        TextEntry::make('histories')
-                            ->hiddenLabel()
-                            ->view('filament.resources.ticket-resource.timeline-history'),
-                    ]),
             ]);
     }
 
@@ -244,7 +260,7 @@ class ViewTicket extends ViewRecord
     {
         return [
             Action::make('editComment')
-                ->label('Edit Comment')
+                ->label('Edit Komentar')
                 ->mountUsing(function (Forms\Form $form, array $arguments) {
                     $commentId = $arguments['commentId'] ?? null;
 
@@ -267,7 +283,7 @@ class ViewTicket extends ViewRecord
                     Hidden::make('commentId')
                         ->required(),
                     RichEditor::make('comment')
-                        ->label('Comment')
+                        ->label('Komentar')
                         ->toolbarButtons([
                             'blockquote',
                             'bold',
@@ -290,17 +306,16 @@ class ViewTicket extends ViewRecord
 
                     if (! $comment) {
                         Notification::make()
-                            ->title('Comment not found')
+                            ->title('Komentar tidak ditemukan')
                             ->danger()
                             ->send();
 
                         return;
                     }
 
-                    // Check permissions
                     if (! auth()->user()->hasRole(['super_admin']) && $comment->user_id !== auth()->id()) {
                         Notification::make()
-                            ->title('You do not have permission to edit this comment')
+                            ->title('Anda tidak memiliki izin untuk mengedit komentar ini')
                             ->danger()
                             ->send();
 
@@ -312,19 +327,17 @@ class ViewTicket extends ViewRecord
                     ]);
 
                     Notification::make()
-                        ->title('Comment updated successfully')
+                        ->title('Komentar berhasil diperbarui')
                         ->success()
                         ->send();
 
-                    // Reset editingCommentId
                     $this->editingCommentId = null;
 
-                    // Refresh the page
                     $this->redirect($this->getResource()::getUrl('view', ['record' => $this->getRecord()]));
                 })
                 ->modalWidth('lg')
-                ->modalHeading('Edit Comment')
-                ->modalSubmitActionLabel('Update')
+                ->modalHeading('Edit Komentar')
+                ->modalSubmitActionLabel('Perbarui')
                 ->color('success')
                 ->icon('heroicon-o-pencil'),
         ];

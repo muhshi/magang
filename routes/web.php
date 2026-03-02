@@ -57,9 +57,16 @@ Route::get('/info', function () {
     return phpinfo();
 });
 
-Route::get('/admin/internships/{internship}/certificate', [CertificateController::class, 'generate'])
-    ->middleware('auth') // Pastikan hanya user yang login bisa akses
+Route::get('/admin/certificates/{certificate}/generate', [CertificateController::class, 'generate'])
+    ->middleware('auth')
     ->name('certificate.generate');
+
+// Halaman publik verifikasi sertifikat (tanpa auth)
+Route::get('/sertifikat/{uuid}', [CertificateController::class, 'verify'])
+    ->name('certificate.verify');
+
+Route::get('/sertifikat/{uuid}/download', [CertificateController::class, 'download'])
+    ->name('certificate.download');
 
 Route::get('/login', function () {
     return redirect('admin/login');

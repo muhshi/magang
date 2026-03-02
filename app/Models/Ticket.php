@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Str;
+use App\Models\Logbook;
 
 class Ticket extends Model
 {
@@ -22,6 +23,7 @@ class Ticket extends Model
         'uuid',
         'epic_id',
         'created_by',
+        'employee_id',
         // Spreadsheet fields
         'priority',
         'start_date',
@@ -29,6 +31,7 @@ class Ticket extends Model
         'approved_by',
         'approved_at',
         'attachment',
+        'status',
     ];
 
     protected $casts = [
@@ -57,10 +60,17 @@ class Ticket extends Model
         static::updating(function ($ticket) {
             if ($ticket->isDirty('ticket_status_id')) {
                 TicketHistory::create([
-                    'ticket_id' => $ticket->id,
-                    'user_id' => auth()->id(),
+                    'ticket_id'        => $ticket->id,
+                    'user_id'          => auth()->id(),
                     'ticket_status_id' => $ticket->ticket_status_id,
                 ]);
+            }
+
+            // Sync status logbook jika status ticket berubah
+            if ($ticket->isDirty('status')) {
+                Logbook::where('ticket_id', $ticket->id)
+                    ->where('source', 'system')
+                    ->update(['status' => $ticket->status]);
             }
         });
     }
@@ -81,10 +91,22 @@ class Ticket extends Model
         return $this->belongsToMany(User::class, 'ticket_users');
     }
 
-    // Creator relationship
+    // Creator relationship (user account)
     public function creator(): BelongsTo
     {
         return $this->belongsTo(User::class, 'created_by');
+    }
+
+    // Employee (Pembuat from employees table)
+    public function employee(): BelongsTo
+    {
+        return $this->belongsTo(Employee::class);
+    }
+
+    // Intern groups (kelompok magang)
+    public function internGroups(): BelongsToMany
+    {
+        return $this->belongsToMany(InternGroup::class, 'ticket_intern_group');
     }
 
     public function histories(): HasMany
@@ -95,6 +117,11 @@ class Ticket extends Model
     public function comments(): HasMany
     {
         return $this->hasMany(TicketComment::class)->orderBy('created_at', 'asc');
+    }
+
+    public function logbooks(): HasMany
+    {
+        return $this->hasMany(Logbook::class);
     }
 
     public function epic(): BelongsTo

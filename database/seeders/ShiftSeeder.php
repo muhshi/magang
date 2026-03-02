@@ -16,7 +16,7 @@ class ShiftSeeder extends Seeder
     {
         DB::table('shifts')->insert([
             'name' => 'Pagi',
-            'start_time' => '07:30:00',
+            'start_time' => '08:00:00',
             'end_time' => '16:00:00',
         ]);
     }

@@ -19,7 +19,10 @@
         "laravel/octane": "^2.9",
         "laravel/tinker": "^2.10.1",
         "maatwebsite/excel": "^3.1",
-        "phpoffice/phpspreadsheet": "^1.29"
+        "phpoffice/phpspreadsheet": "^1.29",
+        "pxlrbt/filament-excel": "^2.5",
+        "simplesoftwareio/simple-qrcode": "^4.2",
+        "spatie/laravel-settings": "^3.7"
     },
     "require-dev": {
         "barryvdh/laravel-ide-helper": "^3.5",

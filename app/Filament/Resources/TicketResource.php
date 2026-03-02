@@ -3,9 +3,11 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\TicketResource\Pages;
-use App\Models\Project;
+use App\Models\Employee;
+use App\Models\Internship;
+use App\Models\Logbook;
 use App\Models\Ticket;
-use App\Models\TicketStatus;
+use App\Models\User;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -13,60 +15,47 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
-use App\Models\Epic;
 use Illuminate\Support\Facades\Auth;
+use pxlrbt\FilamentExcel\Actions\Tables\ExportAction;
+use pxlrbt\FilamentExcel\Exports\ExcelExport;
+use pxlrbt\FilamentExcel\Columns\Column;
 
 class TicketResource extends Resource
 {
     protected static ?string $model = Ticket::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-ticket';
+    protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-list';
 
-    protected static ?string $navigationLabel = 'Tickets';
+    protected static ?string $navigationLabel = 'Penugasan';
 
-    protected static ?string $navigationGroup = 'Manajemen Tugas';
+    // Root level - no group
+    protected static ?string $navigationGroup = 'Manajemen Penugasan';
 
     protected static ?string $label = 'Tugas';
-    protected static ?int $navigationSort = 10;
+    protected static ?string $pluralLabel = 'Penugasan';
+    protected static ?int $navigationSort = 2;
 
+
+    public static function canAccess(): bool
+    {
+        return !auth()->user()->hasRole(['Calon Magang', 'Alumni Magang']);
+    }
 
     public static function getEloquentQuery(): Builder
     {
-        $query = parent::getEloquentQuery();
-
-        if (!auth()->user()->hasRole(['super_admin'])) {
-            $query->where(function ($query) {
-                $query->whereHas('assignees', function ($query) {
-                    $query->where('users.id', auth()->id());
-                })
-                    ->orWhere('created_by', auth()->id())
-                    ->orWhereHas('project.members', function ($query) {
-                        $query->where('users.id', auth()->id());
-                    });
-            });
-        }
-
-        return $query;
+        return parent::getEloquentQuery();
     }
 
     public static function form(Form $form): Form
     {
-        $projectId = request()->query('project_id') ?? request()->input('project_id');
-        $statusId = request()->query('ticket_status_id') ?? request()->input('ticket_status_id');
-
         return $form
             ->schema([
-                // Hidden project field (for filtering)
-                Forms\Components\Hidden::make('project_id')
-                    ->default($projectId),
-
                 Forms\Components\Grid::make(2)
                     ->schema([
-                        // A. Pembuat/Creator
-                        Forms\Components\Select::make('created_by')
-                            ->label('Pembuat/Creator')
-                            ->relationship('creator', 'name')
-                            ->default(auth()->id())
+                        // A. Pembuat (dari tabel employees)
+                        Forms\Components\Select::make('employee_id')
+                            ->label('Pembuat')
+                            ->relationship('employee', 'name')
                             ->required()
                             ->searchable()
                             ->preload(),
@@ -107,34 +96,7 @@ class TicketResource extends Resource
                             ->label('Target Selesai'),
                     ]),
 
-                Forms\Components\Grid::make(2)
-                    ->schema([
-                        // G. Assignee (Multi-select)
-                        Forms\Components\Select::make('assignees')
-                            ->label('Assignee')
-                            ->multiple()
-                            ->relationship(
-                                name: 'assignees',
-                                titleAttribute: 'name',
-                            )
-                            ->searchable()
-                            ->preload()
-                            ->helperText('Pilih anak magang yang ditugaskan'),
-
-                        // H. Status
-                        Forms\Components\Select::make('ticket_status_id')
-                            ->label('Status')
-                            ->options([
-                                'belum' => 'Belum',
-                                'proses' => 'Proses',
-                                'revisi' => 'Revisi',
-                                'selesai' => 'Selesai',
-                            ])
-                            ->default('belum')
-                            ->required(),
-                    ]),
-
-                // I. Attachment
+                // G. Attachment
                 Forms\Components\FileUpload::make('attachment')
                     ->label('Attachment')
                     ->directory('task-attachments')
@@ -149,24 +111,18 @@ class TicketResource extends Resource
     {
         return $table
             ->columns([
-                // 1. No (Row number - auto)
-                Tables\Columns\TextColumn::make('id')
-                    ->label('No')
-                    ->rowIndex()
-                    ->sortable(),
-
-                // 2. Tanggal Pengisian
+                // 1. Tanggal Pengisian
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Tgl Pengisian')
                     ->date('d/m/Y')
                     ->sortable(),
 
-                // 3. Pembuat
-                Tables\Columns\TextColumn::make('creator.name')
-                    ->label('Pembuat')
+                // 3. Pembuat (dari tabel employees)
+                Tables\Columns\TextColumn::make('employee.name')
+                    ->label('Nama Pegawai')
                     ->sortable()
                     ->searchable()
-                    ->limit(15),
+                    ->limit(20),
 
                 // 4. Deskripsi Tugas
                 Tables\Columns\TextColumn::make('name')
@@ -202,12 +158,12 @@ class TicketResource extends Resource
 
                 // 7. Target Selesai
                 Tables\Columns\TextColumn::make('due_date')
-                    ->label('Target')
+                    ->label('Selesai')
                     ->date('d/m/Y')
                     ->sortable()
                     ->placeholder('-'),
 
-                // 8. Persetujuan (approval status badge)
+                // 8. Persetujuan (clickable toggle - Pembimbing & Super Admin)
                 Tables\Columns\TextColumn::make('approval_status')
                     ->label('Persetujuan')
                     ->badge()
@@ -220,44 +176,152 @@ class TicketResource extends Resource
                         'approved' => 'success',
                         'pending' => 'warning',
                         default => 'warning',
-                    }),
+                    })
+                    ->action(
+                        Tables\Actions\Action::make('toggleApproval')
+                            ->requiresConfirmation()
+                            ->modalHeading(fn ($record) => $record->approval_status === 'approved' ? 'Batalkan Approval?' : 'Approve Tugas?')
+                            ->action(function ($record) {
+                                if ($record->approval_status === 'approved') {
+                                    $record->update([
+                                        'approval_status' => 'pending',
+                                        'approved_by' => null,
+                                        'approved_at' => null,
+                                    ]);
+                                } else {
+                                    $record->update([
+                                        'approval_status' => 'approved',
+                                        'approved_by' => auth()->id(),
+                                        'approved_at' => now(),
+                                    ]);
+                                }
+                            })
+                            ->visible(fn () => auth()->user()->hasRole(['super_admin', 'pembimbing']))
+                    ),
 
-                // 9. Assignee (multi-badge)
+                // 9. Assignee (clickable - peserta magang)
                 Tables\Columns\TextColumn::make('assignees.name')
-                    ->label('Assignee')
+                    ->label('Yang Ditugaskan')
                     ->badge()
                     ->separator(',')
                     ->limitList(2)
                     ->expandableLimitedList()
-                    ->searchable(),
+                    ->searchable()
+                    ->placeholder('Belum diset')
+                    ->action(
+                        Tables\Actions\Action::make('setAssignee')
+                            ->form([
+                                Forms\Components\Select::make('assignee_ids')
+                                    ->label('Peserta Magang')
+                                    ->multiple()
+                                    ->options(function () {
+                                        $acceptedUserIds = Internship::where('status', 'accepted')->pluck('user_id');
+                                        return User::where(function ($query) use ($acceptedUserIds) {
+                                            $query->whereHas('roles', fn ($q) => $q->where('name', 'Magang BPS'))
+                                                  ->orWhereIn('id', $acceptedUserIds);
+                                        })
+                                        ->whereDoesntHave('roles', fn ($q) => $q->where('name', 'Alumni Magang'))
+                                        ->pluck('name', 'id')->toArray();
+                                    })
+                                    ->default(fn ($record) => $record->assignees->pluck('id')->toArray())
+                                    ->searchable()
+                                    ->preload(),
+                            ])
+                            ->action(function ($record, array $data) {
+                                $newAssigneeIds = $data['assignee_ids'] ?? [];
+                                $oldAssigneeIds = $record->assignees->pluck('id')->toArray();
+                                $record->assignees()->sync($newAssigneeIds);
 
-                // 10. Status
-                Tables\Columns\TextColumn::make('status.name')
+                                // Auto-create/update logbook untuk setiap assignee baru
+                                $addedIds = array_diff($newAssigneeIds, $oldAssigneeIds);
+                                $removedIds = array_diff($oldAssigneeIds, $newAssigneeIds);
+
+                                // Hapus logbook untuk assignee yang dihapus
+                                foreach ($removedIds as $userId) {
+                                    $logbook = Logbook::where('ticket_id', $record->id)
+                                        ->where('user_id', $userId)
+                                        ->where('source', 'system')
+                                        ->first();
+                                    if ($logbook) {
+                                        $logbook->assignees()->detach();
+                                        $logbook->delete();
+                                    }
+                                }
+
+                                // Buat logbook untuk assignee baru
+                                foreach ($addedIds as $userId) {
+                                    $logbook = Logbook::create([
+                                        'user_id'           => $userId,
+                                        'ticket_id'         => $record->id,
+                                        'source'            => 'system',
+                                        'tanggal_pengisian' => $record->created_at->toDateString(),
+                                        'nama_pegawai'      => $record->employee?->name ?? '-',
+                                        'deskripsi_tugas'   => $record->name,
+                                        'status'            => $record->status ?? 'belum',
+                                        'lampiran'          => $record->attachment,
+                                    ]);
+                                    $logbook->assignees()->sync($newAssigneeIds);
+                                }
+
+                                // Update status & assignees di logbook yang sudah ada
+                                foreach (array_intersect($newAssigneeIds, $oldAssigneeIds) as $userId) {
+                                    $logbook = Logbook::where('ticket_id', $record->id)
+                                        ->where('user_id', $userId)
+                                        ->where('source', 'system')
+                                        ->first();
+                                    if ($logbook) {
+                                        $logbook->assignees()->sync($newAssigneeIds);
+                                    }
+                                }
+                            })
+                            ->visible(fn () => auth()->user()->hasRole(['super_admin', 'pembimbing']))
+                    ),
+
+                // 10. Status (clickable - Pembimbing & Super Admin)
+                Tables\Columns\TextColumn::make('status')
                     ->label('Status')
                     ->badge()
-                    ->sortable(),
+                    ->formatStateUsing(fn (?string $state): string => match($state) {
+                        'belum' => 'Belum',
+                        'proses' => 'Proses',
+                        'revisi' => 'Revisi',
+                        'selesai' => 'Selesai',
+                        default => $state ?? 'Belum',
+                    })
+                    ->color(fn (?string $state): string => match($state) {
+                        'belum' => 'gray',
+                        'proses' => 'info',
+                        'revisi' => 'warning',
+                        'selesai' => 'success',
+                        default => 'gray',
+                    })
+                    ->sortable()
+                    ->action(
+                        Tables\Actions\Action::make('setStatus')
+                            ->form([
+                                Forms\Components\Select::make('status')
+                                    ->label('Status')
+                                    ->options([
+                                        'belum' => 'Belum Dikerjakan',
+                                        'proses' => 'Sedang Proses',
+                                        'revisi' => 'Perlu Revisi',
+                                        'selesai' => 'Selesai',
+                                    ])
+                                    ->default(fn ($record) => $record->status)
+                                    ->required(),
+                            ])
+                            ->action(function ($record, array $data) {
+                                $record->update(['status' => $data['status']]);
+                            })
+                            ->visible(fn () => auth()->user()->hasRole(['super_admin', 'pembimbing', 'Magang BPS']))
+                    ),
 
-                // 11. Attachment (icon link)
-                Tables\Columns\IconColumn::make('attachment')
-                    ->label('📎')
-                    ->icon(fn ($state) => $state ? 'heroicon-o-paper-clip' : null)
-                    ->url(fn ($record) => $record->attachment ? asset('storage/' . $record->attachment) : null)
-                    ->openUrlInNewTab()
-                    ->tooltip(fn ($record) => $record->attachment ? 'Download File' : 'No Attachment'),
+                // Lampiran (preview)
+                Tables\Columns\ViewColumn::make('attachment')
+                    ->label('Lampiran')
+                    ->view('filament.tables.columns.attachment-preview'),
             ])
             ->filters([
-                Tables\Filters\SelectFilter::make('project_id')
-                    ->label('Project')
-                    ->options(function () {
-                        if (auth()->user()->hasRole(['super_admin'])) {
-                            return Project::pluck('name', 'id')->toArray();
-                        }
-
-                        return auth()->user()->projects()->pluck('name', 'projects.id')->toArray();
-                    })
-                    ->searchable()
-                    ->preload(),
-
                 // Priority Filter
                 Tables\Filters\SelectFilter::make('priority')
                     ->label('Prioritas')
@@ -265,6 +329,16 @@ class TicketResource extends Resource
                         'urgent' => '🔴 Mendesak',
                         'important' => '🟡 Penting',
                         'flexible' => '🟢 Fleksibel',
+                    ]),
+
+                // Status Filter (static)
+                Tables\Filters\SelectFilter::make('status')
+                    ->label('Status')
+                    ->options([
+                        'belum' => 'Belum Dikerjakan',
+                        'proses' => 'Sedang Proses',
+                        'revisi' => 'Perlu Revisi',
+                        'selesai' => 'Selesai',
                     ]),
 
                 // Approval Status Filter
@@ -275,34 +349,18 @@ class TicketResource extends Resource
                         'approved' => '✅ Approved',
                     ]),
 
-                Tables\Filters\SelectFilter::make('ticket_status_id')
-                    ->label('Status')
-                    ->options(function () {
-                        $projectId = request()->input('tableFilters.project_id');
-
-                        if (!$projectId) {
-                            return [];
-                        }
-
-                        return TicketStatus::where('project_id', $projectId)
-                            ->pluck('name', 'id')
-                            ->toArray();
-                    })
-                    ->searchable()
-                    ->preload(),
-
-                // Filter by assignees
-                Tables\Filters\SelectFilter::make('assignees')
-                    ->label('Assignee')
-                    ->relationship('assignees', 'name')
+                // Filter by intern group
+                Tables\Filters\SelectFilter::make('internGroups')
+                    ->label('Kelompok')
+                    ->relationship('internGroups', 'name')
                     ->multiple()
                     ->searchable()
                     ->preload(),
 
-                // Filter by creator
-                Tables\Filters\SelectFilter::make('created_by')
-                    ->label('Created By')
-                    ->relationship('creator', 'name')
+                // Filter by pembuat (employee)
+                Tables\Filters\SelectFilter::make('employee_id')
+                    ->label('Pembuat')
+                    ->relationship('employee', 'name')
                     ->searchable()
                     ->preload(),
 
@@ -324,114 +382,178 @@ class TicketResource extends Resource
                     }),
             ])
             ->defaultSort('created_at', 'desc')
+            ->headerActions([
+                ExportAction::make()
+                    ->exports([
+                        ExcelExport::make('penugasan')
+                            ->fromTable()
+                            ->withColumns([
+                                Column::make('created_at')
+                                    ->heading('Tgl Pengisian')
+                                    ->formatStateUsing(fn ($state) => $state ? \Carbon\Carbon::parse($state)->format('d/m/Y') : '-'),
+                                Column::make('employee.name')
+                                    ->heading('Nama Pegawai'),
+                                Column::make('name')
+                                    ->heading('Deskripsi Tugas'),
+                                Column::make('priority')
+                                    ->heading('Prioritas')
+                                    ->formatStateUsing(fn ($state) => match ($state) {
+                                        'urgent'    => 'Mendesak',
+                                        'important' => 'Penting',
+                                        'flexible'  => 'Fleksibel',
+                                        default     => $state ?? '-',
+                                    }),
+                                Column::make('start_date')
+                                    ->heading('Mulai')
+                                    ->formatStateUsing(fn ($state) => $state ? \Carbon\Carbon::parse($state)->format('d/m/Y') : '-'),
+                                Column::make('due_date')
+                                    ->heading('Selesai')
+                                    ->formatStateUsing(fn ($state) => $state ? \Carbon\Carbon::parse($state)->format('d/m/Y') : '-'),
+                                Column::make('approval_status')
+                                    ->heading('Persetujuan')
+                                    ->formatStateUsing(fn ($state) => match ($state) {
+                                        'approved' => 'Approved',
+                                        'pending'  => 'Pending',
+                                        default    => 'Pending',
+                                    }),
+                                Column::make('assignees.name')
+                                    ->heading('Yang Ditugaskan')
+                                    ->formatStateUsing(fn ($record) => $record->assignees->pluck('name')->join(', ')),
+                                Column::make('status')
+                                    ->heading('Status')
+                                    ->formatStateUsing(fn ($state) => match ($state) {
+                                        'belum'   => 'Belum Dikerjakan',
+                                        'proses'  => 'Sedang Proses',
+                                        'revisi'  => 'Perlu Revisi',
+                                        'selesai' => 'Selesai',
+                                        default   => $state ?? '-',
+                                    }),
+                                Column::make('attachment')
+                                    ->heading('Lampiran')
+                                    ->formatStateUsing(fn ($state) => $state ? asset('storage/' . $state) : '-'),
+                            ])
+                            ->withFilename('penugasan-' . now()->format('Y-m-d')),
+                    ]),
+            ])
             ->actions([
-                // Approval Toggle Action (for Pembimbing & Super Admin)
-                Tables\Actions\Action::make('toggleApproval')
-                    ->label(fn ($record) => $record->approval_status === 'approved' ? 'Batalkan' : 'Approve')
-                    ->icon(fn ($record) => $record->approval_status === 'approved' ? 'heroicon-o-x-circle' : 'heroicon-o-check-circle')
-                    ->color(fn ($record) => $record->approval_status === 'approved' ? 'warning' : 'success')
-                    ->requiresConfirmation()
-                    ->modalHeading(fn ($record) => $record->approval_status === 'approved' ? 'Batalkan Approval?' : 'Approve Tugas?')
-                    ->modalDescription(fn ($record) => $record->approval_status === 'approved' 
-                        ? 'Apakah Anda yakin ingin membatalkan approval tugas ini?' 
-                        : 'Apakah Anda yakin ingin meng-approve tugas ini?')
-                    ->action(function ($record) {
-                        if ($record->approval_status === 'approved') {
-                            $record->update([
-                                'approval_status' => 'pending',
-                                'approved_by' => null,
-                                'approved_at' => null,
-                            ]);
-                        } else {
-                            $record->update([
-                                'approval_status' => 'approved',
-                                'approved_by' => auth()->id(),
-                                'approved_at' => now(),
-                            ]);
-                        }
-                    })
-                    ->visible(fn () => auth()->user()->hasRole(['super_admin', 'pembimbing'])),
-
-                Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\ViewAction::make()->label('Detail'),
+                Tables\Actions\EditAction::make()
+                    ->visible(fn () => auth()->user()->hasRole(['super_admin', 'pembimbing', 'Pegawai BPS'])),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make()
                         ->visible(auth()->user()->hasRole(['super_admin'])),
 
+                    // Bulk update status
                     Tables\Actions\BulkAction::make('updateStatus')
                         ->label('Update Status')
                         ->icon('heroicon-o-arrow-path')
                         ->form([
-                            Forms\Components\Select::make('ticket_status_id')
+                            Forms\Components\Select::make('status')
                                 ->label('Status')
-                                ->options(function () {
-                                    $firstTicket = Ticket::find(request('records')[0] ?? null);
-                                    if (!$firstTicket) {
-                                        return [];
-                                    }
-
-                                    return TicketStatus::where('project_id', $firstTicket->project_id)
-                                        ->pluck('name', 'id')
-                                        ->toArray();
-                                })
+                                ->options([
+                                    'belum' => 'Belum Dikerjakan',
+                                    'proses' => 'Sedang Proses',
+                                    'revisi' => 'Perlu Revisi',
+                                    'selesai' => 'Selesai',
+                                ])
                                 ->required(),
                         ])
                         ->action(function (array $data, Collection $records) {
                             foreach ($records as $record) {
-                                $record->update([
-                                    'ticket_status_id' => $data['ticket_status_id'],
-                                ]);
+                                $record->update(['status' => $data['status']]);
                             }
-                        }),
+                        })
+                        ->visible(fn () => auth()->user()->hasRole(['super_admin', 'pembimbing'])),
 
-                    // New bulk action for assigning users
+                    // Bulk assign peserta magang
                     Tables\Actions\BulkAction::make('assignUsers')
-                        ->label('Assign Users')
-                        ->icon('heroicon-o-user-plus')
+                        ->label('Assign Peserta')
+                        ->icon('heroicon-o-user-group')
                         ->form([
-                            Forms\Components\Select::make('assignees')
-                                ->label('Assignees')
+                            Forms\Components\Select::make('assignee_ids')
+                                ->label('Peserta Magang')
                                 ->multiple()
                                 ->options(function () {
-                                    $firstTicket = Ticket::find(request('records')[0] ?? null);
-                                    if (!$firstTicket) {
-                                        return [];
-                                    }
-
-                                    $project = $firstTicket->project;
-                                    if (!$project) {
-                                        return [];
-                                    }
-
-                                    return $project->members()
-                                        ->select('users.id', 'users.name')
-                                        ->pluck('users.name', 'users.id')
-                                        ->toArray();
+                                    $acceptedUserIds = Internship::where('status', 'accepted')->pluck('user_id');
+                                    return User::where(function ($query) use ($acceptedUserIds) {
+                                        $query->whereHas('roles', fn ($q) => $q->where('name', 'Magang BPS'))
+                                              ->orWhereIn('id', $acceptedUserIds);
+                                    })
+                                    ->whereDoesntHave('roles', fn ($q) => $q->where('name', 'Alumni Magang'))
+                                    ->pluck('name', 'id')->toArray();
                                 })
                                 ->searchable()
                                 ->preload()
                                 ->required(),
 
                             Forms\Components\Radio::make('assignment_mode')
-                                ->label('Assignment Mode')
+                                ->label('Mode')
                                 ->options([
-                                    'replace' => 'Replace existing assignees',
-                                    'add' => 'Add to existing assignees',
+                                    'replace' => 'Ganti peserta',
+                                    'add' => 'Tambah peserta',
                                 ])
                                 ->default('add')
                                 ->required(),
                         ])
                         ->action(function (array $data, Collection $records) {
                             foreach ($records as $record) {
+                                $newAssigneeIds = $data['assignee_ids'];
+                                $oldAssigneeIds = $record->assignees->pluck('id')->toArray();
+
                                 if ($data['assignment_mode'] === 'replace') {
-                                    $record->assignees()->sync($data['assignees']);
+                                    $record->assignees()->sync($newAssigneeIds);
+                                    $addedIds   = array_diff($newAssigneeIds, $oldAssigneeIds);
+                                    $removedIds = array_diff($oldAssigneeIds, $newAssigneeIds);
                                 } else {
-                                    $record->assignees()->syncWithoutDetaching($data['assignees']);
+                                    $record->assignees()->syncWithoutDetaching($newAssigneeIds);
+                                    $addedIds   = array_diff($newAssigneeIds, $oldAssigneeIds);
+                                    $removedIds = [];
+                                }
+
+                                $finalAssigneeIds = $record->fresh()->assignees->pluck('id')->toArray();
+
+                                // Hapus logbook assignee yang dihapus
+                                foreach ($removedIds as $userId) {
+                                    $logbook = Logbook::where('ticket_id', $record->id)
+                                        ->where('user_id', $userId)
+                                        ->where('source', 'system')
+                                        ->first();
+                                    if ($logbook) {
+                                        $logbook->assignees()->detach();
+                                        $logbook->delete();
+                                    }
+                                }
+
+                                // Buat logbook untuk assignee baru
+                                foreach ($addedIds as $userId) {
+                                    $logbook = Logbook::create([
+                                        'user_id'           => $userId,
+                                        'ticket_id'         => $record->id,
+                                        'source'            => 'system',
+                                        'tanggal_pengisian' => $record->created_at->toDateString(),
+                                        'nama_pegawai'      => $record->employee?->name ?? '-',
+                                        'deskripsi_tugas'   => $record->name,
+                                        'status'            => $record->status ?? 'belum',
+                                        'lampiran'          => $record->attachment,
+                                    ]);
+                                    $logbook->assignees()->sync($finalAssigneeIds);
+                                }
+
+                                // Update assignees di logbook yang sudah ada
+                                foreach (array_intersect($finalAssigneeIds, $oldAssigneeIds) as $userId) {
+                                    $logbook = Logbook::where('ticket_id', $record->id)
+                                        ->where('user_id', $userId)
+                                        ->where('source', 'system')
+                                        ->first();
+                                    if ($logbook) {
+                                        $logbook->assignees()->sync($finalAssigneeIds);
+                                    }
                                 }
                             }
-                        }),
+                        })
+                        ->visible(fn () => auth()->user()->hasRole(['super_admin', 'pembimbing'])),
                 ]),
             ]);
     }
@@ -458,5 +580,11 @@ class TicketResource extends Resource
         $query = static::getEloquentQuery();
 
         return $query->count();
+    }
+
+    // Hanya Pembimbing, Pegawai BPS, dan Super Admin yang bisa create
+    public static function canCreate(): bool
+    {
+        return auth()->user()->hasRole(['super_admin', 'pembimbing', 'Pegawai BPS']);
     }
 }

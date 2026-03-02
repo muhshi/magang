@@ -3,21 +3,21 @@
 namespace App\Livewire;
 
 use App\Models\Attendance;
-use App\Models\Schedule;
+use App\Settings\SystemSettings;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 
 class Map extends Component
 {
-
-
     public function render()
     {
-        $schedule = Schedule::where('user_id', Auth::user()->id)->first();
+        $settings   = app(SystemSettings::class);
         $attendance = Attendance::with('user')->get();
-        //dd($schedule);
+
         return view('livewire.map', [
-            'schedule' => $schedule,
+            'officeLat'  => $settings->default_office_lat,
+            'officeLng'  => $settings->default_office_lng,
+            'radius'     => $settings->default_geofence_radius_m,
             'attendance' => $attendance,
         ]);
     }

@@ -41,6 +41,11 @@ return new class extends Migration
             $table->string('attachment')
                 ->nullable()
                 ->after('approved_at');
+
+            // Status field (static, no project dependency)
+            $table->enum('status', ['belum', 'proses', 'revisi', 'selesai'])
+                ->default('belum')
+                ->after('attachment');
         });
     }
 
@@ -58,6 +63,7 @@ return new class extends Migration
                 'approved_by',
                 'approved_at',
                 'attachment',
+                'status',
             ]);
         });
     }

@@ -23,6 +23,11 @@ class ShiftResource extends Resource
 
     protected static ?string $label = 'Jam Kerja';
 
+    public static function shouldRegisterNavigation(): bool
+    {
+        return false;
+    }
+
     public static function form(Form $form): Form
     {
         return $form

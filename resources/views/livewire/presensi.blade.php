@@ -7,11 +7,13 @@
 
                     <div class="bg-gray-100 p-4 rounded-lg shadow-lg mt-4">
                         <p><strong>Nama Peserta:</strong> {{ Auth::user()->name }}</p>
-                        <p><strong>Kantor : </strong>{{ $schedule->office->name }}</p>
-                        <p><strong>Shift :</strong> {{ $schedule->shift->name }} ({{ $schedule->shift->start_time }} -
-                            {{ $schedule->shift->end_time }}) WIB</p>
-                        @if ($schedule->is_wfa)
+                        <p><strong>Kantor : </strong>{{ $presensiData['officeName'] }}</p>
+                        <p><strong>Shift :</strong> {{ $presensiData['shiftName'] }} ({{ $presensiData['workStart'] }} -
+                            {{ $presensiData['workEnd'] }}) WIB</p>
+                        @if ($presensiData['isWfa'])
                             <p class="text-green-500"><strong>Status :</strong> WFA</p>
+                        @elseif ($presensiData['isBanned'])
+                            <p class="text-red-500"><strong>Status :</strong> Banned</p>
                         @else
                             <p><strong>Status :</strong> WFO</p>
                         @endif
@@ -38,6 +40,7 @@
                     </script>
                 @endif
 
+                @if (!$presensiData['isBanned'])
                 <div class="bg-gray-100 p-4 rounded-lg shadow-lg mt-4">
                     <h2 class="text-2xl font-semibold text-black dark:text-white"> Presensi </h2>
                     <div id="map" class="mb-4 rounded-lg border border-gray-300" wire:ignore></div>
@@ -57,23 +60,31 @@
                         @endif
                     </form>
                 </div>
+                @else
+                <div class="bg-red-50 p-4 rounded-lg shadow-lg mt-4 text-center">
+                    <p class="text-red-600 font-semibold">Anda sedang diblokir dari sistem presensi.</p>
+                    <p class="text-gray-500 text-sm">Silakan hubungi admin.</p>
+                </div>
+                @endif
 
             </div>
         </div>
     </div>
+
+    @if (!$presensiData['isBanned'])
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script>
         let map;
         let marker;
         let component;
         let lat, lng;
-        const office = @json([$schedule->office->latitude, $schedule->office->longitude]);
-        const radius = @json($schedule->office->radius);
+        const office = @json([$presensiData['officeLat'], $presensiData['officeLng']]);
+        const radius = @json($presensiData['radius']);
 
         document.addEventListener('livewire:initialized', function() {
             component = @this;
-            map = L.map('map').setView([{{ $schedule->office->latitude }},
-                {{ $schedule->office->longitude }}
+            map = L.map('map').setView([{{ $presensiData['officeLat'] }},
+                {{ $presensiData['officeLng'] }}
             ], 16);
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -116,7 +127,7 @@
         }
 
         function isWithinRadius(lat, lng, center, radius) {
-            const is_wfa = @json($schedule->is_wfa);
+            const is_wfa = @json($presensiData['isWfa']);
             if (is_wfa) {
                 return true;
             } else {
@@ -125,5 +136,6 @@
             }
         }
     </script>
+    @endif
 
 </div>

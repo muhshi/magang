@@ -12,6 +12,11 @@ class Map extends Page
     protected static ?string $navigationIcon = 'heroicon-o-map';
     protected static ?string $navigationGroup = 'Manajemen Presensi';
 
+    public static function shouldRegisterNavigation(): bool
+    {
+        return false;
+    }
+
     protected static ?string $label = 'Map Utama';
     protected static string $view = 'filament.pages.map';
 

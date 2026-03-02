@@ -5,162 +5,191 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <title>Sertifikat Magang - {{ $nama }}</title>
     <style>
-        /* Mengatur halaman agar tidak ada margin */
+        @font-face {
+            font-family: 'Anton';
+            src: url("{{ public_path('fonts/Anton-Regular.ttf') }}") format('truetype');
+            font-weight: normal;
+            font-style: normal;
+        }
+        @font-face {
+            font-family: 'Montserrat';
+            src: url("{{ public_path('fonts/Montserrat-Regular.ttf') }}") format('truetype');
+            font-weight: normal;
+            font-style: normal;
+        }
+        @font-face {
+            font-family: 'Montserrat';
+            src: url("{{ public_path('fonts/Montserrat-Bold.ttf') }}") format('truetype');
+            font-weight: bold;
+            font-style: normal;
+        }
+        @font-face {
+            font-family: 'OleoScript';
+            src: url("{{ public_path('fonts/OleoScript-Regular.ttf') }}") format('truetype');
+            font-weight: normal;
+            font-style: normal;
+        }
+
         @page {
             margin: 0;
         }
         body {
-            font-family: 'Times New Roman', Times, serif; /* Font lebih formal */
+            font-family: 'Montserrat', sans-serif;
             margin: 0;
             padding: 0;
+            color: #333;
         }
-        /* Kontainer utama yang ukurannya sama dengan halaman */
         .certificate-container {
             width: 100%;
             height: 100%;
-            position: relative;
-            /* background-image: url("{{ public_path('images/sertifikat-template.jpg') }}"); */
+            background-image: url("{{ public_path('images/TEMPLATE.png') }}");
             background-size: cover;
             background-repeat: no-repeat;
             background-position: center;
         }
 
-        /* =================================================================
-         * BAGIAN KUSTOMISASI: SESUAIKAN SEMUA NILAI PIXEL DI BAWAH INI
-         * agar pas dengan desain template dan seleramu.
-         * ================================================================= */
-
-        .logo {
-            position: absolute;
-            top: 80px;
-            left: 50%; /* Posisikan di tengah secara horizontal */
-            transform: translateX(-50%); /* Trik untuk centering sempurna */
-            width: 90px; /* Sesuaikan ukuran logo */
+        .content {
+            padding-top: 60px;
+            padding-left: 80px;
+            padding-right: 80px;
+            text-align: center;
         }
 
         .judul {
-            position: absolute;
-            width: 100%;
-            top: 180px; /* Turunkan di bawah logo */
-            text-align: center;
-            font-size: 32px;
-            font-weight: bold;
-            text-decoration: underline;
+            font-size: 54px;
+            font-family: 'Anton', sans-serif;
+            font-weight: normal;
+            color: #1a1a1a;
+            letter-spacing: 4px;
+            margin-bottom: 2px;
         }
 
         .nomor {
-            position: absolute;
+            font-size: 17px;
+            font-weight: bold;
+            color: #c8902e;
+            letter-spacing: 1px;
+            margin-bottom: 20px;
+        }
+
+        .pembuka {
+            font-size: 19px;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .nama-wrapper {
+            margin-bottom: 5px;
+        }
+        .nama-garis {
+            width: 400px;
+            margin: 0 auto;
+            border-bottom: 1px solid #999;
+        }
+        .nama-peserta {
+            font-size: 38px;
+            font-family: 'OleoScript', cursive;
+            color: #1a1a1a;
+            margin-top: -5px;
+        }
+
+        .info-peserta {
+            font-size: 17px;
+            line-height: 1.4;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .body-text {
+            font-size: 17px;
+            line-height: 1.5;
+            color: #333;
+            margin-bottom: 5px;
+            padding-left: 60px;
+            padding-right: 60px;
+        }
+        .predikat {
+            font-weight: bold;
+            color: #c8902e;
+            font-size: 17px;
+        }
+
+        .ttd-table {
             width: 100%;
-            top: 220px;
+        }
+        .ttd-cell {
             text-align: center;
-            font-size: 16px;
+            font-size: 17px;
+            line-height: 1.4;
+            vertical-align: top;
+            padding-top: 5px;
         }
-
-        .paragraf-pembuka {
-            position: absolute;
-            width: 80%;
-            top: 280px;
-            left: 10%;
-            text-align: justify;
-            font-size: 16px;
-            line-height: 1.5;
-        }
-
-        .foto-profil {
-            position: absolute;
-            top: 340px; /* Sejajarkan dengan blok data peserta */
-            left: 120px; /* Posisikan di sebelah kiri */
-            width: 120px;  /* Lebar 4cm (sekitar 151px) */
-            height: 180px; /* Tinggi 6cm (sekitar 227px) */
-            border: 1px solid #ccc;
-            object-fit: cover; /* Pastikan gambar mengisi area tanpa distorsi */
-        }
-
-        .data-peserta {
-            position: absolute;
-            top: 350px;
-            left: 280px; /* Geser ke kanan untuk memberi ruang bagi foto */
-            font-size: 16px;
-            line-height: 1.6;
-        }
-
-        .paragraf-penutup {
-            position: absolute;
-            width: 80%;
-            top: 450px; /* Sesuaikan posisinya di bawah blok data */
-            left: 10%;
-            text-align: justify;
-            font-size: 16px;
-            line-height: 1.5;
-        }
-
-        .ttd-block {
-            position: absolute;
-            top: 550px;
-            right: 90px;
-            width: 300px; /* Lebar area tanda tangan */
-            text-align: center;
-            font-size: 16px;
-            line-height: 1.5;
-        }
-
         .ttd-nama {
             font-weight: bold;
             text-decoration: underline;
-            margin-top: 80px; /* Jarak untuk tanda tangan */
+        }
+        .ttd-nip {
+            font-size: 14px;
         }
 
+        .qr-code {
+            width: 70px;
+            height: 70px;
+            margin: 5px auto;
+        }
     </style>
 </head>
 <body>
     <div class="certificate-container">
+        <div class="content">
 
-        {{-- 1. LOGO BPS (sekarang di tengah atas) --}}
-        <img src="{{ public_path('images/logo-bps.png') }}" class="logo" alt="Logo BPS">
+            {{-- 1. JUDUL --}}
+            <div class="judul">SERTIFIKAT MAGANG</div>
 
-        {{-- 2. FOTO PROFIL PESERTA (sekarang di kiri) --}}
-        @if($photoDataUri)
-            <img src="{{ $photoDataUri }}" class="foto-profil" alt="Foto Profil">
-        @endif
+            {{-- 2. NOMOR --}}
+            <div class="nomor">NOMOR : {{ $nomor }}</div>
 
-        {{-- 3. JUDUL SERTIFIKAT --}}
-        <div class="judul">SERTIFIKAT</div>
-        <div class="nomor">Nomor: ... / ... / ...</div>
+            {{-- 3. PEMBUKA --}}
+            <div class="pembuka">Dengan bangga diberikan kepada :</div>
 
-        {{-- 4. PARAGRAF PEMBUKA --}}
-        <div class="paragraf-pembuka">
-            Dengan ini menerangkan bahwa:
-        </div>
+            {{-- 4. NAMA PESERTA --}}
+            <div class="nama-wrapper">
+                <div class="nama-peserta">{{ $nama }}</div>
+                <div class="nama-garis"></div>
+            </div>
 
-        {{-- 5. DATA PESERTA --}}
-        <div class="data-peserta">
-            <table>
+            {{-- 5. INFO PESERTA --}}
+            <div class="info-peserta">
+                Mahasiswa Program Studi {{ $programStudi }}, {{ $fakultas }},<br>
+                {{ $universitas }}<br>
+                NIM : &nbsp;{{ $nim }}
+            </div>
+
+            {{-- 6. BODY TEXT --}}
+            <div class="body-text">
+                atas terselesaikannya Praktik Kerja Lapangan (PKL) di Badan Pusat Statistik Kabupaten
+                Demak dari tanggal <strong>{{ $periodeMulai }} - {{ $periodeSelesai }}</strong>
+                dengan hasil <span class="predikat">{{ $predikat }}</span>
+            </div>
+
+            {{-- 7. TTD --}}
+            <table class="ttd-table">
                 <tr>
-                    <td style="width: 200px;">Nama</td>
-                    <td>:</td>
-                    <td style="font-weight: bold;">{{ $nama }}</td>
-                </tr>
-                <tr>
-                    <td>Asal Instansi</td>
-                    <td>:</td>
-                    <td>{{ $universitas }}</td>
+                    <td width="50%"></td>
+                    <td width="50%" class="ttd-cell">
+                        Demak, {{ $tanggalSertifikat }}<br>
+                        Kepala<br>
+                        BPS Kabupaten Demak,<br>
+                        <img src="{{ $qrCodeDataUri }}" class="qr-code" alt="QR Code"><br>
+                        <span class="ttd-nama">{{ $kepalaBpsName }}</span><br>
+                        @if(!empty($kepalaBpsNip))
+                            <span class="ttd-nip">NIP. {{ $kepalaBpsNip }}</span>
+                        @endif
+                    </td>
                 </tr>
             </table>
-        </div>
 
-        {{-- 6. PARAGRAF PENUTUP --}}
-        <div class="paragraf-penutup">
-            Telah menyelesaikan Praktik Kerja Lapangan (PKL) di Badan Pusat Statistik (BPS) Kabupaten Demak yang dilaksanakan pada periode <strong>{{ $periode }}</strong> dengan hasil yang baik.
         </div>
-
-        {{-- 7. BLOK TANDA TANGAN --}}
-        <div class="ttd-block">
-            <div class="ttd-kota-tanggal">Demak, {{ \Carbon\Carbon::now()->translatedFormat('d F Y') }}</div>
-            <div class="ttd-jabatan">Kepala BPS Kabupaten Demak</div>
-            <div class="ttd-nama">Nama Kepala BPS</div>
-            <div class="ttd-nip">NIP. 123456789012345678</div>
-        </div>
-
     </div>
 </body>
 </html>
