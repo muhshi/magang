@@ -153,3 +153,12 @@ To run the application in development mode with auto-reloading, simply use the p
 ## License
 
 This project is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+
+## Changelog
+
+### 2 Maret 2026
+- **Fitur Sertifikat Magang**: Form isian, generate PDF, QR code verifikasi, halaman publik verifikasi & download
+- **Custom Fonts**: Anton (judul), Oleo Script (nama peserta), Montserrat (body) untuk template sertifikat
+- **Dashboard Peserta Magang**: Stats overview (sisa magang, hadir, izin/cuti, alpha, penugasan aktif, progress), quick actions, tabel penugasan aktif, tabel logbook terbaru
+- **Role Permission**: Seeder untuk Calon Magang, Magang BPS, Alumni Magang. Auto remove "Calon Magang" saat approve internship
+- **Magang BPS Permission**: Presensi, cuti, view sertifikat (create sertifikat hanya super_admin)
