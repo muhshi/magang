@@ -9,6 +9,7 @@ use Carbon\Carbon;
 use Filament\Actions;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\Page;
@@ -21,18 +22,18 @@ class PreviewCertificate extends Page
 
     public $record;
     public ?Certificate $certificate = null;
+    public ?string $pdfUrl = null;
 
     public function mount(int|string $record): void
     {
-        // Bypass Filament's query filter — just find the user directly
         $this->record = User::findOrFail($record);
 
         $internship = $this->record->internship;
-        if ($internship) {
+        if ($internship && $internship->certificate) {
             $this->certificate = $internship->certificate;
+            $this->pdfUrl = route('certificate.generate', $this->certificate->id);
         }
 
-        // Skip Filament authorization for this custom page
         static::authorizeResourceAccess();
     }
 
@@ -53,49 +54,93 @@ class PreviewCertificate extends Page
                 ->icon('heroicon-o-pencil-square')
                 ->color('warning')
                 ->form([
-                    Grid::make(2)->schema([
-                        TextInput::make('certificate_number')
-                            ->label('Nomor Sertifikat')
-                            ->default($this->certificate->certificate_number)
-                            ->required(),
+                    Section::make('Data Peserta')->schema([
+                        Grid::make(2)->schema([
+                            TextInput::make('full_name')
+                                ->label('Nama Lengkap')
+                                ->default($this->record->internship->full_name ?? '')
+                                ->required(),
 
-                        Select::make('predikat')
-                            ->label('Predikat')
-                            ->options([
-                                'SANGAT BAIK' => 'SANGAT BAIK',
-                                'BAIK' => 'BAIK',
-                                'CUKUP' => 'CUKUP',
-                                'KURANG' => 'KURANG',
-                            ])
-                            ->default($this->certificate->predikat)
-                            ->required(),
+                            TextInput::make('school_name')
+                                ->label('Universitas')
+                                ->default($this->record->internship->school_name ?? '')
+                                ->required(),
 
-                        TextInput::make('program_studi')
-                            ->label('Program Studi')
-                            ->default($this->certificate->program_studi)
-                            ->required(),
+                            TextInput::make('program_studi')
+                                ->label('Program Studi')
+                                ->default($this->certificate->program_studi)
+                                ->required(),
 
-                        TextInput::make('fakultas')
-                            ->label('Fakultas')
-                            ->default($this->certificate->fakultas)
-                            ->required(),
+                            TextInput::make('fakultas')
+                                ->label('Fakultas')
+                                ->default($this->certificate->fakultas)
+                                ->required(),
 
-                        TextInput::make('nim')
-                            ->label('NIM')
-                            ->default($this->certificate->nim)
-                            ->required(),
+                            TextInput::make('nim')
+                                ->label('NIM')
+                                ->default($this->certificate->nim)
+                                ->required(),
 
-                        DatePicker::make('certificate_date')
-                            ->label('Tanggal Sertifikat')
-                            ->default($this->certificate->certificate_date)
-                            ->required(),
+                            DatePicker::make('start_date')
+                                ->label('Periode Mulai')
+                                ->default($this->record->internship->start_date ?? null)
+                                ->required(),
+
+                            DatePicker::make('end_date')
+                                ->label('Periode Selesai')
+                                ->default($this->record->internship->end_date ?? null)
+                                ->required(),
+                        ]),
+                    ]),
+
+                    Section::make('Data Sertifikat')->schema([
+                        Grid::make(2)->schema([
+                            TextInput::make('certificate_number')
+                                ->label('Nomor Sertifikat')
+                                ->default($this->certificate->certificate_number)
+                                ->required(),
+
+                            Select::make('predikat')
+                                ->label('Predikat')
+                                ->options([
+                                    'SANGAT BAIK' => 'SANGAT BAIK',
+                                    'BAIK' => 'BAIK',
+                                    'CUKUP' => 'CUKUP',
+                                    'KURANG' => 'KURANG',
+                                ])
+                                ->default($this->certificate->predikat)
+                                ->required(),
+
+                            DatePicker::make('certificate_date')
+                                ->label('Tanggal Sertifikat')
+                                ->default($this->certificate->certificate_date)
+                                ->required(),
+                        ]),
                     ]),
                 ])
                 ->action(function (array $data): void {
-                    $this->certificate->update($data);
+                    $internship = $this->record->internship;
+
+                    // Update internship data
+                    $internship->update([
+                        'full_name' => $data['full_name'],
+                        'school_name' => $data['school_name'],
+                        'start_date' => $data['start_date'],
+                        'end_date' => $data['end_date'],
+                    ]);
+
+                    // Update certificate data
+                    $this->certificate->update([
+                        'certificate_number' => $data['certificate_number'],
+                        'predikat' => $data['predikat'],
+                        'program_studi' => $data['program_studi'],
+                        'fakultas' => $data['fakultas'],
+                        'nim' => $data['nim'],
+                        'certificate_date' => $data['certificate_date'],
+                    ]);
 
                     \Filament\Notifications\Notification::make()
-                        ->title('Sertifikat berhasil diperbarui')
+                        ->title('Data sertifikat berhasil diperbarui')
                         ->success()
                         ->send();
 

@@ -1,6 +1,18 @@
 <x-filament-panels::page>
     @if($certificate)
         <div class="space-y-6">
+            {{-- PDF Preview --}}
+            <x-filament::section heading="Preview Sertifikat PDF">
+                <div style="width: 100%; height: 500px; border: 1px solid rgba(128,128,128,0.3); border-radius: 8px; overflow: hidden;">
+                    <iframe
+                        src="{{ $pdfUrl }}"
+                        width="100%"
+                        height="100%"
+                        style="border: none;"
+                    ></iframe>
+                </div>
+            </x-filament::section>
+
             {{-- Info Peserta --}}
             <x-filament::section heading="Data Peserta">
                 <div class="grid grid-cols-2 gap-4">
