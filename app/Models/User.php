@@ -92,6 +92,14 @@ class User extends Authenticatable
         return $this->hasMany(Internship::class);
     }
 
+    /**
+     * Internship aktif (accepted) — untuk PesertaResource & sertifikat
+     */
+    public function internship(): HasOne
+    {
+        return $this->hasOne(Internship::class)->where('status', 'accepted')->latest();
+    }
+
     public function profile(): HasOne
     {
         return $this->hasOne(Profile::class);

@@ -19,6 +19,8 @@ use Illuminate\Support\Facades\Auth;
 
 class CertificateResource extends Resource
 {
+    protected static bool $shouldRegisterNavigation = false;
+
     protected static ?string $model = Certificate::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-academic-cap';

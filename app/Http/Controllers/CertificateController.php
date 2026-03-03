@@ -51,7 +51,7 @@ class CertificateController extends Controller
         $pdf = Pdf::loadView('certificates.template', $data)
             ->setPaper('a4', 'landscape');
 
-        return $pdf->stream('sertifikat-' . Str::slug($internship->full_name) . '.pdf');
+        return $pdf->download('sertifikat-' . Str::slug($internship->full_name) . '.pdf');
     }
 
     /**

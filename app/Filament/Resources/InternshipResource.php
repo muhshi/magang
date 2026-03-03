@@ -101,6 +101,18 @@ class InternshipResource extends Resource
                                     ])
                                     ->required(),
 
+                                TextInput::make('program_studi')
+                                    ->label('Program Studi')
+                                    ->required(),
+
+                                TextInput::make('fakultas')
+                                    ->label('Fakultas')
+                                    ->required(),
+
+                                TextInput::make('nim')
+                                    ->label('NIM / NISN')
+                                    ->required(),
+
                                 DatePicker::make('start_date')
                                     ->label('Durasi Magang (Mulai)')
                                     ->native(false)
