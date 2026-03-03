@@ -12,9 +12,11 @@ use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Actions\Action;
+use Filament\Tables\Actions\BulkAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Str;
 
 class PesertaResource extends Resource
@@ -24,6 +26,7 @@ class PesertaResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-s-user-group';
     protected static ?string $label = 'Peserta';
     protected static ?string $pluralLabel = 'Peserta';
+    protected static ?string $slug = 'peserta';
     protected static ?string $navigationGroup = 'Manajemen Sertifikat';
     protected static ?int $navigationSort = 1;
 
@@ -140,7 +143,56 @@ class PesertaResource extends Resource
                     })
                     ->url(fn ($record) => PesertaResource::getUrl('preview-certificate', ['record' => $record->id])),
             ])
-            ->bulkActions([]);
+            ->bulkActions([
+                BulkAction::make('generate_sertifikat_bulk')
+                    ->label('Generate Sertifikat')
+                    ->icon('heroicon-o-document-arrow-down')
+                    ->color('primary')
+                    ->requiresConfirmation()
+                    ->modalHeading('Generate Sertifikat')
+                    ->modalDescription('Sertifikat akan di-generate untuk semua peserta yang dipilih dan belum memiliki sertifikat. Lanjutkan?')
+                    ->action(function (Collection $records) {
+                        $generated = 0;
+                        $skipped = 0;
+
+                        foreach ($records as $record) {
+                            $internship = $record->internship;
+
+                            if (!$internship || $internship->certificate) {
+                                $skipped++;
+                                continue;
+                            }
+
+                            $lastCert = Certificate::orderBy('id', 'desc')->first();
+                            $lastNumber = 0;
+                            if ($lastCert && preg_match('/^B-(\d+)/', $lastCert->certificate_number, $matches)) {
+                                $lastNumber = (int) $matches[1];
+                            }
+                            $newNumber = $lastNumber + 1;
+                            $year = Carbon::now()->year;
+                            $certificateNumber = 'B-' . $newNumber . '/33210/HM.340/' . $year;
+
+                            Certificate::create([
+                                'internship_id' => $internship->id,
+                                'uuid' => Str::uuid(),
+                                'certificate_number' => $certificateNumber,
+                                'program_studi' => $internship->program_studi ?? '-',
+                                'fakultas' => $internship->fakultas ?? '-',
+                                'nim' => $internship->nim ?? '-',
+                                'predikat' => 'SANGAT BAIK',
+                                'certificate_date' => Carbon::today(),
+                            ]);
+
+                            $generated++;
+                        }
+
+                        Notification::make()
+                            ->title("Sertifikat di-generate: {$generated}, Dilewati: {$skipped}")
+                            ->success()
+                            ->send();
+                    })
+                    ->deselectRecordsAfterCompletion(),
+            ]);
     }
 
     /**
