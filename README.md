@@ -164,9 +164,11 @@ This project is open-sourced software licensed under the [MIT license](https://o
 - **Magang BPS Permission**: Presensi, cuti, view sertifikat (create sertifikat hanya super_admin)
 
 ### 3 Maret 2026
-- **Resource Peserta**: Daftar user Magang BPS + Alumni, action generate & lihat sertifikat
-- **Auto-Generate Sertifikat**: One-click generate dari data pendaftaran (nomor sequential, predikat default SANGAT BAIK)
-- **Preview + Edit Sertifikat**: Halaman preview data sertifikat dengan modal edit (nomor, predikat, prodi, fakultas, nim, tanggal)
-- **Download PDF**: Generate sertifikat → download langsung (bukan preview browser)
+- **Resource Peserta**: Daftar user Magang BPS + Alumni dengan tabs filter dan badge count
+- **Auto-Generate Sertifikat**: One-click generate dari data pendaftaran (nomor sequential, predikat default SANGAT BAIK), bulk action tersedia
+- **Preview Sertifikat**: Halaman preview dengan embedded PDF iframe + data peserta & sertifikat
+- **Edit Semua Field**: Modal edit mencakup data peserta (nama, universitas, prodi, fakultas, NIM, periode) dan sertifikat (nomor, predikat, tanggal)
+- **Download PDF**: Tombol download terpisah dari preview
 - **Form Pendaftaran**: Tambah field program studi, fakultas, NIM di section Data Pendidikan
+- **Tabs Peserta**: Filter Magang BPS (aktif) dan Alumni (durasi selesai) dengan badge jumlah
 - **Hapus Section Sertifikat**: CertificateResource dihilangkan dari sidebar, diganti resource Peserta
