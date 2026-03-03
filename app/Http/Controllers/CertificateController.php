@@ -20,6 +20,7 @@ class CertificateController extends Controller
         $settings = app(SystemSettings::class);
 
         // Siapkan data teks
+        Carbon::setLocale('id');
         $tanggalMulai = Carbon::parse($internship->start_date)->translatedFormat('d F Y');
         $tanggalSelesai = Carbon::parse($internship->end_date)->translatedFormat('d F Y');
         $tanggalSertifikat = Carbon::parse($certificate->certificate_date)->translatedFormat('d F Y');
@@ -86,6 +87,7 @@ class CertificateController extends Controller
         $internship = $certificate->internship;
         $settings = app(SystemSettings::class);
 
+        Carbon::setLocale('id');
         $tanggalMulai = Carbon::parse($internship->start_date)->translatedFormat('d F Y');
         $tanggalSelesai = Carbon::parse($internship->end_date)->translatedFormat('d F Y');
         $tanggalSertifikat = Carbon::parse($certificate->certificate_date)->translatedFormat('d F Y');
