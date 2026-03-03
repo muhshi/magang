@@ -11,12 +11,7 @@ use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
-use Filament\Infolists\Components\Section;
-use Filament\Infolists\Components\TextEntry;
-use Filament\Infolists\Infolist;
 use Filament\Resources\Pages\Page;
-use Illuminate\Support\Facades\Auth;
 
 class PreviewCertificate extends Page
 {
@@ -24,17 +19,21 @@ class PreviewCertificate extends Page
     protected static string $view = 'filament.resources.peserta-resource.pages.preview-certificate';
     protected static ?string $title = 'Preview Sertifikat';
 
-    public User $record;
+    public $record;
     public ?Certificate $certificate = null;
 
     public function mount(int|string $record): void
     {
+        // Bypass Filament's query filter — just find the user directly
         $this->record = User::findOrFail($record);
-        $internship = $this->record->internship;
 
+        $internship = $this->record->internship;
         if ($internship) {
             $this->certificate = $internship->certificate;
         }
+
+        // Skip Filament authorization for this custom page
+        static::authorizeResourceAccess();
     }
 
     protected function getHeaderActions(): array
