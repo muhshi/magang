@@ -9,7 +9,7 @@
     <meta name="keywords" content="">
 
     <!-- Favicons -->
-    <link href="{{ asset('landing-assets/img/logo1.png') }}" rel="icon">
+    <link href="{{ asset('landing-assets/img/logo2.png') }}" rel="icon">
     <link href="{{ asset('landing-assets/img/apple-touch-icon.png') }}" rel="apple-touch-icon">
 
     <!-- Fonts -->
@@ -80,7 +80,7 @@
         <!-- Hero Section -->
         <section id="hero" class="hero section">
             <div class="hero-bg">
-                <img src="{{ asset('landing-assets/img/logo1.png') }}" alt="">
+                <img src="{{ asset('landing-assets/img/logo2.png') }}" alt="">
             </div>
             <div class="container text-center">
                 <div class="d-flex flex-column justify-content-center align-items-center">
@@ -95,7 +95,7 @@
                             class="glightbox btn-watch-video d-flex align-items-center"><i
                                 class="bi bi-play-circle"></i><span>Watch Video</span></a>
                     </div>
-                    <img src="{{ asset('landing-assets/img/logo1.png') }}" class="img-fluid hero-img" alt=""
+                    <img src="{{ asset('landing-assets/img/logo2.png') }}" class="img-fluid hero-img" alt=""
                         data-aos="zoom-out" data-aos-delay="300">
                 </div>
             </div>

@@ -172,3 +172,6 @@ This project is open-sourced software licensed under the [MIT license](https://o
 - **Form Pendaftaran**: Tambah field program studi, fakultas, NIM di section Data Pendidikan
 - **Tabs Peserta**: Filter Magang BPS (aktif) dan Alumni (durasi selesai) dengan badge jumlah
 - **Hapus Section Sertifikat**: CertificateResource dihilangkan dari sidebar, diganti resource Peserta
+
+### 4 Maret 2026
+- **Dynamic Education Fields**: Field program studi & fakultas otomatis disabled saat tingkat pendidikan SMA/SMK dipilih, label NIM/NISN berubah dinamis sesuai tingkat pendidikan

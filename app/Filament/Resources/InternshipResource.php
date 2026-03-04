@@ -99,18 +99,27 @@ class InternshipResource extends Resource
                                         'S1' => 'Sarjana (S1)',
                                         'S2' => 'Magister (S2)',
                                     ])
+                                    ->live()
+                                    ->afterStateUpdated(function (Forms\Set $set, ?string $state) {
+                                        if (in_array($state, ['SMA', 'SMK'])) {
+                                            $set('program_studi', null);
+                                            $set('fakultas', null);
+                                        }
+                                    })
                                     ->required(),
 
                                 TextInput::make('program_studi')
                                     ->label('Program Studi')
-                                    ->required(),
+                                    ->disabled(fn (Get $get): bool => in_array($get('education_level'), ['SMA', 'SMK']))
+                                    ->required(fn (Get $get): bool => !in_array($get('education_level'), ['SMA', 'SMK'])),
 
                                 TextInput::make('fakultas')
                                     ->label('Fakultas')
-                                    ->required(),
+                                    ->disabled(fn (Get $get): bool => in_array($get('education_level'), ['SMA', 'SMK']))
+                                    ->required(fn (Get $get): bool => !in_array($get('education_level'), ['SMA', 'SMK'])),
 
                                 TextInput::make('nim')
-                                    ->label('NIM / NISN')
+                                    ->label(fn (Get $get): string => in_array($get('education_level'), ['SMA', 'SMK']) ? 'NISN' : 'NIM')
                                     ->required(),
 
                                 DatePicker::make('start_date')
