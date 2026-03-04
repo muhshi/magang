@@ -22,6 +22,7 @@ class Internship extends Model
         'email',
         'school_name',
         'education_level',
+        'jurusan',
         'program_studi',
         'fakultas',
         'nim',

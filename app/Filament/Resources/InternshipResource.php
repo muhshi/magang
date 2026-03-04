@@ -108,6 +108,10 @@ class InternshipResource extends Resource
                                     })
                                     ->required(),
 
+                                TextInput::make('jurusan')
+                                    ->label('Jurusan')
+                                    ->required(),
+
                                 TextInput::make('program_studi')
                                     ->label('Program Studi')
                                     ->disabled(fn (Get $get): bool => in_array($get('education_level'), ['SMA', 'SMK']))

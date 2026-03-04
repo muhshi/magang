@@ -175,3 +175,4 @@ This project is open-sourced software licensed under the [MIT license](https://o
 
 ### 4 Maret 2026
 - **Dynamic Education Fields**: Field program studi & fakultas otomatis disabled saat tingkat pendidikan SMA/SMK dipilih, label NIM/NISN berubah dinamis sesuai tingkat pendidikan
+- **Field Jurusan**: Tambah field Jurusan di section Data Pendidikan (wajib diisi untuk semua tingkat pendidikan)
