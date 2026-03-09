@@ -26,6 +26,9 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 
+use Filament\Support\Facades\FilamentView;
+use Illuminate\Support\Facades\Blade;
+
 class AdminPanelProvider extends PanelProvider
 {
     public function panel(Panel $panel): Panel
@@ -97,7 +100,13 @@ class AdminPanelProvider extends PanelProvider
                 Authenticate::class,
             ])
             ->passwordReset()
-            ->emailVerification();
+            ->emailVerification()
+            ->renderHook(
+                'panels::body.end',
+                fn (): string => auth()->check() && !auth()->user()->hasRole('super_admin')
+                    ? Blade::render('@livewire(\'chat-widget\')')
+                    : '',
+            );
 
     }
 }

@@ -176,3 +176,12 @@ This project is open-sourced software licensed under the [MIT license](https://o
 ### 4 Maret 2026
 - **Dynamic Education Fields**: Field program studi & fakultas otomatis disabled saat tingkat pendidikan SMA/SMK dipilih, label NIM/NISN berubah dinamis sesuai tingkat pendidikan
 - **Field Jurusan**: Tambah field Jurusan di section Data Pendidikan (wajib diisi untuk semua tingkat pendidikan)
+
+### 9 Maret 2026
+- **Fitur Chat User ↔ Admin**: Floating chat widget di kiri bawah semua halaman (Filament + Landing Page), user bisa langsung chat ke admin
+- **Admin Chat Inbox**: Halaman khusus super admin (`/admin/chat`) dengan daftar percakapan dan detail chat split-view
+- **File Attachment**: Kirim file/gambar di chat, preview gambar langsung di bubble chat
+- **Polling 5 Detik**: Auto-refresh pesan baru setiap 5 detik via Livewire polling
+- **Unread Indicator**: Badge unread di floating button dan dot indicator di inbox admin
+- **Auto Retention 60 Hari**: Scheduled command `chat:prune` hapus pesan lama otomatis setiap hari
+- **Responsive Design**: Chat widget responsive untuk mobile, admin inbox stack layout di layar kecil

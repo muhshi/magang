@@ -878,6 +878,13 @@
     <!-- Main JS File -->
     <script src="{{ asset('landing-assets/js/main.js') }}"></script>
 
+    {{-- Livewire Chat Widget (hanya untuk user yang sudah login) --}}
+    @auth
+        @livewireStyles
+        @livewireScripts
+        @livewire('chat-widget')
+    @endauth
+
 </body>
 
 </html>

@@ -104,4 +104,9 @@ class User extends Authenticatable
     {
         return $this->hasOne(Profile::class);
     }
+
+    public function chatConversation(): HasOne
+    {
+        return $this->hasOne(ChatConversation::class);
+    }
 }
