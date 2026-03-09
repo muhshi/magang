@@ -35,6 +35,7 @@ class AdminPanelProvider extends PanelProvider
     {
         return $panel
             ->spa()
+            ->globalSearchDebounce('500ms')
             ->favicon(asset('images/logo BPS.svg'))
             ->databaseTransactions()
             ->default()

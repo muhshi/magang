@@ -350,6 +350,49 @@
                 height: 50px;
             }
         }
+
+        /* ========== DARK MODE (Filament .dark class) ========== */
+        .dark .chat-panel {
+            background: #1e293b;
+            box-shadow: 0 12px 40px rgba(0,0,0,0.4);
+        }
+        .dark .chat-messages {
+            background: #0f172a;
+        }
+        .dark .chat-empty-state {
+            color: #64748b;
+        }
+        .dark .chat-bubble-received {
+            background: #334155;
+            color: #e2e8f0;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+        }
+        .dark .chat-input-area {
+            background: #1e293b;
+            border-top-color: #334155;
+        }
+        .dark .chat-attach-btn {
+            color: #94a3b8;
+        }
+        .dark .chat-input {
+            background: #0f172a;
+            border-color: #334155;
+            color: #e2e8f0;
+        }
+        .dark .chat-input:focus {
+            border-color: #3b82f6;
+            background: #1e293b;
+        }
+        .dark .chat-attachment-preview {
+            background: #1e3a5f;
+            color: #93c5fd;
+        }
+        .dark .chat-attachment-file {
+            background: rgba(255,255,255,0.1);
+        }
+        .dark .chat-unread-badge {
+            border-color: #1e293b;
+        }
     </style>
 
     @script

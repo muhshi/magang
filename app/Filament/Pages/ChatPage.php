@@ -26,6 +26,10 @@ class ChatPage extends Page
 
     public static function getNavigationBadge(): ?string
     {
+        if (!auth()->check() || !auth()->user()->hasRole('super_admin')) {
+            return null;
+        }
+
         $count = ChatConversation::where('is_read_by_admin', false)->count();
 
         return $count > 0 ? (string) $count : null;
@@ -34,5 +38,10 @@ class ChatPage extends Page
     public static function getNavigationBadgeColor(): string|array|null
     {
         return 'danger';
+    }
+
+    public static function getNavigationBadgeTooltip(): ?string
+    {
+        return 'Pesan belum dibaca';
     }
 }
