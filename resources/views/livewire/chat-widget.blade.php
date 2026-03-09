@@ -109,7 +109,7 @@
         .chat-float-btn {
             position: fixed;
             bottom: 28px;
-            left: 28px;
+            right: 28px;
             z-index: 9999;
             width: 56px;
             height: 56px;
@@ -147,7 +147,7 @@
         .chat-panel {
             position: fixed;
             bottom: 96px;
-            left: 28px;
+            right: 28px;
             z-index: 9998;
             width: 370px;
             max-height: 520px;
@@ -339,13 +339,13 @@
         @media (max-width: 480px) {
             .chat-panel {
                 width: calc(100vw - 24px);
-                left: 12px;
+                right: 12px;
                 bottom: 88px;
                 max-height: 70vh;
             }
             .chat-float-btn {
                 bottom: 20px;
-                left: 20px;
+                right: 20px;
                 width: 50px;
                 height: 50px;
             }
