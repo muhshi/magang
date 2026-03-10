@@ -191,4 +191,5 @@ This project is open-sourced software licensed under the [MIT license](https://o
 - **Hapus Badge Count Pesan Masuk**: Menghapus badge angka di samping teks "Pesan Masuk" pada halaman chat inbox admin
 - **Register EmployeeSeeder**: Mendaftarkan `EmployeeSeeder` di `DatabaseSeeder` agar data 44 pegawai BPS otomatis terisi saat `php artisan db:seed`
 - **Upload Template Sertifikat**: Fitur upload gambar template sertifikat (JPG/PNG) di Pengaturan Sistem, background sertifikat PDF sekarang dinamis dari setting
-- **Merge**: Menggabungkan fitur dan perbaikan tambahan dari branch `nana-work` ke `main`
+- **Ubah Judul Utama**: Mengubah judul aplikasi di README menjadi Mangga Muda (Manajemen Magang Terintegrasi dan Mudah)
+- **Replace README**: Menggunakan versi README.md dari branch `nana-work`
