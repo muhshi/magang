@@ -1,4 +1,4 @@
-# DewaKoding Project Management
+# Mangga Muda (Manajemen Magang Terintegrasi dan Mudah)
 
 ![image](https://raw.githubusercontent.com/SeptiawanAjiP/dewakoding-project-management/refs/heads/main/image-1.jpeg)
 ![image](https://raw.githubusercontent.com/SeptiawanAjiP/dewakoding-project-management/refs/heads/main/image-4.jpeg)
