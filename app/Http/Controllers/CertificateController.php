@@ -47,6 +47,7 @@ class CertificateController extends Controller
             'kepalaBpsName' => $settings->kepala_bps_name,
             'kepalaBpsNip' => $settings->kepala_bps_nip,
             'qrCodeDataUri' => $qrCodeDataUri,
+            'certificateTemplatePath' => $settings->certificate_template_path ?? 'images/TEMPLATE.png',
         ];
 
         $pdf = Pdf::loadView('certificates.template', $data)
@@ -113,6 +114,7 @@ class CertificateController extends Controller
             'kepalaBpsName' => $settings->kepala_bps_name,
             'kepalaBpsNip' => $settings->kepala_bps_nip,
             'qrCodeDataUri' => $qrCodeDataUri,
+            'certificateTemplatePath' => $settings->certificate_template_path ?? 'images/TEMPLATE.png',
         ];
 
         $pdf = Pdf::loadView('certificates.template', $data)

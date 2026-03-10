@@ -5,10 +5,13 @@ namespace App\Filament\Pages;
 use App\Settings\SystemSettings;
 use Dotswan\MapPicker\Fields\Map;
 use Filament\Forms\Components\CheckboxList;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\TimePicker;
+use Filament\Forms\Components\ViewField;
+use Illuminate\Support\Facades\Storage;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
@@ -38,13 +41,14 @@ class SystemSettingsPage extends Page implements HasForms
     public function mount(SystemSettings $settings): void
     {
         $this->form->fill([
-            'default_office_name'      => $settings->default_office_name ?? 'BPS Kabupaten Demak',
-            'default_office_lat'       => $settings->default_office_lat ?? -6.894561,
-            'default_office_lng'       => $settings->default_office_lng ?? 110.637492,
-            'default_geofence_radius_m'=> $settings->default_geofence_radius_m ?? 100,
-            'default_work_start'       => $settings->default_work_start ?? '08:00',
-            'default_work_end'         => $settings->default_work_end ?? '16:00',
-            'default_workdays'         => $settings->default_workdays ?? [1, 2, 3, 4, 5],
+            'default_office_name'        => $settings->default_office_name ?? 'BPS Kabupaten Demak',
+            'default_office_lat'         => $settings->default_office_lat ?? -6.894561,
+            'default_office_lng'         => $settings->default_office_lng ?? 110.637492,
+            'default_geofence_radius_m'  => $settings->default_geofence_radius_m ?? 100,
+            'default_work_start'         => $settings->default_work_start ?? '08:00',
+            'default_work_end'           => $settings->default_work_end ?? '16:00',
+            'default_workdays'           => $settings->default_workdays ?? [1, 2, 3, 4, 5],
+            'certificate_template_path'  => $settings->certificate_template_path ?? 'images/TEMPLATE.png',
         ]);
     }
 
@@ -131,6 +135,21 @@ class SystemSettingsPage extends Page implements HasForms
                             7 => 'Minggu',
                         ]),
                 ])->columns(1),
+
+                Section::make('Template Sertifikat')->schema([
+                    FileUpload::make('certificate_template_upload')
+                        ->label('Upload Template Baru')
+                        ->helperText('Upload gambar JPG/PNG untuk background sertifikat (landscape A4). Kosongkan jika tidak ingin mengubah.')
+                        ->acceptedFileTypes(['image/jpeg', 'image/png'])
+                        ->directory('certificate-templates')
+                        ->disk('public')
+                        ->image()
+                        ->imagePreviewHeight('200')
+                        ->maxSize(5120),
+                    ViewField::make('certificate_template_preview')
+                        ->label('Template Aktif')
+                        ->view('filament.forms.certificate-template-preview'),
+                ])->columns(1),
             ])->columnSpan(1),
 
         ])
@@ -141,7 +160,7 @@ class SystemSettingsPage extends Page implements HasForms
     public function save(): void
     {
         $state = collect($this->form->getState())
-            ->except('default_location') // field bantu MapPicker
+            ->except(['default_location', 'certificate_template_upload', 'certificate_template_preview'])
             ->toArray();
 
         if (strcmp($state['default_work_start'], $state['default_work_end']) >= 0) {
@@ -150,6 +169,23 @@ class SystemSettingsPage extends Page implements HasForms
         }
 
         $settings = app(SystemSettings::class);
+
+        // Handle certificate template upload
+        $formState = $this->form->getState();
+        $uploadedFile = $formState['certificate_template_upload'] ?? null;
+
+        if ($uploadedFile) {
+            // Uploaded file path is relative to public disk
+            $newPath = is_array($uploadedFile) ? reset($uploadedFile) : $uploadedFile;
+
+            // Delete old template if it's not the default
+            $oldPath = $settings->certificate_template_path;
+            if ($oldPath && $oldPath !== 'images/TEMPLATE.png' && Storage::disk('public')->exists($oldPath)) {
+                Storage::disk('public')->delete($oldPath);
+            }
+
+            $state['certificate_template_path'] = $newPath;
+        }
 
         $changed = [];
         foreach ($state as $key => $value) {
