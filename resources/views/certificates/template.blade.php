@@ -42,7 +42,11 @@
         .certificate-container {
             width: 100%;
             height: 100%;
-            background-image: url("{{ public_path('images/TEMPLATE.png') }}");
+            @if(file_exists(storage_path('app/public/' . $certificateTemplatePath)))
+                background-image: url("{{ storage_path('app/public/' . $certificateTemplatePath) }}");
+            @else
+                background-image: url("{{ public_path($certificateTemplatePath) }}");
+            @endif
             background-size: cover;
             background-repeat: no-repeat;
             background-position: center;

@@ -15,6 +15,7 @@ class SystemSettings extends Settings
     public array $default_workdays;
     public string $kepala_bps_name;
     public string $kepala_bps_nip;
+    public string $certificate_template_path;
 
     public static function group(): string
     {
