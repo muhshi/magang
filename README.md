@@ -193,3 +193,4 @@ This project is open-sourced software licensed under the [MIT license](https://o
 - **Upload Template Sertifikat**: Fitur upload gambar template sertifikat (JPG/PNG) di Pengaturan Sistem, background sertifikat PDF sekarang dinamis dari setting
 - **Ubah Judul Utama**: Mengubah judul aplikasi di README menjadi Mangga Muda (Manajemen Magang Terintegrasi dan Mudah)
 - **Replace README**: Menggunakan versi README.md dari branch `nana-work`
+- **Fix Docker Configuration**: Mengembalikan file `docker-compose.yml` untuk portainer (magang-franken) yang sempat tertimpa versi Sail, serta memperbaiki `Dockerfile` (menghapus trailing spaces dan menyesuaikan ekstensi PCNTL, Zip, Exif)
