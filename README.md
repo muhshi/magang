@@ -182,6 +182,9 @@ This project is open-sourced software licensed under the [MIT license](https://o
 - **Admin Chat Inbox**: Halaman khusus super admin (`/admin/chat`) dengan daftar percakapan dan detail chat split-view
 - **File Attachment**: Kirim file/gambar di chat, preview gambar langsung di bubble chat
 - **Polling 5 Detik**: Auto-refresh pesan baru setiap 5 detik via Livewire polling
-- **Unread Indicator**: Badge unread di floating button dan dot indicator di inbox admin
+- **Unread Indicator**: Dot indicator di inbox admin
 - **Auto Retention 60 Hari**: Scheduled command `chat:prune` hapus pesan lama otomatis setiap hari
 - **Responsive Design**: Chat widget responsive untuk mobile, admin inbox stack layout di layar kecil
+
+### 10 Maret 2026
+- **Hapus Badge Unread Chat**: Menghapus badge angka unread di sidebar admin Chat karena logika read/unread tidak akurat
