@@ -3,6 +3,8 @@
 /public/build
 /public/hot
 /public/storage
+/storage/app/*
+!/storage/app/public/.gitignore
 /storage/*.key
 /storage/pail
 /vendor
