@@ -4,7 +4,6 @@
         <div class="admin-chat-sidebar">
             <div class="admin-chat-sidebar-header">
                 <h3>Pesan Masuk</h3>
-                <span class="admin-chat-count">{{ $this->conversations->count() }}</span>
             </div>
 
             <div class="admin-chat-conversation-list">
@@ -160,14 +159,7 @@
             font-weight: 700;
             color: #1e293b;
         }
-        .admin-chat-count {
-            background: #3b82f6;
-            color: white;
-            border-radius: 12px;
-            padding: 2px 10px;
-            font-size: 13px;
-            font-weight: 600;
-        }
+
         .admin-chat-conversation-list {
             flex: 1;
             overflow-y: auto;
