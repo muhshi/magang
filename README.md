@@ -189,3 +189,4 @@ This project is open-sourced software licensed under the [MIT license](https://o
 ### 10 Maret 2026
 - **Hapus Badge Unread Chat**: Menghapus badge angka unread di sidebar admin Chat karena logika read/unread tidak akurat
 - **Hapus Badge Count Pesan Masuk**: Menghapus badge angka di samping teks "Pesan Masuk" pada halaman chat inbox admin
+- **Register EmployeeSeeder**: Mendaftarkan `EmployeeSeeder` di `DatabaseSeeder` agar data 44 pegawai BPS otomatis terisi saat `php artisan db:seed`
