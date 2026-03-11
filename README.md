@@ -198,3 +198,4 @@ This project is open-sourced software licensed under the [MIT license](https://o
 
 ### 11 Maret 2026
 - **Password Protection PDF Sertifikat**: PDF sertifikat dilindungi owner password mencegah pengeditan, tetap bisa dibuka dan dicetak tanpa password. Password default `demak3321`, bisa diubah di Pengaturan Sistem
+- **Fix Invalid Date Penugasan**: Memperbaiki error `Carbon\InvalidFormatException` saat buka detail penugasan data lama yang tanggalnya berisi "-". Migration membersihkan data + kode defensive untuk mencegah crash di masa depan
