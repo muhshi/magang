@@ -195,3 +195,6 @@ This project is open-sourced software licensed under the [MIT license](https://o
 - **Replace README**: Menggunakan versi README.md dari branch `nana-work`
 - **Fix Docker Configuration**: Mengembalikan file `docker-compose.yml` untuk portainer (magang-franken) yang sempat tertimpa versi Sail, serta memperbaiki `Dockerfile` (menghapus trailing spaces dan menyesuaikan ekstensi PCNTL, Zip, Exif)
 - **Fix Presensi Error**: Menyelesaikan issue Class "Spatie\LaravelSettings\Settings" not found pada sisi server dengan `composer install` dan `optimize:clear`, serta memperbaiki error Leaflet map `addLayer` pada halaman presensi dan mengganti CDN Tailwind dengan Vite.
+
+### 11 Maret 2026
+- **Password Protection PDF Sertifikat**: PDF sertifikat dilindungi owner password mencegah pengeditan, tetap bisa dibuka dan dicetak tanpa password. Password default `demak3321`, bisa diubah di Pengaturan Sistem
