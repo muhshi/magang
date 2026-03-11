@@ -207,21 +207,23 @@ class ViewTicket extends ViewRecord
                                 ->schema([
                                     TextEntry::make('created_at')
                                         ->label('Tgl Pengisian')
-                                        ->date('d/m/Y'),
+                                        ->formatStateUsing(fn ($state) => $state && $state !== '-' ? \Carbon\Carbon::parse($state)->format('d/m/Y') : '-')
+                                        ->placeholder('-'),
 
                                     TextEntry::make('start_date')
                                         ->label('Mulai')
-                                        ->date('d/m/Y')
-                                        ->default('-'),
+                                        ->formatStateUsing(fn ($state) => $state && $state !== '-' ? \Carbon\Carbon::parse($state)->format('d/m/Y') : '-')
+                                        ->placeholder('-'),
 
                                     TextEntry::make('due_date')
                                         ->label('Selesai')
-                                        ->date('d/m/Y')
-                                        ->default('-'),
+                                        ->formatStateUsing(fn ($state) => $state && $state !== '-' ? \Carbon\Carbon::parse($state)->format('d/m/Y') : '-')
+                                        ->placeholder('-'),
 
                                     TextEntry::make('updated_at')
                                         ->label('Terakhir Diperbarui')
-                                        ->dateTime('d/m/Y H:i'),
+                                        ->formatStateUsing(fn ($state) => $state && $state !== '-' ? \Carbon\Carbon::parse($state)->format('d/m/Y H:i') : '-')
+                                        ->placeholder('-'),
                                 ]),
                         ])->columnSpan(1),
                     ]),
