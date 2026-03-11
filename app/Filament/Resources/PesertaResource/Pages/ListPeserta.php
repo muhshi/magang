@@ -20,17 +20,10 @@ class ListPeserta extends ListRecords
             'magang_bps' => Tab::make('Magang BPS')
                 ->modifyQueryUsing(fn (Builder $query) =>
                     $query->whereHas('roles', fn ($q) => $q->where('name', 'Magang BPS'))
-                        ->whereHas('internship', fn ($q) =>
-                            $q->where('status', 'accepted')
-                              ->where('end_date', '>=', Carbon::today())
-                        )
                 )
                 ->badge(fn () =>
                     \App\Models\User::whereHas('roles', fn ($q) => $q->where('name', 'Magang BPS'))
-                        ->whereHas('internship', fn ($q) =>
-                            $q->where('status', 'accepted')
-                              ->where('end_date', '>=', Carbon::today())
-                        )->count()
+                        ->count()
                 ),
 
             'alumni' => Tab::make('Alumni')
