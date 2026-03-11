@@ -53,7 +53,19 @@ class CertificateController extends Controller
         $pdf = Pdf::loadView('certificates.template', $data)
             ->setPaper('a4', 'landscape');
 
-        return $pdf->stream('sertifikat-' . Str::slug($internship->full_name) . '.pdf');
+        // Apply PDF owner password protection (prevents editing, allows viewing & printing)
+        $ownerPassword = $settings->certificate_pdf_password ?? 'demak3321';
+        $dompdf = $pdf->getDomPDF();
+        $dompdf->render();
+        $canvas = $dompdf->getCanvas();
+        $cpdf = $canvas->get_cpdf();
+        $cpdf->setEncryption('', $ownerPassword, ['print', 'copy']);
+
+        $filename = 'sertifikat-' . Str::slug($internship->full_name) . '.pdf';
+
+        return response($dompdf->output(), 200)
+            ->header('Content-Type', 'application/pdf')
+            ->header('Content-Disposition', 'inline; filename="' . $filename . '"');
     }
 
     /**
@@ -120,6 +132,18 @@ class CertificateController extends Controller
         $pdf = Pdf::loadView('certificates.template', $data)
             ->setPaper('a4', 'landscape');
 
-        return $pdf->download('sertifikat-' . Str::slug($internship->full_name) . '.pdf');
+        // Apply PDF owner password protection
+        $ownerPassword = $settings->certificate_pdf_password ?? 'demak3321';
+        $dompdf = $pdf->getDomPDF();
+        $dompdf->render();
+        $canvas = $dompdf->getCanvas();
+        $cpdf = $canvas->get_cpdf();
+        $cpdf->setEncryption('', $ownerPassword, ['print', 'copy']);
+
+        $filename = 'sertifikat-' . Str::slug($internship->full_name) . '.pdf';
+
+        return response($dompdf->output(), 200)
+            ->header('Content-Type', 'application/pdf')
+            ->header('Content-Disposition', 'attachment; filename="' . $filename . '"');
     }
 }

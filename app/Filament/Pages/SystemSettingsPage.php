@@ -49,6 +49,7 @@ class SystemSettingsPage extends Page implements HasForms
             'default_work_end'           => $settings->default_work_end ?? '16:00',
             'default_workdays'           => $settings->default_workdays ?? [1, 2, 3, 4, 5],
             'certificate_template_path'  => $settings->certificate_template_path ?? 'images/TEMPLATE.png',
+            'certificate_pdf_password'   => $settings->certificate_pdf_password ?? 'demak3321',
         ]);
     }
 
@@ -149,6 +150,12 @@ class SystemSettingsPage extends Page implements HasForms
                     ViewField::make('certificate_template_preview')
                         ->label('Template Aktif')
                         ->view('filament.forms.certificate-template-preview'),
+                    TextInput::make('certificate_pdf_password')
+                        ->label('Password PDF Sertifikat')
+                        ->helperText('Password untuk melindungi PDF dari pengeditan. PDF tetap bisa dibuka dan dicetak tanpa password.')
+                        ->required()
+                        ->password()
+                        ->revealable(),
                 ])->columns(1),
             ])->columnSpan(1),
 

@@ -16,6 +16,7 @@ class SystemSettings extends Settings
     public string $kepala_bps_name;
     public string $kepala_bps_nip;
     public string $certificate_template_path;
+    public string $certificate_pdf_password;
 
     public static function group(): string
     {
