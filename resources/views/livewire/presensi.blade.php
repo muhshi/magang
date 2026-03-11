@@ -1,75 +1,406 @@
 <div>
-    <div class="container mx-auto max-w-sm">
-        <div class="bg-white p-6 rounded-lg mt-3 shadow-lg">
-            <div class="grid grid-cols-1 gap-6 mb-6">
-                <div>
-                    <h2 class="text-2xl font-semibold text-black dark:text-white">Presensi Magang</h2>
+    <div class="presensi-wrapper">
+        {{-- Header Card --}}
+        <div class="presensi-card presensi-header-card">
+            <div class="presensi-header-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 22s-8-4.5-8-11.8A8 8 0 0 1 12 2a8 8 0 0 1 8 8.2c0 7.3-8 11.8-8 11.8z"/>
+                    <circle cx="12" cy="10" r="3"/>
+                </svg>
+            </div>
+            <h1 class="presensi-title">Presensi Magang</h1>
+            <p class="presensi-subtitle">Sistem Absensi Digital BPS Kabupaten Demak</p>
+        </div>
 
-                    <div class="bg-gray-100 p-4 rounded-lg shadow-lg mt-4">
-                        <p><strong>Nama Peserta:</strong> {{ Auth::user()->name }}</p>
-                        <p><strong>Kantor : </strong>{{ $presensiData['officeName'] }}</p>
-                        <p><strong>Shift :</strong> {{ $presensiData['shiftName'] }} ({{ $presensiData['workStart'] }} -
-                            {{ $presensiData['workEnd'] }}) WIB
-                        </p>
-                        @if ($presensiData['isWfa'])
-                            <p class="text-green-500"><strong>Status :</strong> WFA</p>
-                        @elseif ($presensiData['isBanned'])
-                            <p class="text-red-500"><strong>Status :</strong> Banned</p>
-                        @else
-                            <p><strong>Status :</strong> WFO</p>
-                        @endif
-                    </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div class="bg-gray-100 p-4 rounded-lg shadow-lg mt-4">
-                            <h4 class="text-l font-bold mb-2"> Jam Datang</h4>
-                            <p><strong>{{ $attendance ? $attendance->start_time : '-' }}</strong></p>
-                        </div>
-                        <div class="bg-gray-100 p-4 rounded-lg shadow-lg mt-4">
-                            <h4 class="text-l font-bold mb-2"> Jam Pulang</h4>
-                            <p><strong>{{ $attendance ? $attendance->end_time : '-' }}</strong></p>
-                        </div>
-                    </div>
+        {{-- Info Peserta --}}
+        <div class="presensi-card">
+            <div class="presensi-info-grid">
+                <div class="presensi-info-item">
+                    <span class="presensi-info-label">Nama Peserta</span>
+                    <span class="presensi-info-value">{{ Auth::user()->name }}</span>
                 </div>
-
-                @if (session()->has('error'))
-                    <script>
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Gagal',
-                            text: '{{ session('error') }}',
-                        });
-                    </script>
-                @endif
-
-                @if (!$presensiData['isBanned'])
-                    <div class="bg-gray-100 p-4 rounded-lg shadow-lg mt-4">
-                        <h2 class="text-2xl font-semibold text-black dark:text-white"> Presensi </h2>
-                        <div id="map" class="mb-4 rounded-lg border border-gray-300" wire:ignore></div>
-                        @if (session()->has('error'))
-                            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
-                                <strong class="font-bold">Error!</strong>
-                                <span class="block sm:inline">{{ session('error') }}</span>
-                            </div>
-                        @endif
-                        <form action="" class="row g-3 mt-4" wire:submit="store" enctype="multipart/form-data">
-                            <button type="button" onclick="tagLocation()"
-                                class="px-4 py-2 bg-blue-500 text-white rounded">Tag
-                                Location</button>
-                            @if ($isWithinRadius)
-                                <button type="submit" class="px-4 py-2 bg-green-500 text-white rounded">Submit</button>
-                            @endif
-                        </form>
-                    </div>
-                @else
-                    <div class="bg-red-50 p-4 rounded-lg shadow-lg mt-4 text-center">
-                        <p class="text-red-600 font-semibold">Anda sedang diblokir dari sistem presensi.</p>
-                        <p class="text-gray-500 text-sm">Silakan hubungi admin.</p>
-                    </div>
-                @endif
-
+                <div class="presensi-info-item">
+                    <span class="presensi-info-label">Kantor</span>
+                    <span class="presensi-info-value">{{ $presensiData['officeName'] }}</span>
+                </div>
+                <div class="presensi-info-item">
+                    <span class="presensi-info-label">Shift</span>
+                    <span class="presensi-info-value">{{ $presensiData['shiftName'] }} ({{ $presensiData['workStart'] }} - {{ $presensiData['workEnd'] }}) WIB</span>
+                </div>
+                <div class="presensi-info-item">
+                    <span class="presensi-info-label">Status</span>
+                    @if ($presensiData['isWfa'])
+                        <span class="presensi-status-badge presensi-status-wfa">WFA</span>
+                    @elseif ($presensiData['isBanned'])
+                        <span class="presensi-status-badge presensi-status-banned">Banned</span>
+                    @else
+                        <span class="presensi-status-badge presensi-status-wfo">WFO</span>
+                    @endif
+                </div>
             </div>
         </div>
+
+        {{-- Jam Datang / Pulang --}}
+        <div class="presensi-time-row">
+            <div class="presensi-card presensi-time-card">
+                <div class="presensi-time-icon presensi-time-icon-datang">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+                    </svg>
+                </div>
+                <span class="presensi-time-label">Jam Datang</span>
+                <span class="presensi-time-value">{{ $attendance ? $attendance->start_time : '-' }}</span>
+            </div>
+            <div class="presensi-card presensi-time-card">
+                <div class="presensi-time-icon presensi-time-icon-pulang">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+                    </svg>
+                </div>
+                <span class="presensi-time-label">Jam Pulang</span>
+                <span class="presensi-time-value">{{ $attendance ? $attendance->end_time : '-' }}</span>
+            </div>
+        </div>
+
+        @if (session()->has('error'))
+            <script>
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Gagal',
+                    text: '{{ session('error') }}',
+                });
+            </script>
+        @endif
+
+        {{-- Map & Presensi Button --}}
+        @if (!$presensiData['isBanned'])
+            <div class="presensi-card">
+                <h2 class="presensi-section-title">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>
+                    </svg>
+                    Lokasi Presensi
+                </h2>
+                <div id="map" class="presensi-map" wire:ignore></div>
+
+                @if (session()->has('error'))
+                    <div class="presensi-error-alert">
+                        <strong>Error!</strong> {{ session('error') }}
+                    </div>
+                @endif
+
+                <form action="" class="presensi-actions" wire:submit="store" enctype="multipart/form-data">
+                    <button type="button" onclick="tagLocation()" class="presensi-btn presensi-btn-tag">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polygon points="3 11 22 2 13 21 11 13 3 11"/>
+                        </svg>
+                        Tag Location
+                    </button>
+                    @if ($isWithinRadius)
+                        <button type="submit" class="presensi-btn presensi-btn-submit">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="20 6 9 17 4 12"/>
+                            </svg>
+                            Submit Presensi
+                        </button>
+                    @endif
+                </form>
+            </div>
+        @else
+            <div class="presensi-card presensi-banned-card">
+                <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/>
+                </svg>
+                <p class="presensi-banned-text">Anda sedang diblokir dari sistem presensi.</p>
+                <p class="presensi-banned-sub">Silakan hubungi admin untuk informasi lebih lanjut.</p>
+            </div>
+        @endif
     </div>
+
+    <style>
+        .presensi-wrapper {
+            max-width: 480px;
+            margin: 24px auto;
+            padding: 0 16px;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        .presensi-card {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+        }
+
+        /* Header */
+        .presensi-header-card {
+            background: linear-gradient(135deg, #3b82f6 0%, #6366f1 100%);
+            border: none;
+            text-align: center;
+            padding: 28px 20px;
+            color: white;
+        }
+        .presensi-header-icon {
+            width: 56px;
+            height: 56px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 12px;
+            backdrop-filter: blur(10px);
+        }
+        .presensi-title {
+            font-size: 22px;
+            font-weight: 700;
+            margin: 0 0 4px;
+            letter-spacing: -0.3px;
+        }
+        .presensi-subtitle {
+            font-size: 13px;
+            opacity: 0.85;
+            margin: 0;
+        }
+
+        /* Info Grid */
+        .presensi-info-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .presensi-info-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #f1f5f9;
+        }
+        .presensi-info-item:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+        .presensi-info-label {
+            font-size: 13px;
+            font-weight: 500;
+            color: #64748b;
+        }
+        .presensi-info-value {
+            font-size: 14px;
+            font-weight: 600;
+            color: #1e293b;
+            text-align: right;
+            max-width: 60%;
+        }
+
+        /* Status Badge */
+        .presensi-status-badge {
+            padding: 3px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+        .presensi-status-wfo {
+            background: #dbeafe;
+            color: #1d4ed8;
+        }
+        .presensi-status-wfa {
+            background: #dcfce7;
+            color: #15803d;
+        }
+        .presensi-status-banned {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+
+        /* Time Cards */
+        .presensi-time-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+        .presensi-time-card {
+            text-align: center;
+            padding: 16px;
+        }
+        .presensi-time-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 8px;
+        }
+        .presensi-time-icon-datang {
+            background: #dbeafe;
+            color: #2563eb;
+        }
+        .presensi-time-icon-pulang {
+            background: #fef3c7;
+            color: #d97706;
+        }
+        .presensi-time-label {
+            display: block;
+            font-size: 12px;
+            color: #64748b;
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+        .presensi-time-value {
+            display: block;
+            font-size: 20px;
+            font-weight: 700;
+            color: #1e293b;
+        }
+
+        /* Section Title */
+        .presensi-section-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            color: #1e293b;
+            margin: 0 0 14px;
+        }
+
+        /* Map */
+        .presensi-map {
+            height: 280px;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+            margin-bottom: 14px;
+            overflow: hidden;
+        }
+
+        /* Error Alert */
+        .presensi-error-alert {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            color: #991b1b;
+            padding: 10px 14px;
+            border-radius: 10px;
+            font-size: 13px;
+            margin-bottom: 14px;
+        }
+
+        /* Buttons */
+        .presensi-actions {
+            display: flex;
+            gap: 10px;
+        }
+        .presensi-btn {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .presensi-btn-tag {
+            background: #3b82f6;
+            color: white;
+        }
+        .presensi-btn-tag:hover {
+            background: #2563eb;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.35);
+        }
+        .presensi-btn-submit {
+            background: #22c55e;
+            color: white;
+        }
+        .presensi-btn-submit:hover {
+            background: #16a34a;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(34, 197, 94, 0.35);
+        }
+
+        /* Banned Card */
+        .presensi-banned-card {
+            text-align: center;
+            padding: 32px 20px;
+            background: #fef2f2;
+            border-color: #fecaca;
+            color: #991b1b;
+        }
+        .presensi-banned-text {
+            font-size: 15px;
+            font-weight: 600;
+            margin: 12px 0 4px;
+        }
+        .presensi-banned-sub {
+            font-size: 13px;
+            color: #b91c1c;
+            margin: 0;
+        }
+
+        /* ======= DARK MODE ======= */
+        .dark .presensi-card {
+            background: #1e293b;
+            border-color: #334155;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+        }
+        .dark .presensi-header-card {
+            background: linear-gradient(135deg, #2563eb 0%, #4f46e5 100%);
+            border: none;
+        }
+        .dark .presensi-info-item {
+            border-bottom-color: #334155;
+        }
+        .dark .presensi-info-label {
+            color: #94a3b8;
+        }
+        .dark .presensi-info-value {
+            color: #e2e8f0;
+        }
+        .dark .presensi-status-wfo {
+            background: #1e3a5f;
+            color: #93c5fd;
+        }
+        .dark .presensi-status-wfa {
+            background: #14532d;
+            color: #86efac;
+        }
+        .dark .presensi-status-banned {
+            background: #7f1d1d;
+            color: #fca5a5;
+        }
+        .dark .presensi-time-icon-datang {
+            background: #1e3a5f;
+            color: #60a5fa;
+        }
+        .dark .presensi-time-icon-pulang {
+            background: #451a03;
+            color: #fbbf24;
+        }
+        .dark .presensi-time-label { color: #94a3b8; }
+        .dark .presensi-time-value { color: #e2e8f0; }
+        .dark .presensi-section-title { color: #e2e8f0; }
+        .dark .presensi-map { border-color: #334155; }
+        .dark .presensi-error-alert {
+            background: #450a0a;
+            border-color: #7f1d1d;
+            color: #fca5a5;
+        }
+        .dark .presensi-banned-card {
+            background: #450a0a;
+            border-color: #7f1d1d;
+            color: #fca5a5;
+        }
+        .dark .presensi-banned-sub { color: #fca5a5; }
+    </style>
 
     @if (!$presensiData['isBanned'])
         <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
