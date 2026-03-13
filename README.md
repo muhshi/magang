@@ -201,3 +201,6 @@ This project is open-sourced software licensed under the [MIT license](https://o
 - **Fix Invalid Date Penugasan**: Memperbaiki error `Carbon\InvalidFormatException` saat buka detail penugasan data lama yang tanggalnya berisi "-". Migration membersihkan data + kode defensive untuk mencegah crash di masa depan
 - **Redesign Halaman Presensi**: UI baru dengan gradient header, info grid, time cards dengan icon, tombol modern dengan hover effect, dan dukungan dark mode. Matching tema Filament
 - **Fix Peserta Tidak Muncul**: Menghapus filter `whereHas('internship')` dari tab Magang BPS di Daftar Peserta, sehingga semua user dengan role Magang BPS tampil meskipun belum punya data internship
+
+### 13 Maret 2026
+- **Merge Branch**: Melakukan pull dan merge dari branch `nana-work`.
