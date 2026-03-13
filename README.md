@@ -205,3 +205,4 @@ This project is open-sourced software licensed under the [MIT license](https://o
 ### 13 Maret 2026
 - **Merge Branch**: Melakukan pull dan merge dari branch `nana-work`.
 - **Fix Migration Date**: Menambahkan try-catch pada migration update `start_date` dan `due_date` menjadi null untuk mencegah error mode strict MySQL mengenai Invalid datetime format saat value '-'.
+- **Optimasi Layout Presensi Mobile**: Menyesuaikan padding, margin, font size, dimensi ikon, dan tinggi peta agar presensi dapat tampil presisi di layar HP tanpa scroll berlebih.

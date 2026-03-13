@@ -120,18 +120,18 @@
     <style>
         .presensi-wrapper {
             max-width: 480px;
-            margin: 24px auto;
+            margin: 12px auto;
             padding: 0 16px;
             font-family: 'Inter', system-ui, -apple-system, sans-serif;
             display: flex;
             flex-direction: column;
-            gap: 16px;
+            gap: 12px;
         }
         .presensi-card {
             background: #ffffff;
             border: 1px solid #e2e8f0;
             border-radius: 16px;
-            padding: 20px;
+            padding: 16px;
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
         }
 
@@ -140,28 +140,28 @@
             background: linear-gradient(135deg, #3b82f6 0%, #6366f1 100%);
             border: none;
             text-align: center;
-            padding: 28px 20px;
+            padding: 20px 16px;
             color: white;
         }
         .presensi-header-icon {
-            width: 56px;
-            height: 56px;
+            width: 48px;
+            height: 48px;
             background: rgba(255,255,255,0.2);
             border-radius: 16px;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 0 auto 12px;
+            margin: 0 auto 8px;
             backdrop-filter: blur(10px);
         }
         .presensi-title {
-            font-size: 22px;
+            font-size: 20px;
             font-weight: 700;
             margin: 0 0 4px;
             letter-spacing: -0.3px;
         }
         .presensi-subtitle {
-            font-size: 13px;
+            font-size: 12px;
             opacity: 0.85;
             margin: 0;
         }
@@ -170,13 +170,13 @@
         .presensi-info-grid {
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 8px;
         }
         .presensi-info-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding-bottom: 10px;
+            padding-bottom: 8px;
             border-bottom: 1px solid #f1f5f9;
         }
         .presensi-info-item:last-child {
@@ -225,16 +225,16 @@
         }
         .presensi-time-card {
             text-align: center;
-            padding: 16px;
+            padding: 12px;
         }
         .presensi-time-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: 12px;
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 0 auto 8px;
+            margin: 0 auto 6px;
         }
         .presensi-time-icon-datang {
             background: #dbeafe;
@@ -263,18 +263,18 @@
             display: flex;
             align-items: center;
             gap: 8px;
-            font-size: 16px;
+            font-size: 15px;
             font-weight: 600;
             color: #1e293b;
-            margin: 0 0 14px;
+            margin: 0 0 10px;
         }
 
         /* Map */
         .presensi-map {
-            height: 280px;
+            height: 180px;
             border-radius: 12px;
             border: 1px solid #e2e8f0;
-            margin-bottom: 14px;
+            margin-bottom: 12px;
             overflow: hidden;
         }
 
@@ -292,18 +292,18 @@
         /* Buttons */
         .presensi-actions {
             display: flex;
-            gap: 10px;
+            gap: 8px;
         }
         .presensi-btn {
             flex: 1;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
-            padding: 12px 20px;
+            gap: 6px;
+            padding: 10px 16px;
             border: none;
-            border-radius: 12px;
-            font-size: 14px;
+            border-radius: 10px;
+            font-size: 13px;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.2s ease;
