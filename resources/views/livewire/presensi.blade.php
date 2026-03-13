@@ -271,7 +271,7 @@
 
         /* Map */
         .presensi-map {
-            height: 180px;
+            height: 120px;
             border-radius: 12px;
             border: 1px solid #e2e8f0;
             margin-bottom: 12px;
