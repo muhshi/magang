@@ -43,20 +43,10 @@
         {{-- Jam Datang / Pulang --}}
         <div class="presensi-time-row">
             <div class="presensi-card presensi-time-card">
-                <div class="presensi-time-icon presensi-time-icon-datang">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
-                    </svg>
-                </div>
                 <span class="presensi-time-label">Jam Datang</span>
                 <span class="presensi-time-value">{{ $attendance ? $attendance->start_time : '-' }}</span>
             </div>
             <div class="presensi-card presensi-time-card">
-                <div class="presensi-time-icon presensi-time-icon-pulang">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
-                    </svg>
-                </div>
                 <span class="presensi-time-label">Jam Pulang</span>
                 <span class="presensi-time-value">{{ $attendance ? $attendance->end_time : '-' }}</span>
             </div>
@@ -225,35 +215,18 @@
         }
         .presensi-time-card {
             text-align: center;
-            padding: 12px;
-        }
-        .presensi-time-icon {
-            width: 36px;
-            height: 36px;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 6px;
-        }
-        .presensi-time-icon-datang {
-            background: #dbeafe;
-            color: #2563eb;
-        }
-        .presensi-time-icon-pulang {
-            background: #fef3c7;
-            color: #d97706;
+            padding: 10px;
         }
         .presensi-time-label {
             display: block;
-            font-size: 12px;
+            font-size: 11px;
             color: #64748b;
             font-weight: 500;
-            margin-bottom: 4px;
+            margin-bottom: 2px;
         }
         .presensi-time-value {
             display: block;
-            font-size: 20px;
+            font-size: 18px;
             font-weight: 700;
             color: #1e293b;
         }
@@ -376,14 +349,6 @@
         .dark .presensi-status-banned {
             background: #7f1d1d;
             color: #fca5a5;
-        }
-        .dark .presensi-time-icon-datang {
-            background: #1e3a5f;
-            color: #60a5fa;
-        }
-        .dark .presensi-time-icon-pulang {
-            background: #451a03;
-            color: #fbbf24;
         }
         .dark .presensi-time-label { color: #94a3b8; }
         .dark .presensi-time-value { color: #e2e8f0; }
