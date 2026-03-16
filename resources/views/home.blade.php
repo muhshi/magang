@@ -86,6 +86,8 @@
                 <div class="d-flex flex-column justify-content-center align-items-center">
                     <h1 data-aos="fade-up">Selamat Datang di <span>Mangga Muda</span></h1>
                     <br>
+                    <h3 data-aos="fade-up" data-aos-delay="100" style="color: var(--accent-color);">Manajemen Magang Terintegrasi dan Mudah</h3>
+                    <br>
                     <h4 data-aos="fade-up" data-aos-delay="100">Mangga Muda membantu BPS Kabupaten Demak mengelola
                         program magang mulai dari registrasi, presensi, hingga monitoring kegiatan secara digital.</h4>
                     <br>
