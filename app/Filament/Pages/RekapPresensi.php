@@ -83,24 +83,6 @@ class RekapPresensi extends Page
     }
 
     /**
-     * Data untuk Chart.js — hanya peserta yang hadir di bulan tersebut
-     */
-    public function getChartData(): array
-    {
-        $rekap = $this->getRekapData();
-
-        // Filter hanya yang ada data (total hadir > 0) untuk chart
-        $withData = array_filter($rekap, fn($r) => $r['total_hadir'] > 0);
-
-        return [
-            'labels'     => array_values(array_map(fn($r) => $r['nama'], $withData)),
-            'hadir'      => array_values(array_map(fn($r) => $r['total_hadir'], $withData)),
-            'terlambat'  => array_values(array_map(fn($r) => $r['terlambat'], $withData)),
-            'tepatWaktu' => array_values(array_map(fn($r) => $r['tepat_waktu'], $withData)),
-        ];
-    }
-
-    /**
      * Daftar bulan 12 bulan terakhir untuk dropdown
      */
     public function getMonthOptions(): array
@@ -111,17 +93,6 @@ class RekapPresensi extends Page
             $options[$date->format('Y-m')] = $date->translatedFormat('F Y');
         }
         return $options;
-    }
-
-    public function updatedSelectedMonth(): void
-    {
-        $chartData = $this->getChartData();
-        $this->dispatch('rekap-chart-updated',
-            labels:     $chartData['labels'],
-            hadir:      $chartData['hadir'],
-            terlambat:  $chartData['terlambat'],
-            tepatWaktu: $chartData['tepatWaktu'],
-        );
     }
 
     public static function canAccess(): bool

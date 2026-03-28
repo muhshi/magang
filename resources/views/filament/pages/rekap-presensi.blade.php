@@ -46,10 +46,17 @@
                                 <th class="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400 text-center">Sisa Magang</th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-gray-100 dark:divide-white/5">
+                        <tbody class="divide-y divide-gray-100 dark:divide-white/5" x-data="{ expandedRow: null }">
                             @forelse ($rekap as $row)
-                                <tr class="hover:bg-gray-50 dark:hover:bg-white/5 transition">
-                                    <td class="px-4 py-3 font-medium text-gray-900 dark:text-white">
+                                <tr wire:key="row-{{ $row['user_id'] }}-{{ $selectedMonth }}" 
+                                    class="hover:bg-gray-50 dark:hover:bg-white/5 transition cursor-pointer" 
+                                    @click="expandedRow = expandedRow === {{ $row['user_id'] }} ? null : {{ $row['user_id'] }}">
+                                    
+                                    <td class="px-4 py-3 font-medium text-gray-900 dark:text-white flex items-center gap-2">
+                                        <x-heroicon-o-chevron-down 
+                                            class="h-4 w-4 text-gray-400 transition-transform duration-200" 
+                                            x-bind:class="{ '-rotate-90': expandedRow !== {{ $row['user_id'] }} }" 
+                                        />
                                         {{ $row['nama'] }}
                                     </td>
 
@@ -107,6 +114,33 @@
                                         @endif
                                     </td>
                                 </tr>
+                                
+                                {{-- ====== DIAGRAM PER-ORANG ====== --}}
+                                <tr wire:key="chart-{{ $row['user_id'] }}-{{ $selectedMonth }}" x-show="expandedRow === {{ $row['user_id'] }}" x-cloak>
+                                    <td colspan="5" class="p-0 border-t border-gray-100 dark:border-white/5">
+                                        <div x-show="expandedRow === {{ $row['user_id'] }}" x-collapse>
+                                            <div class="px-6 py-6 bg-gray-50/50 dark:bg-white/[0.02]">
+                                                <div class="w-full max-w-xl mx-auto h-56"
+                                                    x-data="miniChart(
+                                                        {{ $row['total_hadir'] }},
+                                                        {{ $row['tepat_waktu'] }},
+                                                        {{ $row['terlambat'] }}
+                                                    )"
+                                                    x-init="$watch('expandedRow', val => { if(val === {{ $row['user_id'] }}) { setTimeout(() => render(), 50); } })"
+                                                >
+                                                    @if($row['total_hadir'] > 0)
+                                                        <canvas x-ref="canvas"></canvas>
+                                                    @else
+                                                        <div class="flex flex-col items-center justify-center h-full text-gray-400 dark:text-gray-500">
+                                                            <x-heroicon-o-chart-bar class="h-8 w-8 mb-2 opacity-50" />
+                                                            <span class="text-sm">Belum ada data kehadiran di bulan ini.</span>
+                                                        </div>
+                                                    @endif
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
                             @empty
                                 <tr>
                                     <td colspan="5" class="px-4 py-10 text-center text-gray-400 dark:text-gray-600 text-sm">
@@ -120,129 +154,77 @@
             </div>
         </div>
 
-        {{-- ====== CHART ====== --}}
-        @php $chartData = $this->getChartData(); @endphp
-        @if (count($chartData['labels']) > 0)
-        <div class="fi-section rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10">
-            <div class="fi-section-header px-6 py-4 border-b border-gray-200 dark:border-white/10">
-                <h3 class="text-base font-semibold text-gray-900 dark:text-white flex items-center gap-2">
-                    <x-heroicon-o-chart-bar class="h-5 w-5 text-primary-500" />
-                    Diagram Kehadiran — {{ \Carbon\Carbon::createFromFormat('Y-m', $selectedMonth)->translatedFormat('F Y') }}
-                </h3>
-                <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">Hanya menampilkan peserta yang memiliki data kehadiran di bulan ini.</p>
-            </div>
-            <div class="fi-section-content px-6 py-5">
-                <canvas id="rekapChart" height="90"></canvas>
-            </div>
-        </div>
-        @else
-        <div class="fi-section rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10">
-            <div class="fi-section-content px-6 py-10 text-center text-gray-500 dark:text-gray-400">
-                <x-heroicon-o-chart-bar class="mx-auto h-10 w-10 text-gray-300 dark:text-gray-600 mb-2" />
-                <p class="text-sm">Belum ada data kehadiran di bulan ini untuk ditampilkan dalam diagram.</p>
-            </div>
-        </div>
-        @endif
-
     </div>
 
-    {{-- ====== SCRIPT CHART.JS ====== --}}
+    {{-- ====== SCRIPT CHART.JS ALPINE ====== --}}
     @push('scripts')
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <script>
-        let rekapChart = null;
+        document.addEventListener('alpine:init', () => {
+            Alpine.data('miniChart', (hadir, tepatWaktu, terlambat) => ({
+                chartInstance: null,
 
-        function isDarkMode() {
-            return document.documentElement.classList.contains('dark');
-        }
+                render() {
+                    const canvas = this.$refs.canvas;
+                    if (!canvas) return;
+                    
+                    if (this.chartInstance) {
+                        this.chartInstance.destroy();
+                    }
 
-        function renderChart(chartData) {
-            const canvas = document.getElementById('rekapChart');
-            if (!canvas) return;
+                    const isDark = document.documentElement.classList.contains('dark');
+                    const gridColor  = isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)';
+                    const labelColor = isDark ? '#9ca3af' : '#6b7280';
 
-            const isDark = isDarkMode();
-            const gridColor  = isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)';
-            const labelColor = isDark ? '#9ca3af' : '#6b7280';
-
-            if (rekapChart) rekapChart.destroy();
-
-            rekapChart = new Chart(canvas, {
-                type: 'bar',
-                data: {
-                    labels: chartData.labels,
-                    datasets: [
-                        {
-                            label: 'Total Hadir',
-                            data: chartData.hadir,
-                            backgroundColor: 'rgba(99, 102, 241, 0.75)',
-                            borderColor: 'rgba(99, 102, 241, 1)',
-                            borderWidth: 1,
-                            borderRadius: 6,
+                    this.chartInstance = new Chart(canvas, {
+                        type: 'bar',
+                        data: {
+                            labels: ['Total Hadir', 'Tepat Waktu', 'Terlambat'],
+                            datasets: [{
+                                data: [hadir, tepatWaktu, terlambat],
+                                backgroundColor: [
+                                    'rgba(99, 102, 241, 0.75)', // Indigo
+                                    'rgba(34, 197, 94, 0.75)',  // Green
+                                    'rgba(239, 68, 68, 0.75)'   // Red
+                                ],
+                                borderColor: [
+                                    'rgba(99, 102, 241, 1)',
+                                    'rgba(34, 197, 94, 1)',
+                                    'rgba(239, 68, 68, 1)'
+                                ],
+                                borderWidth: 1,
+                                borderRadius: 6,
+                            }]
                         },
-                        {
-                            label: 'Tepat Waktu',
-                            data: chartData.tepatWaktu,
-                            backgroundColor: 'rgba(34, 197, 94, 0.75)',
-                            borderColor: 'rgba(34, 197, 94, 1)',
-                            borderWidth: 1,
-                            borderRadius: 6,
-                        },
-                        {
-                            label: 'Terlambat',
-                            data: chartData.terlambat,
-                            backgroundColor: 'rgba(239, 68, 68, 0.75)',
-                            borderColor: 'rgba(239, 68, 68, 1)',
-                            borderWidth: 1,
-                            borderRadius: 6,
-                        },
-                    ],
-                },
-                options: {
-                    responsive: true,
-                    interaction: { mode: 'index', intersect: false },
-                    plugins: {
-                        legend: {
-                            position: 'top',
-                            labels: {
-                                color: labelColor,
-                                font: { size: 12 },
-                                usePointStyle: true,
-                                pointStyle: 'rectRounded',
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: { display: false },
+                                tooltip: {
+                                    borderColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.08)',
+                                    borderWidth: 1,
+                                },
+                            },
+                            scales: {
+                                x: {
+                                    ticks: { color: labelColor, font: { size: 12 } },
+                                    grid:  { display: false },
+                                },
+                                y: {
+                                    beginAtZero: true,
+                                    ticks: { 
+                                        color: labelColor, 
+                                        stepSize: 1, 
+                                        precision: 0 
+                                    },
+                                    grid:  { color: gridColor },
+                                },
                             },
                         },
-                        tooltip: {
-                            borderColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.08)',
-                            borderWidth: 1,
-                        },
-                    },
-                    scales: {
-                        x: {
-                            ticks: { color: labelColor, font: { size: 11 } },
-                            grid:  { color: gridColor },
-                        },
-                        y: {
-                            beginAtZero: true,
-                            ticks: {
-                                color: labelColor,
-                                stepSize: 1,
-                                precision: 0,
-                                font: { size: 11 },
-                            },
-                            grid: { color: gridColor },
-                        },
-                    },
-                },
-            });
-        }
-
-        // Initial render setelah DOM siap
-        document.addEventListener('DOMContentLoaded', function () {
-            renderChart(@json($chartData));
-        });
-
-        // Re-render setelah Livewire update (bulan berubah → Livewire kirim event)
-        document.addEventListener('rekap-chart-updated', function (e) {
-            setTimeout(() => renderChart(e.detail), 100);
+                    });
+                }
+            }));
         });
     </script>
     @endpush
