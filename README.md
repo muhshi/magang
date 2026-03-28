@@ -209,3 +209,6 @@ This project is open-sourced software licensed under the [MIT license](https://o
 
 ### 16 Maret 2026
 - **Update Landing Page**: Mengubah warna teks "Manajemen Magang Terintegrasi dan Mudah" pada teks header di halaman utama menjadi oranye (menggunakan warna aksen template).
+
+### 28 Maret 2026
+- **Tambah Tab Magang BPS & Alumni di Pendaftaran Magang**: Halaman Pendaftaran Magang kini memiliki 6 tab — Pending, Diterima, Ditolak, Magang BPS, Alumni, dan Semua. Tab Magang BPS dan Alumni menampilkan kolom khusus (Nama Peserta, Universitas, Program Studi, Periode Magang, Status, Status Sertifikat) dan bersifat read-only tanpa tombol aksi. Tab lain tetap menampilkan kolom pendaftaran dan tombol aksi seperti sebelumnya.

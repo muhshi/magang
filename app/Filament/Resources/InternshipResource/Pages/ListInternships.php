@@ -4,12 +4,13 @@ namespace App\Filament\Resources\InternshipResource\Pages;
 
 use App\Filament\Resources\InternshipResource;
 use App\Models\Internship;
+use App\Models\User;
 use Asmit\ResizedColumn\HasResizableColumn;
 use Filament\Actions;
 use Filament\Resources\Components\Tab;
 use Filament\Resources\Pages\ListRecords;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Facades\Auth; // <-- Import Auth
+use Illuminate\Support\Facades\Auth;
 
 class ListInternships extends ListRecords
 {
@@ -28,11 +29,8 @@ class ListInternships extends ListRecords
      */
     public function getTabs(): array
     {
-        // PERBAIKAN: Hanya tampilkan tabs jika user adalah super_admin
         if (Auth::user()->roles[0]->name === 'super_admin' || Auth::user()->roles[0]->name === 'Pegawai BPS') {
             return [
-
-
                 'pending' => Tab::make('Pending')
                     ->modifyQueryUsing(fn(Builder $query) => $query->where('status', 'pending'))
                     ->badge(Internship::query()->where('status', 'pending')->count())
@@ -51,13 +49,26 @@ class ListInternships extends ListRecords
                     ->badgeColor('danger')
                     ->icon('heroicon-o-x-circle'),
 
+                'magang_bps' => Tab::make('Magang BPS')
+                    ->modifyQueryUsing(fn(Builder $query) => $query->whereHas('user.roles', fn($q) => $q->where('name', 'Magang BPS')))
+                    ->badge(fn() => Internship::query()->whereHas('user.roles', fn($q) => $q->where('name', 'Magang BPS'))->count())
+                    ->badgeColor('success')
+                    ->icon('heroicon-o-academic-cap'),
+
+                'alumni' => Tab::make('Alumni')
+                    ->modifyQueryUsing(fn(Builder $query) => $query->whereHas('user.roles', fn($q) => $q->where('name', 'Alumni Magang')))
+                    ->badge(fn() => Internship::query()->whereHas('user.roles', fn($q) => $q->where('name', 'Alumni Magang'))->count())
+                    ->badgeColor('info')
+                    ->icon('heroicon-o-user-group'),
+
                 'all' => Tab::make('Semua')
                     ->badge(Internship::query()->count())
-                    ->badgeColor('primary'),
+                    ->badgeColor('primary')
+                    ->icon('heroicon-o-list-bullet'),
             ];
         }
 
-        // Jika bukan super_admin, jangan tampilkan tab sama sekali
+        // Jika bukan super_admin/Pegawai BPS, jangan tampilkan tab
         return [];
     }
 }

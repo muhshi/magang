@@ -209,70 +209,127 @@ class InternshipResource extends Resource
 
     public static function table(Table $table): Table
     {
+        $bpsTabs = ['magang_bps', 'alumni'];
+
         return $table
             ->columns([
+                // === KOLOM NORMAL (Pending, Diterima, Ditolak, Semua) ===
                 Tables\Columns\ImageColumn::make('photo_file')
-                    ->label('Pas Foto'),
+                    ->label('Pas Foto')
+                    ->hidden(fn ($livewire) => in_array($livewire->activeTab ?? null, $bpsTabs)),
+
                 Tables\Columns\TextColumn::make('full_name')
-                    ->searchable(),
+                    ->label('Nama Lengkap')
+                    ->searchable()
+                    ->hidden(fn ($livewire) => in_array($livewire->activeTab ?? null, $bpsTabs)),
+
                 TextColumn::make('gender')
                     ->label('Gender')
-                    ->formatStateUsing(fn($state) => $state === 'L' ? 'Laki-laki' : 'Perempuan'),
+                    ->formatStateUsing(fn($state) => $state === 'L' ? 'Laki-laki' : 'Perempuan')
+                    ->hidden(fn ($livewire) => in_array($livewire->activeTab ?? null, $bpsTabs)),
+
                 Tables\Columns\TextColumn::make('phone')
-                    ->searchable(),
+                    ->label('No. Telepon')
+                    ->searchable()
+                    ->hidden(fn ($livewire) => in_array($livewire->activeTab ?? null, $bpsTabs)),
+
                 Tables\Columns\TextColumn::make('school_name')
-                    ->searchable(),
+                    ->label('Sekolah/Universitas')
+                    ->searchable()
+                    ->hidden(fn ($livewire) => in_array($livewire->activeTab ?? null, $bpsTabs)),
+
                 Tables\Columns\TextColumn::make('education_level')
+                    ->label('Jenjang')
                     ->alignCenter()
-                    ->searchable(),
+                    ->searchable()
+                    ->hidden(fn ($livewire) => in_array($livewire->activeTab ?? null, $bpsTabs)),
+
                 TextColumn::make('durasi')
                     ->label('Durasi')
                     ->alignCenter()
-                    ->getStateUsing(fn($record) => \Carbon\Carbon::parse($record->start_date)->translatedFormat('d M Y') . ' - ' . \Carbon\Carbon::parse($record->end_date)->translatedFormat('d M Y')),
+                    ->getStateUsing(fn($record) => \Carbon\Carbon::parse($record->start_date)->translatedFormat('d M Y') . ' - ' . \Carbon\Carbon::parse($record->end_date)->translatedFormat('d M Y'))
+                    ->hidden(fn ($livewire) => in_array($livewire->activeTab ?? null, $bpsTabs)),
+
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->toggleable(isToggledHiddenByDefault: true)
+                    ->hidden(fn ($livewire) => in_array($livewire->activeTab ?? null, $bpsTabs)),
+
                 Tables\Columns\TextColumn::make('updated_at')
                     ->dateTime()
                     ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->toggleable(isToggledHiddenByDefault: true)
+                    ->hidden(fn ($livewire) => in_array($livewire->activeTab ?? null, $bpsTabs)),
+
+                // === KOLOM KHUSUS (Magang BPS & Alumni) ===
+                TextColumn::make('user.name')
+                    ->label('Nama Peserta')
+                    ->searchable()
+                    ->sortable()
+                    ->visible(fn ($livewire) => in_array($livewire->activeTab ?? null, $bpsTabs)),
+
+                TextColumn::make('school_name')
+                    ->label('Universitas')
+                    ->searchable()
+                    ->visible(fn ($livewire) => in_array($livewire->activeTab ?? null, $bpsTabs)),
+
+                TextColumn::make('program_studi')
+                    ->label('Program Studi')
+                    ->visible(fn ($livewire) => in_array($livewire->activeTab ?? null, $bpsTabs)),
+
+                TextColumn::make('periode_magang')
+                    ->label('Periode Magang')
+                    ->getStateUsing(function ($record) {
+                        if (!$record->start_date || !$record->end_date) return '-';
+                        return \Carbon\Carbon::parse($record->start_date)->translatedFormat('d M Y')
+                            . ' - ' . \Carbon\Carbon::parse($record->end_date)->translatedFormat('d M Y');
+                    })
+                    ->visible(fn ($livewire) => in_array($livewire->activeTab ?? null, $bpsTabs)),
+
+                TextColumn::make('user.roles.name')
+                    ->label('Status')
+                    ->badge()
+                    ->color(fn ($state) => match($state) {
+                        'Magang BPS' => 'success',
+                        'Alumni Magang' => 'info',
+                        default => 'gray',
+                    })
+                    ->visible(fn ($livewire) => in_array($livewire->activeTab ?? null, $bpsTabs)),
+
+                TextColumn::make('sertifikat_status')
+                    ->label('Sertifikat')
+                    ->getStateUsing(fn ($record) => $record->certificate ? 'Sudah dibuat' : 'Belum dibuat')
+                    ->badge()
+                    ->color(fn ($state) => $state === 'Sudah dibuat' ? 'success' : 'warning')
+                    ->visible(fn ($livewire) => in_array($livewire->activeTab ?? null, $bpsTabs)),
             ])
             ->filters([
                 //
             ])
             ->actions([
-                Tables\Actions\ViewAction::make(),
+                Tables\Actions\ViewAction::make()
+                    ->hidden(fn ($livewire) => in_array($livewire->activeTab ?? null, $bpsTabs)),
+
                 EditAction::make()
                     ->button()
-                    // PERBAIKAN: Membuat label tombol dinamis
                     ->label(function (Internship $record): string {
                         if (Auth::user()->roles[0]->name === 'super_admin') {
-                            if ($record->status === 'accepted') {
-                                return 'Accepted';
-                            }
-                            if ($record->status === 'rejected') {
-                                return 'Rejected';
-                            }
+                            if ($record->status === 'accepted') return 'Accepted';
+                            if ($record->status === 'rejected') return 'Rejected';
                         }
                         return 'Approval';
                     })
-                    // PERBAIKAN: Membuat warna tombol dinamis
                     ->color(function (Internship $record): string {
                         if (Auth::user()->roles[0]->name === 'super_admin') {
-                            if ($record->status === 'accepted') {
-                                return 'success';
-                            }
-                            if ($record->status === 'rejected') {
-                                return 'danger';
-                            }
+                            if ($record->status === 'accepted') return 'success';
+                            if ($record->status === 'rejected') return 'danger';
                         }
                         return 'primary';
                     })
-                    ->visible(function (Internship $record): bool {
-                        if (Auth::user()->roles[0]->name === 'super_admin') {
-                            return true;
-                        }
+                    ->visible(function (Internship $record, $livewire): bool {
+                        if (in_array($livewire->activeTab ?? null, ['magang_bps', 'alumni'])) return false;
+                        if (Auth::user()->roles[0]->name === 'super_admin') return true;
                         return $record->status === 'pending';
                     }),
             ])
