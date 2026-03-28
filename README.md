@@ -212,3 +212,4 @@ This project is open-sourced software licensed under the [MIT license](https://o
 
 ### 28 Maret 2026
 - **Tambah Tab Magang BPS & Alumni di Pendaftaran Magang**: Halaman Pendaftaran Magang kini memiliki 6 tab — Pending, Diterima, Ditolak, Magang BPS, Alumni, dan Semua. Tab Magang BPS dan Alumni menampilkan kolom khusus (Nama Peserta, Universitas, Program Studi, Periode Magang, Status, Status Sertifikat) dan bersifat read-only tanpa tombol aksi. Tab lain tetap menampilkan kolom pendaftaran dan tombol aksi seperti sebelumnya.
+- **Fix Download Presensi**: Memperbaiki tombol "Download Data" pada halaman Presensi Admin yang sebelumnya menampilkan simbol/karakter acak di browser. Root cause: tombol menggunakan URL redirect biasa sehingga response binary Excel tidak memiliki header `Content-Disposition` yang benar. Solusi: diganti dengan Filament Action menggunakan `Excel::download()` langsung sehingga file ter-download dengan benar.
