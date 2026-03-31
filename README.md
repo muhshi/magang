@@ -218,3 +218,4 @@ This project is open-sourced software licensed under the [MIT license](https://o
 ### 31 Maret 2026
 - **Merge Branch nana-work**: Menggabungkan fitur Task Management (pengganti manajemen project sebelumnya/simplify), System Settings, dan pembaruan UI (style presensi).
 - **Fix Server Listen Error**: Memperbaiki issue `php artisan serve` dengan menyesuaikan konfigurasi environment variabel.
+- **Fix Bug Bulan Presensi**: Mengubah penggunaan fungsi `subMonths()` menjadi `startOfMonth()->subMonths()` untuk mengatasi bug *overflow* pada bulan dengan 31 hari yang menyebabkan bulan Februari rentan menghilang di dropdown filter Rekapitulasi Presensi dan Timeline Project.

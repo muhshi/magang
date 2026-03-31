@@ -89,7 +89,7 @@ class RekapPresensi extends Page
     {
         $options = [];
         for ($i = 0; $i < 12; $i++) {
-            $date = Carbon::now()->subMonths($i);
+            $date = Carbon::now()->startOfMonth()->subMonths($i);
             $options[$date->format('Y-m')] = $date->translatedFormat('F Y');
         }
         return $options;

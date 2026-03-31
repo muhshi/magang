@@ -11,6 +11,7 @@ use Illuminate\Contracts\View\View;
 use BezhanSalleh\FilamentShield\Contracts\HasShieldPermission;
 use Auth;
 use BezhanSalleh\FilamentShield\Traits\HasPageShield;
+use Filament\Notifications\Notification;
 
 class TicketTimeline extends Page
 {
@@ -110,7 +111,7 @@ class TicketTimeline extends Page
 
         if ($tickets->isEmpty()) {
             $months = [];
-            $current = Carbon::now()->subMonths(3)->startOfMonth();
+            $current = Carbon::now()->startOfMonth()->subMonths(3);
             for ($i = 0; $i < 6; $i++) {
                 $months[] = $current->format('M Y');
                 $current->addMonth();
