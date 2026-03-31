@@ -129,6 +129,22 @@ class LeaveResource extends Resource
                 //
             ])
             ->actions([
+                Tables\Actions\Action::make('approve')
+                    ->label('Setujui')
+                    ->button()
+                    ->icon('heroicon-m-check-circle')
+                    ->color('success')
+                    ->action(fn (Leave $record) => $record->update(['status' => 'approved']))
+                    ->visible(fn (Leave $record): bool => $record->status === 'pending' && Auth::user()->roles[0]->name === 'super_admin'),
+
+                Tables\Actions\Action::make('reject')
+                    ->label('Tolak')
+                    ->button()
+                    ->icon('heroicon-m-x-circle')
+                    ->color('danger')
+                    ->action(fn (Leave $record) => $record->update(['status' => 'rejected']))
+                    ->visible(fn (Leave $record): bool => $record->status === 'pending' && Auth::user()->roles[0]->name === 'super_admin'),
+
                 Tables\Actions\ViewAction::make()
                     ->form([
                         Forms\Components\DatePicker::make('start_date')

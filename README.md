@@ -221,3 +221,4 @@ This project is open-sourced software licensed under the [MIT license](https://o
 - **Info Ringkasan Bulan**: Menampilkan summary card berisi total hari kerja efektif dan daftar hari libur nasional (beserta nama) yang jatuh pada bulan yang dipilih.
 - **Update Chart**: Diagram batang per-peserta kini menampilkan 4 bar: Total Hadir, Tepat Waktu, Terlambat, dan Tidak Hadir (warna amber).
 - **Google SSO Login**: Menambahkan fitur Login dengan Google (OAuth 2.0) di halaman login Filament Admin menggunakan `laravel/socialite`. User yang sudah terdaftar langsung login, user baru otomatis dibuatkan akun dengan role `Calon Magang`. Tombol "Masuk dengan Google" tampil di bawah form login biasa dengan divider.
+- **Aksi Cepat Cuti**: Menambahkan Action Cepat pada tabel Daftar Cuti untuk role `super_admin` berupa tombol **Setujui** dan **Tolak**. Tombol ini muncul otomatis pada baris cuti yang bersatus `pending` untuk merubah status secara instan tanpa masuk form ubah data.
