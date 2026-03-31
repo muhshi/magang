@@ -214,3 +214,7 @@ This project is open-sourced software licensed under the [MIT license](https://o
 - **Tambah Tab Magang BPS & Alumni di Pendaftaran Magang**: Halaman Pendaftaran Magang kini memiliki 6 tab — Pending, Diterima, Ditolak, Magang BPS, Alumni, dan Semua. Tab Magang BPS dan Alumni menampilkan kolom khusus (Nama Peserta, Universitas, Program Studi, Periode Magang, Status, Status Sertifikat) dan bersifat read-only tanpa tombol aksi. Tab lain tetap menampilkan kolom pendaftaran dan tombol aksi seperti sebelumnya.
 - **Fix Download Presensi**: Memperbaiki tombol "Download Data" pada halaman Presensi Admin yang menampilkan simbol/karakter acak. Ganti implementasi dari `Excel::download()` ke `response()->streamDownload()` + `Excel::raw()` agar kompatibel dengan Octane/FrankenPHP. Ditambahkan pengecekan data kosong — jika belum ada data presensi, tampilkan notifikasi peringatan "Data presensi masih kosong" alih-alih mengunduh file kosong.
 - **Fitur Rekapitulasi Presensi**: Menu baru di grup "Manajemen Presensi" khusus super admin. Berisi tabel rekap per-peserta (Total Hadir, Tepat Waktu, Terlambat, Sisa Magang) dengan filter dropdown per-bulan (12 bulan terakhir), serta diagram batang Chart.js interaktif di bawah tabel yang auto-refresh saat bulan berubah.
+
+### 31 Maret 2026
+- **Merge Branch nana-work**: Menggabungkan fitur Task Management (pengganti manajemen project sebelumnya/simplify), System Settings, dan pembaruan UI (style presensi).
+- **Fix Server Listen Error**: Memperbaiki issue `php artisan serve` dengan menyesuaikan konfigurasi environment variabel.
