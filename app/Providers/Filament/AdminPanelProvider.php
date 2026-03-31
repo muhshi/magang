@@ -65,7 +65,7 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([
-                
+                \App\Filament\Widgets\CalendarWidget::class,
             ])
             ->middleware([
                 EncryptCookies::class,
@@ -97,6 +97,11 @@ class AdminPanelProvider extends PanelProvider
                     ]),
                 ResizedColumnPlugin::make()
                     ->preserveOnDB(),
+                \Saade\FilamentFullCalendar\FilamentFullCalendarPlugin::make()
+                    ->selectable()
+                    ->editable(false)
+                    ->timezone('Asia/Jakarta')
+                    ->locale('id'),
             ])
             ->authMiddleware([
                 Authenticate::class,
