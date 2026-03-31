@@ -13,6 +13,9 @@ use Illuminate\Support\Carbon;
 class InternshipOverview extends BaseWidget
 {
     use HasWidgetShield;
+    
+    protected static ?int $sort = 1;
+
     protected function getStats(): array
     {
         return

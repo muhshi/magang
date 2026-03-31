@@ -12,6 +12,8 @@ use Saade\FilamentFullCalendar\Data\EventData;
 
 class CalendarWidget extends FullCalendarWidget
 {
+    protected static ?int $sort = 2;
+
     /**
      * Tentukan fullcalendar hanya muncul sebulan penuh dan title di kiri
      */
@@ -24,6 +26,7 @@ class CalendarWidget extends FullCalendarWidget
                 'right' => 'prev,next today',
             ],
             'themeSystem' => 'standard',
+            'height' => 550,
         ];
     }
 
