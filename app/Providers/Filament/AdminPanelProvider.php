@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Pages\Auth\GoogleLogin;
 use App\Filament\Pages\EditProfile;
 use App\Filament\Pages\Map;
 use App\Filament\Pages\ProjectBoard;
@@ -42,7 +43,7 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
 
-            ->login()
+            ->login(GoogleLogin::class)
             ->registration()
             ->userMenuItems([
                 MenuItem::make()
