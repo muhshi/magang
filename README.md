@@ -216,6 +216,10 @@ This project is open-sourced software licensed under the [MIT license](https://o
 - **Fitur Rekapitulasi Presensi**: Menu baru di grup "Manajemen Presensi" khusus super admin. Berisi tabel rekap per-peserta (Total Hadir, Tepat Waktu, Terlambat, Sisa Magang) dengan filter dropdown per-bulan (12 bulan terakhir), serta diagram batang Chart.js interaktif di bawah tabel yang auto-refresh saat bulan berubah.
 
 ### 31 Maret 2026
-- **Merge Branch nana-work**: Menggabungkan fitur Task Management (pengganti manajemen project sebelumnya/simplify), System Settings, dan pembaruan UI (style presensi).
+- **Merge Branch nana-work**: Menggabungkan fitur Task Management (pengganti manajemen project sebelumnya/simplify), System Settings, dan pembaruan UI (style presensi), serta fitur Integrasi API Hari Libur Nasional.
 - **Fix Server Listen Error**: Memperbaiki issue `php artisan serve` dengan menyesuaikan konfigurasi environment variabel.
 - **Fix Bug Bulan Presensi**: Mengubah penggunaan fungsi `subMonths()` menjadi `startOfMonth()->subMonths()` serta mengatur pembacaan string tanggal ke tanggal 1 (`Y-m-d`) pada view untuk mengatasi bug *overflow* pada bulan dengan 31 hari. Bug ini sebelumnya menyebabkan bulan Februari menghilang di dropdown filter dan menampilkan nama bulan yang salah pada judul tabel rekapitulasi.
+- **Integrasi API Hari Libur Nasional**: Mengintegrasikan API `libur.deno.dev` untuk mengambil data hari libur nasional Indonesia. Data di-cache selama 30 hari untuk performa optimal.
+- **Perhitungan "Tidak Hadir" di Rekapitulasi Presensi**: Menambahkan kolom Hari Efektif, Tidak Hadir pada tabel rekap. Hari efektif dihitung dari hari kerja (Senin-Jumat) dikurangi hari libur nasional, dan di-clamp berdasarkan tanggal mulai/selesai magang per peserta. Tidak Hadir = Hari Efektif - Total Hadir.
+- **Info Ringkasan Bulan**: Menampilkan summary card berisi total hari kerja efektif dan daftar hari libur nasional (beserta nama) yang jatuh pada bulan yang dipilih.
+- **Update Chart**: Diagram batang per-peserta kini menampilkan 4 bar: Total Hadir, Tepat Waktu, Terlambat, dan Tidak Hadir (warna amber).
