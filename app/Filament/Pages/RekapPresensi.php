@@ -5,8 +5,12 @@ namespace App\Filament\Pages;
 use App\Models\Attendance;
 use App\Models\User;
 use Carbon\Carbon;
+use Carbon\CarbonPeriod;
 use Filament\Pages\Page;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class RekapPresensi extends Page
 {
@@ -28,11 +32,94 @@ class RekapPresensi extends Page
     }
 
     /**
+     * Ambil daftar tanggal libur nasional dari API untuk tahun tertentu.
+     * Hasilnya di-cache selama 30 hari agar tidak memanggil API terus-menerus.
+     *
+     * @return array<string> Array berisi tanggal libur format 'Y-m-d'
+     */
+    private function getHolidays(int $year): array
+    {
+        return Cache::remember("holidays_{$year}", now()->addDays(30), function () use ($year) {
+            try {
+                $response = Http::timeout(10)->get("https://libur.deno.dev/api", [
+                    'year' => $year,
+                ]);
+
+                if ($response->successful()) {
+                    $data = $response->json();
+
+                    // Simpan juga data lengkap (nama libur) di cache terpisah
+                    Cache::put("holidays_{$year}_full", $data, now()->addDays(30));
+
+                    return collect($data)->pluck('date')->toArray();
+                }
+            } catch (\Exception $e) {
+                Log::warning("Gagal mengambil data hari libur dari API: {$e->getMessage()}");
+            }
+
+            return []; // fallback: tidak ada data libur
+        });
+    }
+
+    /**
+     * Ambil data lengkap hari libur (termasuk nama) untuk tahun tertentu.
+     */
+    public function getHolidaysFull(int $year): array
+    {
+        // Panggil getHolidays dulu untuk memastikan cache terisi
+        $this->getHolidays($year);
+
+        return Cache::get("holidays_{$year}_full", []);
+    }
+
+    /**
+     * Hitung jumlah hari kerja efektif antara dua tanggal.
+     * Mengecualikan hari Sabtu, Minggu, dan tanggal libur nasional.
+     */
+    private function countWorkingDays(Carbon $start, Carbon $end, array $holidays): int
+    {
+        if ($start->greaterThan($end)) {
+            return 0;
+        }
+
+        $count = 0;
+        $period = CarbonPeriod::create($start, $end);
+
+        foreach ($period as $date) {
+            // Lewati akhir pekan (Sabtu = 6, Minggu = 0)
+            if ($date->isWeekend()) {
+                continue;
+            }
+            // Lewati hari libur nasional
+            if (in_array($date->format('Y-m-d'), $holidays)) {
+                continue;
+            }
+            $count++;
+        }
+
+        return $count;
+    }
+
+    /**
      * Ambil data rekapitulasi berdasarkan bulan yang dipilih.
      */
     public function getRekapData(): array
     {
         [$year, $month] = explode('-', $this->selectedMonth);
+
+        // Ambil data hari libur nasional untuk tahun ini
+        $holidays = $this->getHolidays((int) $year);
+
+        // Rentang bulan yang dipilih
+        $monthStart = Carbon::createFromDate($year, $month, 1)->startOfDay();
+        $monthEnd   = $monthStart->copy()->endOfMonth();
+        $today      = Carbon::today();
+
+        // Batas akhir untuk perhitungan (jangan melebihi hari ini jika bulan berjalan)
+        $effectiveEnd = $monthEnd->lessThanOrEqualTo($today) ? $monthEnd : $today;
+
+        // Hitung total hari kerja efektif untuk bulan penuh (sebelum clamp per user)
+        $totalHariEfektifBulan = $this->countWorkingDays($monthStart, $effectiveEnd, $holidays);
 
         // Ambil semua user dengan role Magang BPS
         $users = User::whereHas('roles', fn($q) => $q->whereIn('name', ['Magang BPS', 'Alumni Magang']))
@@ -51,12 +138,33 @@ class RekapPresensi extends Page
             $totalTerlambat = $attendances->filter(fn(Attendance $a) => $a->isLate())->count();
             $tepatWaktu     = $totalHadir - $totalTerlambat;
 
+            // Hitung hari efektif per-user (clamp berdasarkan tanggal magang)
+            $userStart = $monthStart->copy();
+            $userEnd   = $effectiveEnd->copy();
+
+            if ($user->internship) {
+                if ($user->internship->start_date) {
+                    $internStart = Carbon::parse($user->internship->start_date);
+                    if ($internStart->greaterThan($userStart)) {
+                        $userStart = $internStart;
+                    }
+                }
+                if ($user->internship->end_date) {
+                    $internEnd = Carbon::parse($user->internship->end_date);
+                    if ($internEnd->lessThan($userEnd)) {
+                        $userEnd = $internEnd;
+                    }
+                }
+            }
+
+            $hariEfektifUser = $this->countWorkingDays($userStart, $userEnd, $holidays);
+            $tidakHadir      = max(0, $hariEfektifUser - $totalHadir);
+
             // Sisa magang
             $sisaHari = null;
             $sisaLabel = '-';
             if ($user->internship && $user->internship->end_date) {
                 $endDate = Carbon::parse($user->internship->end_date);
-                $today   = Carbon::today();
                 if ($endDate->isFuture() || $endDate->isToday()) {
                     $sisaHari  = $today->diffInDays($endDate);
                     $sisaLabel = $sisaHari . ' hari';
@@ -66,20 +174,26 @@ class RekapPresensi extends Page
             }
 
             $rekap[] = [
-                'user_id'        => $user->id,
-                'nama'           => $user->name,
-                'total_hadir'    => $totalHadir,
-                'tepat_waktu'    => $tepatWaktu,
-                'terlambat'      => $totalTerlambat,
-                'sisa_hari'      => $sisaHari,
-                'sisa_label'     => $sisaLabel,
+                'user_id'         => $user->id,
+                'nama'            => $user->name,
+                'total_hadir'     => $totalHadir,
+                'tepat_waktu'     => $tepatWaktu,
+                'terlambat'       => $totalTerlambat,
+                'tidak_hadir'     => $tidakHadir,
+                'hari_efektif'    => $hariEfektifUser,
+                'sisa_hari'       => $sisaHari,
+                'sisa_label'      => $sisaLabel,
             ];
         }
 
         // Urutkan: yang paling banyak hadir di atas
         usort($rekap, fn($a, $b) => $b['total_hadir'] <=> $a['total_hadir']);
 
-        return $rekap;
+        return [
+            'data'               => $rekap,
+            'total_hari_efektif' => $totalHariEfektifBulan,
+            'holidays'           => $holidays,
+        ];
     }
 
     /**
@@ -107,3 +221,4 @@ class RekapPresensi extends Page
         return static::canAccess();
     }
 }
+
