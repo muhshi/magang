@@ -26,7 +26,7 @@
             <div class="fi-section-header px-6 py-4 border-b border-gray-200 dark:border-white/10">
                 <h3 class="text-base font-semibold text-gray-900 dark:text-white flex items-center gap-2">
                     <x-heroicon-o-table-cells class="h-5 w-5 text-primary-500" />
-                    Rekap Per Peserta — {{ \Carbon\Carbon::createFromFormat('Y-m', $selectedMonth)->translatedFormat('F Y') }}
+                    Rekap Per Peserta — {{ \Carbon\Carbon::createFromFormat('Y-m-d', $selectedMonth . '-01')->translatedFormat('F Y') }}
                 </h3>
             </div>
             <div class="fi-section-content overflow-x-auto">
