@@ -11,7 +11,7 @@
 
     @if (filament()->hasRegistration())
         <x-slot name="subheading">
-            {{ $this->registrationAction }}
+            {{ $this->registerAction }}
         </x-slot>
     @endif
 
