@@ -2,9 +2,9 @@
 
 namespace App\Filament\Pages\Auth;
 
-use Filament\Pages\Auth\Login as BaseLogin;
+use Filament\Auth\Pages\Login as BaseLogin;
 
 class GoogleLogin extends BaseLogin
 {
-    protected static string $view = 'filament.pages.auth.google-login';
+    protected string $view = 'filament.pages.auth.google-login';
 }
