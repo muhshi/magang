@@ -15,7 +15,7 @@ use BezhanSalleh\FilamentShield\Traits\HasPageShield;
 class TicketTimeline extends Page
 {
     use HasPageShield;
-    protected static ?string $navigationIcon = 'heroicon-o-calendar';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-calendar';
     
     protected static bool $shouldRegisterNavigation = false;
 
@@ -23,9 +23,9 @@ class TicketTimeline extends Page
 
     protected static ?int $navigationSort = 1;
 
-    protected static string $view = 'filament.pages.ticket-timeline';
+    protected string $view = 'filament.pages.ticket-timeline';
 
-    protected static ?string $navigationGroup = 'Manajemen Tugas';
+    protected static string | \UnitEnum | null $navigationGroup = 'Manajemen Tugas';
 
 
     public ?string $projectId = null;

@@ -9,8 +9,8 @@ use Illuminate\Support\Facades\Auth;
 class Map extends Page
 {
     use HasPageShield;
-    protected static ?string $navigationIcon = 'heroicon-o-map';
-    protected static ?string $navigationGroup = 'Manajemen Presensi';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-map';
+    protected static string | \UnitEnum | null $navigationGroup = 'Manajemen Presensi';
 
     public static function shouldRegisterNavigation(): bool
     {
@@ -18,7 +18,7 @@ class Map extends Page
     }
 
     protected static ?string $label = 'Map Utama';
-    protected static string $view = 'filament.pages.map';
+    protected string $view = 'filament.pages.map';
 
     public static function canAccess(): bool
     {

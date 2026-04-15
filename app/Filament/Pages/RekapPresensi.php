@@ -15,14 +15,14 @@ use Illuminate\Support\Facades\Log;
 
 class RekapPresensi extends Page
 {
-    protected static ?string $navigationIcon = 'heroicon-o-chart-bar';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-chart-bar';
     protected static ?string $navigationLabel = 'Rekapitulasi Presensi';
     protected static ?string $title = 'Rekapitulasi Presensi';
     protected static ?string $slug = 'rekap-presensi';
-    protected static ?string $navigationGroup = 'Manajemen Presensi';
+    protected static string | \UnitEnum | null $navigationGroup = 'Manajemen Presensi';
     protected static ?int $navigationSort = 2;
 
-    protected static string $view = 'filament.pages.rekap-presensi';
+    protected string $view = 'filament.pages.rekap-presensi';
 
     // Filter bulan (format: Y-m)
     public string $selectedMonth;

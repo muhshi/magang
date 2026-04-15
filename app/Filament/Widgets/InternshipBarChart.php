@@ -11,10 +11,10 @@ use Flowframe\Trend\TrendValue;
 class InternshipBarChart extends ChartWidget
 {
     use HasWidgetShield;
-    protected static ?string $heading = 'Total Pendaftar Menurut Bulan';
+    protected ?string $heading = 'Total Pendaftar Menurut Bulan';
     protected static ?int $sort = 2;
 
-    protected static ?string $maxHeight = '200px';
+    protected ?string $maxHeight = '200px';
 
     protected function getData(): array
     {

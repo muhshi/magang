@@ -14,9 +14,9 @@ use Filament\Forms\Components\ViewField;
 use Illuminate\Support\Facades\Storage;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
-use Filament\Forms\Form;
-use Filament\Forms\Get;
-use Filament\Forms\Set;
+use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Utilities\Set;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 
@@ -25,10 +25,10 @@ class SystemSettingsPage extends Page implements HasForms
     use InteractsWithForms;
 
     protected static ?string $slug = 'system-settings';
-    protected static ?string $navigationIcon = 'heroicon-o-cog-6-tooth';
-    protected static ?string $navigationGroup = 'Manajemen Presensi';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-cog-6-tooth';
+    protected static string | \UnitEnum | null $navigationGroup = 'Manajemen Presensi';
     protected static ?string $title = 'Pengaturan Sistem';
-    protected static string $view = 'filament.pages.system-settings-page';
+    protected string $view = 'filament.pages.system-settings-page';
     protected static ?int $navigationSort = 70;
 
     public static function canAccess(): bool
@@ -53,7 +53,7 @@ class SystemSettingsPage extends Page implements HasForms
         ]);
     }
 
-    public function form(Form $form): Form
+    public function form(Schema $form): Schema
     {
         return $form->schema([
             Group::make()->schema([ // ====== KOLOM KIRI

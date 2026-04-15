@@ -12,7 +12,7 @@ class RecentActivityTable extends BaseWidget
 {
     use HasWidgetShield;
 
-    protected static ?string $heading = 'Recent Activities';
+    protected static ?string $heading = 'Aktivitas Terbaru';
     
     protected int | string | array $columnSpan = [
         'md' => 2,

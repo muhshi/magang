@@ -17,16 +17,16 @@ use Illuminate\Support\Facades\Storage;
 
 class ProjectBoard extends Page
 {
-    protected static ?string $navigationIcon = 'heroicon-o-view-columns';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-view-columns';
 
-    protected static string $view = 'filament.pages.project-board';
+    protected string $view = 'filament.pages.project-board';
 
     // Hidden from navigation - replaced by Penugasan
     protected static bool $shouldRegisterNavigation = false;
 
     protected static ?string $navigationLabel = 'Project Board';
 
-    protected static ?string $navigationGroup = 'Manajemen Tugas';
+    protected static string | \UnitEnum | null $navigationGroup = 'Manajemen Tugas';
 
     protected static ?string $title = 'Papan Tugas';
 

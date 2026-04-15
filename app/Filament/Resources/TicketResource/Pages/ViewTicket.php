@@ -15,7 +15,7 @@ use Filament\Infolists\Components\Group;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Components\ViewEntry;
-use Filament\Infolists\Infolist;
+use Filament\Schemas\Schema;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ViewRecord;
 
@@ -118,7 +118,7 @@ class ViewTicket extends ViewRecord
         $this->redirect($this->getResource()::getUrl('view', ['record' => $this->getRecord()]));
     }
 
-    public function infolist(Infolist $infolist): Infolist
+    public function infolist(Schema $infolist): Schema
     {
         return $infolist
             ->schema([
@@ -263,7 +263,7 @@ class ViewTicket extends ViewRecord
         return [
             Action::make('editComment')
                 ->label('Edit Komentar')
-                ->mountUsing(function (Forms\Form $form, array $arguments) {
+                ->mountUsing(function (Schema $form, array $arguments) {
                     $commentId = $arguments['commentId'] ?? null;
 
                     if (! $commentId) {
