@@ -148,7 +148,7 @@ class UserResource extends Resource
                         ->form([
                             Forms\Components\Select::make('roles')
                                 ->label('Roles')
-                                ->relationship('roles', 'name')
+                                ->options(\Spatie\Permission\Models\Role::pluck('name', 'id')->toArray())
                                 ->multiple()
                                 ->preload()
                                 ->searchable()
