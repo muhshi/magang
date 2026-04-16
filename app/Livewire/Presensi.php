@@ -32,24 +32,31 @@ class Presensi extends Component
         $workEnd    = $settings->default_work_end;
         $shiftName  = 'Default';
 
-        // Override dari Schedule jika ada office & shift
-        if ($schedule && $schedule->office_id && $schedule->office) {
-            $officeName = $schedule->office->name;
-            $officeLat  = $schedule->office->latitude;
-            $officeLng  = $schedule->office->longitude;
-            $radius     = $schedule->office->radius;
-        }
-        if ($schedule && $schedule->shift_id && $schedule->shift) {
-            $workStart = $schedule->shift->start_time;
-            $workEnd   = $schedule->shift->end_time;
-            $shiftName = $schedule->shift->name;
-        }
+        $isWfa     = false;
+        $isBanned  = false;
 
+        // Override dari Schedule jika ada office & shift
+        if ($schedule) {
+            $isWfa    = (bool) $schedule->is_wfa;
+            $isBanned = (bool) $schedule->is_banned;
+
+            if ($schedule->office_id && $schedule->office) {
+                $officeName = $schedule->office->name;
+                $officeLat  = $schedule->office->latitude;
+                $officeLng  = $schedule->office->longitude;
+                $radius     = $schedule->office->radius;
+            }
+            if ($schedule->shift_id && $schedule->shift) {
+                $workStart = $schedule->shift->start_time;
+                $workEnd   = $schedule->shift->end_time;
+                $shiftName = $schedule->shift->name;
+            }
+        }
 
         return compact(
             'officeName', 'officeLat', 'officeLng', 'radius',
             'workStart', 'workEnd', 'shiftName',
-            'schedule'
+            'schedule', 'isWfa', 'isBanned'
         );
     }
 
