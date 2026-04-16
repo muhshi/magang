@@ -20,7 +20,7 @@
     <x-filament-panels::form id="form" wire:submit="authenticate">
         {{ $this->form }}
 
-        <x-filament-schemas::components.actions
+        <x-filament::actions
             :actions="$this->getCachedFormActions()"
             :full-width="$this->hasFullWidthFormActions()"
         />
