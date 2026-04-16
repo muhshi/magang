@@ -19,8 +19,8 @@ A Laravel Filament 3 application for managing projects with ticket management an
 
 ## Requirements
 
-- PHP > 8.2+
-- Laravel 12
+- PHP 8.4+
+- Laravel 13
 - MySQL 8.0+ / PostgreSQL 12+
 - Composer
 
@@ -234,3 +234,4 @@ This project is open-sourced software licensed under the [MIT license](https://o
 
 ### 16 April 2026
 - **Merge Branch nana-work**: Melakukan pull dan merge terbaru dari branch `nana-work` yang mencakup migrasi ke Filament v5, login Google SSO, fitur aksi cepat cuti, dan optimasi rekapitulasi presensi. Menangani konflik pada file README.md.
+- **Upgrade PHP 8.4 Support**: Melakukan upgrade base image Dockerfile ke `php8.4` (FrankenPHP) dan menambahkan konfigurasi `platform` di `composer.json` untuk mengatasi konflik dependensi Symfony 8.0 pada server.
