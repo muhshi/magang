@@ -9,10 +9,10 @@ use Filament\Widgets\ChartWidget;
 class InternshipPieChart extends ChartWidget
 {
     use HasWidgetShield;
-    protected static ?string $heading = 'Distribusi Pendaftar Magang (Gender)';
-    protected static ?int $sort = 1; // urutan tampil
+    protected ?string $heading = 'Distribusi Pendaftar Magang (Gender)';
+    protected static ?int $sort = 3; // urutan tampil
 
-    protected static ?string $maxHeight = '200px';
+    protected ?string $maxHeight = '200px';
 
     protected function getData(): array
     {

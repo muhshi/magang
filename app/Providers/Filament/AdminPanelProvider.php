@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Pages\Auth\GoogleLogin;
 use App\Filament\Pages\EditProfile;
 use App\Filament\Pages\Map;
 use App\Filament\Pages\ProjectBoard;
@@ -12,7 +13,7 @@ use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
-use Filament\Navigation\MenuItem;
+use Filament\Actions\Action;
 use Filament\Pages;
 use Filament\Pages\Dashboard;
 use Filament\Panel;
@@ -42,15 +43,15 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
 
-            ->login()
+            ->login(GoogleLogin::class)
             ->registration()
             ->userMenuItems([
-                MenuItem::make()
+                Action::make()
                     ->label('Profile')
                     ->url(fn(): string => EditProfile::getUrl())
                     ->icon('heroicon-o-user-circle'),
                 // Menambahkan kembali item menu Logout
-                'logout' => MenuItem::make()->label('Log out'),
+                'logout' => Action::make()->label('Log out'),
             ])
             ->colors([
                 'primary' => Color::Blue,
@@ -64,7 +65,7 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([
-                
+                \App\Filament\Widgets\CalendarWidget::class,
             ])
             ->middleware([
                 EncryptCookies::class,
@@ -96,6 +97,11 @@ class AdminPanelProvider extends PanelProvider
                     ]),
                 ResizedColumnPlugin::make()
                     ->preserveOnDB(),
+                \Saade\FilamentFullCalendar\FilamentFullCalendarPlugin::make()
+                    ->selectable()
+                    ->editable(false)
+                    ->timezone('Asia/Jakarta')
+                    ->locale('id'),
             ])
             ->authMiddleware([
                 Authenticate::class,

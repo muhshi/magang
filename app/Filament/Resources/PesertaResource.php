@@ -23,11 +23,11 @@ class PesertaResource extends Resource
 {
     protected static ?string $model = User::class;
 
-    protected static ?string $navigationIcon = 'heroicon-s-user-group';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-s-user-group';
     protected static ?string $label = 'Peserta';
     protected static ?string $pluralLabel = 'Peserta';
     protected static ?string $slug = 'peserta';
-    protected static ?string $navigationGroup = 'Manajemen Sertifikat';
+    protected static string | \UnitEnum | null $navigationGroup = 'Manajemen Sertifikat';
     protected static ?int $navigationSort = 1;
 
     public static function table(Table $table): Table

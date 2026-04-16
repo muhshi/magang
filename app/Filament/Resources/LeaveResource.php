@@ -7,11 +7,15 @@ use App\Filament\Resources\LeaveResource\RelationManagers;
 use App\Models\Leave;
 use Carbon\Carbon;
 use Filament\Forms;
-use Filament\Forms\Components\Section;
-use Filament\Forms\Components\Tabs\Tab;
-use Filament\Forms\Form;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Tabs\Tab;
+use Filament\Schemas\Schema;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Actions\Action;
+use Filament\Actions\ViewAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\BulkActionGroup;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -22,9 +26,9 @@ class LeaveResource extends Resource
 {
     protected static ?string $model = Leave::class;
 
-    protected static ?string $navigationIcon = 'heroicon-c-arrow-left-end-on-rectangle';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-c-arrow-left-end-on-rectangle';
 
-    protected static ?string $navigationGroup = 'Manajemen Presensi';
+    protected static string | \UnitEnum | null $navigationGroup = 'Manajemen Presensi';
 
     protected static ?string $label = 'Cuti';
 
@@ -51,7 +55,7 @@ class LeaveResource extends Resource
         return $data;
     }
 
-    public static function form(Form $form): Form
+    public static function form(Schema $form): Schema
     {
         return $form
             ->schema([
@@ -129,7 +133,23 @@ class LeaveResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\ViewAction::make()
+                Action::make('approve')
+                    ->label('Setujui')
+                    ->button()
+                    ->icon('heroicon-m-check-circle')
+                    ->color('success')
+                    ->action(fn (Leave $record) => $record->update(['status' => 'approved']))
+                    ->visible(fn (Leave $record): bool => $record->status === 'pending' && Auth::user()->roles[0]->name === 'super_admin'),
+
+                Action::make('reject')
+                    ->label('Tolak')
+                    ->button()
+                    ->icon('heroicon-m-x-circle')
+                    ->color('danger')
+                    ->action(fn (Leave $record) => $record->update(['status' => 'rejected']))
+                    ->visible(fn (Leave $record): bool => $record->status === 'pending' && Auth::user()->roles[0]->name === 'super_admin'),
+
+                ViewAction::make()
                     ->form([
                         Forms\Components\DatePicker::make('start_date')
                             ->label('Tanggal Mulai')
@@ -152,7 +172,7 @@ class LeaveResource extends Resource
                             ->label('Catatan')
                             ->disabled(),
                     ]),
-                Tables\Actions\EditAction::make()
+                EditAction::make()
                     ->visible(function (Leave $record): bool {
                         return $record->status === 'pending' || Auth::user()->roles[0]->name === 'super_admin';
                     }),
@@ -160,7 +180,7 @@ class LeaveResource extends Resource
                 // ->hidden(Auth::user()->roles[0]->name !== 'super_admin'),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
+                BulkActionGroup::make([
                     //Tables\Actions\DeleteBulkAction::make(),
                     //Tables\Actions\ExportBulkAction::make(),
                 ]),

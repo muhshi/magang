@@ -13,7 +13,7 @@ class UserStatisticsTable extends BaseWidget
 {
     use HasWidgetShield;
     
-    protected static ?string $heading = 'User Statistics';
+    protected static ?string $heading = 'Statistik Pengguna';
     
     protected int | string | array $columnSpan = [
         'md' => 2,

@@ -8,7 +8,7 @@ use Asmit\ResizedColumn\HasResizableColumn;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 use Spatie\Permission\Models\Role;
-use Filament\Resources\Components\Tab;
+use Filament\Schemas\Components\Tabs\Tab;
 use Illuminate\Database\Eloquent\Builder;
 
 

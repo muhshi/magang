@@ -6,7 +6,7 @@ use App\Filament\Resources\ProjectResource\Pages;
 use App\Filament\Resources\ProjectResource\RelationManagers;
 use App\Models\Project;
 use Filament\Forms;
-use Filament\Forms\Form;
+use Filament\Schemas\Schema;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -19,18 +19,18 @@ class ProjectResource extends Resource
 {
     protected static ?string $model = Project::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-rectangle-stack';
 
     // Hidden from navigation - replaced by Penugasan
     protected static bool $shouldRegisterNavigation = false;
 
-    protected static ?string $navigationGroup = 'Manajemen Tugas';
+    protected static string | \UnitEnum | null $navigationGroup = 'Manajemen Tugas';
 
     protected static ?string $label = 'Projek Utama';
 
     protected static ?int $navigationSort = 10;
 
-    public static function form(Form $form): Form
+    public static function form(Schema $form): Schema
     {
         return $form
             ->schema([

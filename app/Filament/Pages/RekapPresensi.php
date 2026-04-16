@@ -3,6 +3,7 @@
 namespace App\Filament\Pages;
 
 use App\Models\Attendance;
+use App\Models\Leave;
 use App\Models\User;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
@@ -14,14 +15,14 @@ use Illuminate\Support\Facades\Log;
 
 class RekapPresensi extends Page
 {
-    protected static ?string $navigationIcon = 'heroicon-o-chart-bar';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-chart-bar';
     protected static ?string $navigationLabel = 'Rekapitulasi Presensi';
     protected static ?string $title = 'Rekapitulasi Presensi';
     protected static ?string $slug = 'rekap-presensi';
-    protected static ?string $navigationGroup = 'Manajemen Presensi';
+    protected static string | \UnitEnum | null $navigationGroup = 'Manajemen Presensi';
     protected static ?int $navigationSort = 2;
 
-    protected static string $view = 'filament.pages.rekap-presensi';
+    protected string $view = 'filament.pages.rekap-presensi';
 
     // Filter bulan (format: Y-m)
     public string $selectedMonth;
@@ -158,7 +159,32 @@ class RekapPresensi extends Page
             }
 
             $hariEfektifUser = $this->countWorkingDays($userStart, $userEnd, $holidays);
-            $tidakHadir      = max(0, $hariEfektifUser - $totalHadir);
+
+            // Ambil data cuti yang disetujui untuk user ini pada bulan berjalan
+            $leaves = Leave::where('user_id', $user->id)
+                ->where('status', 'approved')
+                ->where(function ($q) use ($monthStart, $monthEnd) {
+                    $q->whereBetween('start_date', [$monthStart, $monthEnd])
+                      ->orWhereBetween('end_date', [$monthStart, $monthEnd])
+                      ->orWhere(function ($q2) use ($monthStart, $monthEnd) {
+                          $q2->where('start_date', '<', $monthStart)
+                             ->where('end_date', '>', $monthEnd);
+                      });
+                })->get();
+
+            $totalCuti = 0;
+            foreach ($leaves as $leave) {
+                // Batasi rentang cuti hanya di dalam rentang waktu user di bulan tsb
+                $leaveStart = Carbon::parse($leave->start_date)->max($userStart);
+                $leaveEnd   = Carbon::parse($leave->end_date)->min($userEnd);
+
+                if ($leaveStart->lessThanOrEqualTo($leaveEnd)) {
+                    $totalCuti += $this->countWorkingDays($leaveStart, $leaveEnd, $holidays);
+                }
+            }
+
+            // Hitung Tanpa Izin (Total Hadir + Cuti)
+            $tanpaIzin = max(0, $hariEfektifUser - ($totalHadir + $totalCuti));
 
             // Sisa magang
             $sisaHari = null;
@@ -179,7 +205,8 @@ class RekapPresensi extends Page
                 'total_hadir'     => $totalHadir,
                 'tepat_waktu'     => $tepatWaktu,
                 'terlambat'       => $totalTerlambat,
-                'tidak_hadir'     => $tidakHadir,
+                'cuti'            => $totalCuti,
+                'tanpa_izin'      => $tanpaIzin,
                 'hari_efektif'    => $hariEfektifUser,
                 'sisa_hari'       => $sisaHari,
                 'sisa_label'      => $sisaLabel,

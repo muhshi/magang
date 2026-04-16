@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\DB;
 
 class InternDashboard extends BaseWidget
 {
-    protected static ?string $pollingInterval = '30s';
+    protected ?string $pollingInterval = '30s';
     protected static ?int $sort = 1;
 
     public static function canView(): bool

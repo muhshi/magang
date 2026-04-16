@@ -6,7 +6,7 @@ use App\Filament\Resources\ShiftResource\Pages;
 use App\Filament\Resources\ShiftResource\RelationManagers;
 use App\Models\Shift;
 use Filament\Forms;
-use Filament\Forms\Form;
+use Filament\Schemas\Schema;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -17,9 +17,9 @@ class ShiftResource extends Resource
 {
     protected static ?string $model = Shift::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-clipboard-document';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-clipboard-document';
 
-    protected static ?string $navigationGroup = 'Manajemen Presensi';
+    protected static string | \UnitEnum | null $navigationGroup = 'Manajemen Presensi';
 
     protected static ?string $label = 'Jam Kerja';
 
@@ -28,7 +28,7 @@ class ShiftResource extends Resource
         return false;
     }
 
-    public static function form(Form $form): Form
+    public static function form(Schema $form): Schema
     {
         return $form
             ->schema([

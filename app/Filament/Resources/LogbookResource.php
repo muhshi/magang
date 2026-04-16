@@ -8,7 +8,7 @@ use App\Models\Internship;
 use App\Models\Logbook;
 use App\Models\User;
 use Filament\Forms;
-use Filament\Forms\Form;
+use Filament\Schemas\Schema;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -22,9 +22,9 @@ class LogbookResource extends Resource
 {
     protected static ?string $model = Logbook::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-book-open';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-book-open';
 
-    protected static ?string $navigationGroup = 'Manajemen Penugasan';
+    protected static string | \UnitEnum | null $navigationGroup = 'Manajemen Penugasan';
 
     protected static ?string $navigationLabel = 'Logbook';
 
@@ -50,7 +50,7 @@ class LogbookResource extends Resource
         ->toArray();
     }
 
-    public static function form(Form $form): Form
+    public static function form(Schema $form): Schema
     {
         $isAdmin = auth()->user()->hasRole(['super_admin', 'pembimbing']);
 

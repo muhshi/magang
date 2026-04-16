@@ -17,7 +17,7 @@ use Filament\Resources\Pages\Page;
 class PreviewCertificate extends Page
 {
     protected static string $resource = PesertaResource::class;
-    protected static string $view = 'filament.resources.peserta-resource.pages.preview-certificate';
+    protected string $view = 'filament.resources.peserta-resource.pages.preview-certificate';
     protected static ?string $title = 'Preview Sertifikat';
 
     public $record;

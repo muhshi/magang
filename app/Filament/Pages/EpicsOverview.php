@@ -8,7 +8,7 @@ use App\Models\Ticket;
 use BezhanSalleh\FilamentShield\Traits\HasPageShield;
 use Filament\Pages\Page;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Form;
+use Filament\Schemas\Schema;
 use Filament\Notifications\Notification;
 
 use Illuminate\Support\Collection;
@@ -19,11 +19,11 @@ use Livewire\Attributes\On;
 class EpicsOverview extends Page
 {
     use HasPageShield;
-    protected static ?string $navigationIcon = 'heroicon-o-flag';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-flag';
 
-    protected static string $view = 'filament.pages.epics-overview';
+    protected string $view = 'filament.pages.epics-overview';
 
-    protected static ?string $navigationGroup = 'Project Management';
+    protected static string | \UnitEnum | null $navigationGroup = 'Project Management';
 
     protected static ?string $navigationLabel = 'Epics';
     protected static bool $shouldRegisterNavigation = false;

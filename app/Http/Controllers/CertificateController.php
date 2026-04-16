@@ -57,9 +57,12 @@ class CertificateController extends Controller
         $ownerPassword = $settings->certificate_pdf_password ?? 'demak3321';
         $dompdf = $pdf->getDomPDF();
         $dompdf->render();
+        
+        // Modern approach: Accessing the canvas safely and type-hinting for IDE
         $canvas = $dompdf->getCanvas();
-        $cpdf = $canvas->get_cpdf();
-        $cpdf->setEncryption('', $ownerPassword, ['print', 'copy']);
+        if (method_exists($canvas, 'get_cpdf')) {
+            $canvas->get_cpdf()->setEncryption('', $ownerPassword, ['print', 'copy']);
+        }
 
         $filename = 'sertifikat-' . Str::slug($internship->full_name) . '.pdf';
 
@@ -136,9 +139,11 @@ class CertificateController extends Controller
         $ownerPassword = $settings->certificate_pdf_password ?? 'demak3321';
         $dompdf = $pdf->getDomPDF();
         $dompdf->render();
+        
         $canvas = $dompdf->getCanvas();
-        $cpdf = $canvas->get_cpdf();
-        $cpdf->setEncryption('', $ownerPassword, ['print', 'copy']);
+        if (method_exists($canvas, 'get_cpdf')) {
+            $canvas->get_cpdf()->setEncryption('', $ownerPassword, ['print', 'copy']);
+        }
 
         $filename = 'sertifikat-' . Str::slug($internship->full_name) . '.pdf';
 

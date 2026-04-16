@@ -8,7 +8,7 @@ use App\Models\Internship;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
+use Filament\Schemas\Schema;
 use Filament\Resources\Resource;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\EditAction;
@@ -23,11 +23,11 @@ class CertificateResource extends Resource
 
     protected static ?string $model = Certificate::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-academic-cap';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-academic-cap';
     protected static ?string $navigationLabel = 'Sertifikat';
     protected static ?string $slug = 'sertifikat';
 
-    public static function form(Form $form): Form
+    public static function form(Schema $form): Schema
     {
         return $form->schema([
             Select::make('internship_id')

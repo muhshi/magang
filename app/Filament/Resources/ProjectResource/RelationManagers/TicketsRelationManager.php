@@ -5,7 +5,7 @@ namespace App\Filament\Resources\ProjectResource\RelationManagers;
 use App\Models\Epic;
 use App\Models\TicketStatus;
 use Filament\Forms;
-use Filament\Forms\Form;
+use Filament\Schemas\Schema;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -22,7 +22,7 @@ class TicketsRelationManager extends RelationManager
         return $ownerRecord->tickets_count ?? $ownerRecord->tickets()->count();
     }
 
-    public function form(Form $form): Form
+    public function form(Schema $form): Schema
     {
         $projectId = $this->getOwnerRecord()->id;
 

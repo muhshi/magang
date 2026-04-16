@@ -91,7 +91,8 @@
                                 <th class="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400 text-center">Total Hadir</th>
                                 <th class="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400 text-center">Tepat Waktu</th>
                                 <th class="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400 text-center">Terlambat</th>
-                                <th class="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400 text-center">Tidak Hadir</th>
+                                <th class="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400 text-center">Cuti</th>
+                                <th class="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400 text-center">Tanpa Izin</th>
                                 <th class="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400 text-center">Sisa Magang</th>
                             </tr>
                         </thead>
@@ -151,11 +152,24 @@
                                         @endif
                                     </td>
 
-                                    {{-- Tidak Hadir --}}
+                                    {{-- Cuti --}}
                                     <td class="px-4 py-3 text-center">
-                                        @if ($row['tidak_hadir'] > 0)
+                                        @if ($row['cuti'] > 0)
+                                            <span class="inline-flex items-center justify-center rounded-full bg-info-50 dark:bg-info-950 px-2.5 py-0.5 text-sm font-semibold text-info-700 dark:text-info-300">
+                                                {{ $row['cuti'] }}x
+                                            </span>
+                                        @else
+                                            <span class="inline-flex items-center justify-center rounded-full bg-gray-100 dark:bg-gray-800 px-2.5 py-0.5 text-xs font-medium text-gray-500 dark:text-gray-400">
+                                                -
+                                            </span>
+                                        @endif
+                                    </td>
+
+                                    {{-- Tanpa Izin --}}
+                                    <td class="px-4 py-3 text-center">
+                                        @if ($row['tanpa_izin'] > 0)
                                             <span class="inline-flex items-center justify-center rounded-full bg-warning-50 dark:bg-warning-950 px-2.5 py-0.5 text-sm font-semibold text-warning-700 dark:text-warning-300">
-                                                {{ $row['tidak_hadir'] }}x
+                                                {{ $row['tanpa_izin'] }}x
                                             </span>
                                         @else
                                             <span class="inline-flex items-center justify-center rounded-full bg-success-50 dark:bg-success-950 px-2.5 py-0.5 text-xs font-medium text-success-700 dark:text-success-300">
@@ -194,11 +208,12 @@
                                                         {{ $row['total_hadir'] }},
                                                         {{ $row['tepat_waktu'] }},
                                                         {{ $row['terlambat'] }},
-                                                        {{ $row['tidak_hadir'] }}
+                                                        {{ $row['cuti'] }},
+                                                        {{ $row['tanpa_izin'] }}
                                                     )"
                                                     x-init="$watch('expandedRow', val => { if(val === {{ $row['user_id'] }}) { setTimeout(() => render(), 50); } })"
                                                 >
-                                                    @if($row['total_hadir'] > 0 || $row['tidak_hadir'] > 0)
+                                                    @if($row['total_hadir'] > 0 || $row['tanpa_izin'] > 0 || $row['cuti'] > 0)
                                                         <canvas x-ref="canvas"></canvas>
                                                     @else
                                                         <div class="flex flex-col items-center justify-center h-full text-gray-400 dark:text-gray-500">
@@ -231,7 +246,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <script>
         document.addEventListener('alpine:init', () => {
-            Alpine.data('miniChart', (hadir, tepatWaktu, terlambat, tidakHadir) => ({
+            Alpine.data('miniChart', (hadir, tepatWaktu, terlambat, cuti, tanpaIzin) => ({
                 chartInstance: null,
 
                 render() {
@@ -249,19 +264,21 @@
                     this.chartInstance = new Chart(canvas, {
                         type: 'bar',
                         data: {
-                            labels: ['Total Hadir', 'Tepat Waktu', 'Terlambat', 'Tidak Hadir'],
+                            labels: ['Total Hadir', 'Tepat Waktu', 'Terlambat', 'Cuti', 'Tanpa Izin'],
                             datasets: [{
-                                data: [hadir, tepatWaktu, terlambat, tidakHadir],
+                                data: [hadir, tepatWaktu, terlambat, cuti, tanpaIzin],
                                 backgroundColor: [
                                     'rgba(99, 102, 241, 0.75)', // Indigo
                                     'rgba(34, 197, 94, 0.75)',  // Green
                                     'rgba(239, 68, 68, 0.75)',  // Red
+                                    'rgba(14, 165, 233, 0.75)', // Sky blue (Cuti)
                                     'rgba(245, 158, 11, 0.75)'  // Amber
                                 ],
                                 borderColor: [
                                     'rgba(99, 102, 241, 1)',
                                     'rgba(34, 197, 94, 1)',
                                     'rgba(239, 68, 68, 1)',
+                                    'rgba(14, 165, 233, 1)',
                                     'rgba(245, 158, 11, 1)'
                                 ],
                                 borderWidth: 1,

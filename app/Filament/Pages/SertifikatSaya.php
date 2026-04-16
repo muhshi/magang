@@ -7,14 +7,14 @@ use Illuminate\Support\Facades\Auth;
 
 class SertifikatSaya extends Page
 {
-    protected static ?string $navigationIcon = 'heroicon-o-academic-cap';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-academic-cap';
     protected static ?string $navigationLabel = 'Sertifikat';
     protected static ?string $title = 'Sertifikat Saya';
     protected static ?string $slug = 'sertifikat-saya';
-    protected static ?string $navigationGroup = 'Manajemen Sertifikat';
+    protected static string | \UnitEnum | null $navigationGroup = 'Manajemen Sertifikat';
     protected static ?int $navigationSort = 1;
 
-    protected static string $view = 'filament.pages.sertifikat-saya';
+    protected string $view = 'filament.pages.sertifikat-saya';
 
     public $certificate = null;
     public $internship = null;

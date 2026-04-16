@@ -9,7 +9,7 @@ use App\Models\Logbook;
 use App\Models\Ticket;
 use App\Models\User;
 use Filament\Forms;
-use Filament\Forms\Form;
+use Filament\Schemas\Schema;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -24,12 +24,12 @@ class TicketResource extends Resource
 {
     protected static ?string $model = Ticket::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-list';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-clipboard-document-list';
 
     protected static ?string $navigationLabel = 'Penugasan';
 
     // Root level - no group
-    protected static ?string $navigationGroup = 'Manajemen Penugasan';
+    protected static string | \UnitEnum | null $navigationGroup = 'Manajemen Penugasan';
 
     protected static ?string $label = 'Tugas';
     protected static ?string $pluralLabel = 'Penugasan';
@@ -46,7 +46,7 @@ class TicketResource extends Resource
         return parent::getEloquentQuery();
     }
 
-    public static function form(Form $form): Form
+    public static function form(Schema $form): Schema
     {
         return $form
             ->schema([

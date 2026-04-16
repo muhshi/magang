@@ -10,16 +10,20 @@ use Asmit\FilamentUpload\Forms\Components\AdvancedFileUpload;
 use Filament\Forms;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\FileUpload;
-use Filament\Forms\Components\Grid;
-use Filament\Forms\Components\Section;
+use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
-use Filament\Forms\Get;
+use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Utilities\Set;
 use Filament\Resources\Resource;
 use Filament\Tables;
-use Filament\Tables\Actions\EditAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\ViewAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -32,11 +36,11 @@ class InternshipResource extends Resource
 {
     protected static ?string $model = Internship::class;
 
-    protected static ?string $navigationIcon = 'heroicon-s-identification';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-s-identification';
 
     protected static ?string $label = "Pendaftaran Magang";
 
-    public static function form(Form $form): Form
+    public static function form(Schema $form): Schema
     {
         return $form
             ->schema([
@@ -100,7 +104,7 @@ class InternshipResource extends Resource
                                         'S2' => 'Magister (S2)',
                                     ])
                                     ->live()
-                                    ->afterStateUpdated(function (Forms\Set $set, ?string $state) {
+                                    ->afterStateUpdated(function (Set $set, ?string $state) {
                                         if (in_array($state, ['SMA', 'SMK'])) {
                                             $set('program_studi', null);
                                             $set('fakultas', null);
@@ -308,7 +312,7 @@ class InternshipResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\ViewAction::make()
+                ViewAction::make()
                     ->hidden(fn ($livewire) => in_array($livewire->activeTab ?? null, $bpsTabs)),
 
                 EditAction::make()
@@ -334,8 +338,8 @@ class InternshipResource extends Resource
                     }),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
                 ]),
             ]);
     }

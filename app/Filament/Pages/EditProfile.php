@@ -9,7 +9,7 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
-use Filament\Forms\Form;
+use Filament\Schemas\Schema;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Illuminate\Support\Facades\Auth;
@@ -19,8 +19,8 @@ class EditProfile extends Page implements HasForms
 {
     use InteractsWithForms;
 
-    protected static ?string $navigationIcon = 'heroicon-o-user-circle';
-    protected static string $view = 'filament.pages.edit-profile';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-user-circle';
+    protected string $view = 'filament.pages.edit-profile';
     protected static ?string $navigationLabel = 'My Profile';
     protected static bool $shouldRegisterNavigation = false;
     protected static ?string $title = 'My Profile';
@@ -65,7 +65,7 @@ class EditProfile extends Page implements HasForms
     /**
      * Mendefinisikan form untuk data profil.
      */
-    public function profileForm(Form $form): Form
+    public function profileForm(Schema $form): Schema
     {
         return $form
             // KUNCI UTAMA: Ikat form ini ke model Profile.
@@ -126,7 +126,7 @@ class EditProfile extends Page implements HasForms
      * Mendefinisikan form untuk ganti password.
      * Form ini tidak diikat ke model, jadi kita tangani secara manual.
      */
-    public function passwordForm(Form $form): Form
+    public function passwordForm(Schema $form): Schema
     {
         return $form->schema([
             Section::make('Update Password')

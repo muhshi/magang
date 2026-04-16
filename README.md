@@ -223,3 +223,14 @@ This project is open-sourced software licensed under the [MIT license](https://o
 - **Perhitungan "Tidak Hadir" di Rekapitulasi Presensi**: Menambahkan kolom Hari Efektif, Tidak Hadir pada tabel rekap. Hari efektif dihitung dari hari kerja (Senin-Jumat) dikurangi hari libur nasional, dan di-clamp berdasarkan tanggal mulai/selesai magang per peserta. Tidak Hadir = Hari Efektif - Total Hadir.
 - **Info Ringkasan Bulan**: Menampilkan summary card berisi total hari kerja efektif dan daftar hari libur nasional (beserta nama) yang jatuh pada bulan yang dipilih.
 - **Update Chart**: Diagram batang per-peserta kini menampilkan 4 bar: Total Hadir, Tepat Waktu, Terlambat, dan Tidak Hadir (warna amber).
+- **Google SSO Login**: Menambahkan fitur Login dengan Google (OAuth 2.0) di halaman login Filament Admin menggunakan `laravel/socialite`. User yang sudah terdaftar langsung login, user baru otomatis dibuatkan akun dengan role `Calon Magang`. Tombol "Masuk dengan Google" tampil di bawah form login biasa dengan divider.
+- **Aksi Cepat Cuti**: Menambahkan Action Cepat pada tabel Daftar Cuti untuk role `super_admin` berupa tombol **Setujui** dan **Tolak**. Tombol ini muncul otomatis pada baris cuti yang bersatus `pending` untuk merubah status secara instan tanpa masuk form ubah data.
+- **Pembaruan Rekapitulasi Presensi**: Menambahkan kolom baru **Cuti** yang menghitung absensi legal (Cuti Disetujui) pada hari kerja efektif yang beririsan dengan filter bulan. Label *Tidak Hadir* juga telah diganti menjadi **Tanpa Izin**, di mana jumlah "Tanpa Izin" sekarang menyesuaikan dengan rumus `max(0, Hari Efektif - (Total Hadir + Cuti))`. Bar Chart juga diperbarui untuk memuat data *Cuti*.
+
+### 15 April 2026
+- **Migrasi Filament v5**: Memperbarui namespace pada `GoogleLogin.php`, `InternshipResource.php`, `LeaveResource.php`, dan `ListInternships.php` untuk sesuai dengan arsitektur `Filament\Schemas` yang baru. Menggunakan `Filament\Actions` untuk aksi tabel dan `Filament\Schemas\Components` untuk komponen form.
+- **Pembaruan Admin Panel**: Mengganti `MenuItem` yang telah didepresiasi dengan `Filament\Actions\Action` pada `AdminPanelProvider.php` sesuai standar terbaru.
+- **Modernisasi Sertifikat PDF**: Memperbaiki peringatan IDE pada `CertificateController.php` dengan menambahkan pengecekan `method_exists` yang lebih aman saat mengakses CPDF canvas untuk enkripsi PDF, memastikan kompatibilitas dengan Dompdf v3.
+
+### 16 April 2026
+- **Merge Branch nana-work**: Melakukan pull dan merge terbaru dari branch `nana-work` yang mencakup migrasi ke Filament v5, login Google SSO, fitur aksi cepat cuti, dan optimasi rekapitulasi presensi. Menangani konflik pada file README.md.
