@@ -9,9 +9,13 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Saade\FilamentFullCalendar\Widgets\FullCalendarWidget;
 use Saade\FilamentFullCalendar\Data\EventData;
+use Illuminate\Database\Eloquent\Model;
+use Livewire\Attributes\Locked;
 
 class CalendarWidget extends FullCalendarWidget
 {
+    #[Locked]
+    public Model | int | string | null $record = null;
     protected static ?int $sort = 2;
 
     /**

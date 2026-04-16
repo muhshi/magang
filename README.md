@@ -232,3 +232,4 @@ This project is open-sourced software licensed under the [MIT license](https://o
 ### 16 April 2026
 - **Fix User Menu Error**: Memperbaiki `LogicException` dengan memberikan unique name pada `Action::make()` di `userMenuItems` `AdminPanelProvider.php`, sekaligus menyelesaikan *deprecation warning* dengan tetap menggunakan `Action` (menggantikan `MenuItem`).
 - **Update Component Namespaces**: Menyelesaikan error IDE terkait "Use of unknown class" dengan menyesuaikan namespace `Section`, `Grid`, dan `Group` dari `Forms\Components` & `Infolists\Components` menjadi `Filament\Schemas\Components`, serta mengubah `Tables\Actions\Action` menjadi `\Filament\Actions\Action` sesuai arsitektur Filament v5.
+- **Fix FullCalendarWidget Error**: Menginisialisasi properti `$record` pada `CalendarWidget.php` untuk mencegah error "Typed property $record must not be accessed before initialization" yang terjadi di PHP 8.4 saat memuat event pada Livewire update.
