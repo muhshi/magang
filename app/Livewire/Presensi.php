@@ -72,7 +72,7 @@ class Presensi extends Component
             'presensiData'   => $data,
             'isWithinRadius' => $this->isWithinRadius,
             'attendance'     => $attendance,
-        ]);
+        ])->layout('components.layouts.app');
     }
 
     public function store()
