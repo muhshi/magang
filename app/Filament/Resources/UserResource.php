@@ -112,7 +112,7 @@ class UserResource extends Resource
                     ->query(fn(Builder $query): Builder => $query->whereNull('email_verified_at')),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                \Filament\Actions\EditAction::make(),
                 Action::make('selesaiMagang')
                     ->button()
                     ->label('Selesai Magang')
@@ -138,11 +138,11 @@ class UserResource extends Resource
                     }),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                \Filament\Actions\BulkActionGroup::make([
+                    \Filament\Actions\DeleteBulkAction::make(),
 
                     // NEW: Bulk action to assign role
-                    Tables\Actions\BulkAction::make('assignRole')
+                    \Filament\Actions\BulkAction::make('assignRole')
                         ->label('Assign Role')
                         ->icon('heroicon-o-shield-check')
                         ->form([
