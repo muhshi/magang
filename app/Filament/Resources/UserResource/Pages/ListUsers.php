@@ -52,6 +52,14 @@ class ListUsers extends ListRecords
                 ->badgeColor('primary');
         }
 
+        // Tab khusus untuk pengguna tanpa role
+        $tabs['no_role'] = Tab::make('Tanpa Role')
+            ->modifyQueryUsing(function (Builder $query) {
+                $query->doesntHave('roles');
+            })
+            ->badge(User::doesntHave('roles')->count())
+            ->badgeColor('danger');
+
         return $tabs;
     }
 }
