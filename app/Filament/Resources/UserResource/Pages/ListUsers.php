@@ -32,12 +32,12 @@ class ListUsers extends ListRecords
         // PERBAIKAN: Tentukan peran mana saja yang ingin ditampilkan
         $rolesToDisplay = ['Calon Magang', 'Magang BPS', 'Pegawai BPS'];
 
-        // $tabs = [
-        //     // Tab 'Semua' sekarang juga tidak akan menampilkan super_admin
-        //     'all' => Tab::make('Semua Pengguna')
-        //         ->modifyQueryUsing(fn(Builder $query) => $query->whereHas('roles', fn(Builder $query) => $query->whereIn('name', $rolesToDisplay)))
-        //         ->badge(User::role($rolesToDisplay)->count()),
-        // ];
+        $tabs = [
+            // Tab 'Semua' sekarang juga tidak akan menampilkan super_admin
+            'all' => Tab::make('Semua Pengguna')
+                ->modifyQueryUsing(fn(Builder $query) => $query->whereHas('roles', fn(Builder $query) => $query->whereIn('name', $rolesToDisplay)))
+                ->badge(User::role($rolesToDisplay)->count()),
+        ];
 
         // Buat satu tab untuk setiap role yang sudah ditentukan
         foreach ($rolesToDisplay as $roleName) {
