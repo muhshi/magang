@@ -49,8 +49,6 @@ class AdminPanelProvider extends PanelProvider
                     ->label('Profile')
                     ->url(fn(): string => EditProfile::getUrl())
                     ->icon('heroicon-o-user-circle'),
-                // Menambahkan kembali item menu Logout
-                'logout' => Action::make('logout')->label('Log out'),
             ])
             ->colors([
                 'primary' => Color::Blue,
