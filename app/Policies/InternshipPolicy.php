@@ -1,108 +1,75 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Policies;
 
-use App\Models\User;
+use Illuminate\Foundation\Auth\User as AuthUser;
 use App\Models\Internship;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class InternshipPolicy
 {
     use HandlesAuthorization;
-
-    /**
-     * Determine whether the user can view any models.
-     */
-    public function viewAny(User $user): bool
+    
+    public function viewAny(AuthUser $authUser): bool
     {
-        return $user->can('view_any_internship');
+        return $authUser->can('ViewAny:Internship');
     }
 
-    /**
-     * Determine whether the user can view the model.
-     */
-    public function view(User $user, Internship $internship): bool
+    public function view(AuthUser $authUser, Internship $internship): bool
     {
-        return $user->can('view_internship');
+        return $authUser->can('View:Internship');
     }
 
-    /**
-     * Determine whether the user can create models.
-     */
-    public function create(User $user): bool
+    public function create(AuthUser $authUser): bool
     {
-        return $user->can('create_internship');
+        return $authUser->can('Create:Internship');
     }
 
-    /**
-     * Determine whether the user can update the model.
-     */
-    public function update(User $user, Internship $internship): bool
+    public function update(AuthUser $authUser, Internship $internship): bool
     {
-        return $user->can('update_internship');
+        return $authUser->can('Update:Internship');
     }
 
-    /**
-     * Determine whether the user can delete the model.
-     */
-    public function delete(User $user, Internship $internship): bool
+    public function delete(AuthUser $authUser, Internship $internship): bool
     {
-        return $user->can('delete_internship');
+        return $authUser->can('Delete:Internship');
     }
 
-    /**
-     * Determine whether the user can bulk delete.
-     */
-    public function deleteAny(User $user): bool
+    public function deleteAny(AuthUser $authUser): bool
     {
-        return $user->can('delete_any_internship');
+        return $authUser->can('DeleteAny:Internship');
     }
 
-    /**
-     * Determine whether the user can permanently delete.
-     */
-    public function forceDelete(User $user, Internship $internship): bool
+    public function restore(AuthUser $authUser, Internship $internship): bool
     {
-        return $user->can('force_delete_internship');
+        return $authUser->can('Restore:Internship');
     }
 
-    /**
-     * Determine whether the user can permanently bulk delete.
-     */
-    public function forceDeleteAny(User $user): bool
+    public function forceDelete(AuthUser $authUser, Internship $internship): bool
     {
-        return $user->can('force_delete_any_internship');
+        return $authUser->can('ForceDelete:Internship');
     }
 
-    /**
-     * Determine whether the user can restore.
-     */
-    public function restore(User $user, Internship $internship): bool
+    public function forceDeleteAny(AuthUser $authUser): bool
     {
-        return $user->can('restore_internship');
+        return $authUser->can('ForceDeleteAny:Internship');
     }
 
-    /**
-     * Determine whether the user can bulk restore.
-     */
-    public function restoreAny(User $user): bool
+    public function restoreAny(AuthUser $authUser): bool
     {
-        return $user->can('restore_any_internship');
+        return $authUser->can('RestoreAny:Internship');
     }
 
-    /**
-     * Determine whether the user can replicate.
-     */
-    public function replicate(User $user, Internship $internship): bool
+    public function replicate(AuthUser $authUser, Internship $internship): bool
     {
-        return $user->can('replicate_internship');
+        return $authUser->can('Replicate:Internship');
     }
 
-    /**
-     * Determine whether the user can reorder.
-     */
-    public function reorder(User $user): bool
+    public function reorder(AuthUser $authUser): bool
     {
-        return $user->can('reorder_internship');
+        return $authUser->can('Reorder:Internship');
     }
+
 }

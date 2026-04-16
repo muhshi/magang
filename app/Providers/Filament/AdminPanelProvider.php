@@ -2,7 +2,6 @@
 
 namespace App\Providers\Filament;
 
-use App\Filament\Pages\Auth\GoogleLogin;
 use App\Filament\Pages\EditProfile;
 use App\Filament\Pages\Map;
 use App\Filament\Pages\ProjectBoard;
@@ -43,15 +42,13 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
 
-            ->login(GoogleLogin::class)
+            ->login()
             ->registration()
             ->userMenuItems([
-                Action::make()
+                Action::make('profile')
                     ->label('Profile')
                     ->url(fn(): string => EditProfile::getUrl())
                     ->icon('heroicon-o-user-circle'),
-                // Menambahkan kembali item menu Logout
-                'logout' => Action::make()->label('Log out'),
             ])
             ->colors([
                 'primary' => Color::Blue,

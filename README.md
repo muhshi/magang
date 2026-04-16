@@ -233,7 +233,13 @@ This project is open-sourced software licensed under the [MIT license](https://o
 - **Modernisasi Sertifikat PDF**: Memperbaiki peringatan IDE pada `CertificateController.php` dengan menambahkan pengecekan `method_exists` yang lebih aman saat mengakses CPDF canvas untuk enkripsi PDF, memastikan kompatibilitas dengan Dompdf v3.
 
 ### 16 April 2026
-- **Merge Branch nana-work**: Melakukan pull dan merge terbaru dari branch `nana-work` yang mencakup migrasi ke Filament v5, login Google SSO, fitur aksi cepat cuti, dan optimasi rekapitulasi presensi. Menangani konflik pada file README.md.
+- **Merge Branch nana-work**: Melakukan pull dan merge terbaru dari branch `nana-work` yang mencakup perbaikan Filament v5, penghapusan regulasi & Google SSO, fix logout, dan optimasi widget.
+- **Fix User Menu Error**: Memperbaiki `LogicException` dengan memberikan unique name pada `Action::make()` di `userMenuItems` `AdminPanelProvider.php`, sekaligus menyelesaikan *deprecation warning* dengan tetap menggunakan `Action` (menggantikan `MenuItem`).
+- **Update Component Namespaces**: Menyelesaikan error IDE terkait "Use of unknown class" dengan menyesuaikan namespace `Section`, `Grid`, dan `Group` dari `Forms\Components` & `Infolists\Components` menjadi `Filament\Schemas\Components`, serta mengubah `Tables\Actions\Action` menjadi `\Filament\Actions\Action` sesuai arsitektur Filament v5.
+- **Fix FullCalendarWidget Error**: Menginisialisasi properti `$record` pada `CalendarWidget.php` untuk mencegah error "Typed property $record must not be accessed before initialization" yang terjadi di PHP 8.4 saat memuat event pada Livewire update.
+- **Restore Disappeared Widgets**: Meregenerasi seluruh *permissions* Filament Shield melalui sinkronisasi ulang agar widget-widget admin kembali muncul.
+- **Remove Project Timeline**: Menghapus widget `ProjectTimeline` beserta file *view*-nya karena sudah tidak lagi digunakan pada halaman *Dashboard*.
+- **Remove Regulasi & Google SSO**: Menghapus total modul `Aturan` dan fitur login Google SSO, mengembalikan form login ke standar bawaan Filament.
+- **Fix Logout Button**: Memperbaiki tombol "Log out" yang sebelumnya tidak berfungsi di Menu Profil.
 - **Upgrade PHP 8.4 Support**: Melakukan upgrade base image Dockerfile ke `php8.4` (FrankenPHP) dan menambahkan konfigurasi `platform` di `composer.json` untuk mengatasi konflik dependensi Symfony 8.0 pada server.
-- **Fix Dev Script Windows**: Menghapus `laravel/pail` dari script `composer dev` karena membutuhkan ekstensi `pcntl` yang tidak tersedia di Windows, guna memastikan kelancaran development lokal.
-- **Fix Filament Namespace**: Memperbaiki error "Unable to locate component" dengan mengupdate tag form actions dari `filament-panels::form.actions` ke `filament::actions` pada halaman Google Login, menyesuaikan dengan standar penggunaan komponen publik Filament v5.
+- **Fix Dev Script Windows**: Menghapus `laravel/pail` dari script `composer dev` karena membutuhkan ekstensi `pcntl` yang tidak tersedia di Windows.

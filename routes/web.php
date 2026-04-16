@@ -2,15 +2,11 @@
 
 use App\Exports\AttendanceExport;
 use App\Http\Controllers\CertificateController;
-use App\Http\Controllers\GoogleAuthController;
 use App\Livewire\Presensi;
 use Illuminate\Support\Facades\Route;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Log;
 
-// ===== Google OAuth Routes =====
-Route::get('/auth/google/redirect', [GoogleAuthController::class, 'redirect'])->name('auth.google.redirect');
-Route::get('/auth/google/callback', [GoogleAuthController::class, 'callback'])->name('auth.google.callback');
 
 Route::get('/', function () {
     return view('home');
