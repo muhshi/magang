@@ -1,108 +1,75 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Policies;
 
-use App\Models\User;
+use Illuminate\Foundation\Auth\User as AuthUser;
 use App\Models\Certificate;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class CertificatePolicy
 {
     use HandlesAuthorization;
-
-    /**
-     * Determine whether the user can view any models.
-     */
-    public function viewAny(User $user): bool
+    
+    public function viewAny(AuthUser $authUser): bool
     {
-        return $user->can('view_any_certificate');
+        return $authUser->can('ViewAny:Certificate');
     }
 
-    /**
-     * Determine whether the user can view the model.
-     */
-    public function view(User $user, Certificate $certificate): bool
+    public function view(AuthUser $authUser, Certificate $certificate): bool
     {
-        return $user->can('view_certificate');
+        return $authUser->can('View:Certificate');
     }
 
-    /**
-     * Determine whether the user can create models.
-     */
-    public function create(User $user): bool
+    public function create(AuthUser $authUser): bool
     {
-        return $user->can('create_certificate');
+        return $authUser->can('Create:Certificate');
     }
 
-    /**
-     * Determine whether the user can update the model.
-     */
-    public function update(User $user, Certificate $certificate): bool
+    public function update(AuthUser $authUser, Certificate $certificate): bool
     {
-        return $user->can('update_certificate');
+        return $authUser->can('Update:Certificate');
     }
 
-    /**
-     * Determine whether the user can delete the model.
-     */
-    public function delete(User $user, Certificate $certificate): bool
+    public function delete(AuthUser $authUser, Certificate $certificate): bool
     {
-        return $user->can('delete_certificate');
+        return $authUser->can('Delete:Certificate');
     }
 
-    /**
-     * Determine whether the user can bulk delete.
-     */
-    public function deleteAny(User $user): bool
+    public function deleteAny(AuthUser $authUser): bool
     {
-        return $user->can('delete_any_certificate');
+        return $authUser->can('DeleteAny:Certificate');
     }
 
-    /**
-     * Determine whether the user can permanently delete.
-     */
-    public function forceDelete(User $user, Certificate $certificate): bool
+    public function restore(AuthUser $authUser, Certificate $certificate): bool
     {
-        return $user->can('force_delete_certificate');
+        return $authUser->can('Restore:Certificate');
     }
 
-    /**
-     * Determine whether the user can permanently bulk delete.
-     */
-    public function forceDeleteAny(User $user): bool
+    public function forceDelete(AuthUser $authUser, Certificate $certificate): bool
     {
-        return $user->can('force_delete_any_certificate');
+        return $authUser->can('ForceDelete:Certificate');
     }
 
-    /**
-     * Determine whether the user can restore.
-     */
-    public function restore(User $user, Certificate $certificate): bool
+    public function forceDeleteAny(AuthUser $authUser): bool
     {
-        return $user->can('restore_certificate');
+        return $authUser->can('ForceDeleteAny:Certificate');
     }
 
-    /**
-     * Determine whether the user can bulk restore.
-     */
-    public function restoreAny(User $user): bool
+    public function restoreAny(AuthUser $authUser): bool
     {
-        return $user->can('restore_any_certificate');
+        return $authUser->can('RestoreAny:Certificate');
     }
 
-    /**
-     * Determine whether the user can replicate.
-     */
-    public function replicate(User $user, Certificate $certificate): bool
+    public function replicate(AuthUser $authUser, Certificate $certificate): bool
     {
-        return $user->can('replicate_certificate');
+        return $authUser->can('Replicate:Certificate');
     }
 
-    /**
-     * Determine whether the user can reorder.
-     */
-    public function reorder(User $user): bool
+    public function reorder(AuthUser $authUser): bool
     {
-        return $user->can('reorder_certificate');
+        return $authUser->can('Reorder:Certificate');
     }
+
 }

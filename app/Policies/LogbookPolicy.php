@@ -1,108 +1,75 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Policies;
 
-use App\Models\User;
+use Illuminate\Foundation\Auth\User as AuthUser;
 use App\Models\Logbook;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class LogbookPolicy
 {
     use HandlesAuthorization;
-
-    /**
-     * Determine whether the user can view any models.
-     */
-    public function viewAny(User $user): bool
+    
+    public function viewAny(AuthUser $authUser): bool
     {
-        return $user->can('view_any_logbook');
+        return $authUser->can('ViewAny:Logbook');
     }
 
-    /**
-     * Determine whether the user can view the model.
-     */
-    public function view(User $user, Logbook $logbook): bool
+    public function view(AuthUser $authUser, Logbook $logbook): bool
     {
-        return $user->can('view_logbook');
+        return $authUser->can('View:Logbook');
     }
 
-    /**
-     * Determine whether the user can create models.
-     */
-    public function create(User $user): bool
+    public function create(AuthUser $authUser): bool
     {
-        return $user->can('create_logbook');
+        return $authUser->can('Create:Logbook');
     }
 
-    /**
-     * Determine whether the user can update the model.
-     */
-    public function update(User $user, Logbook $logbook): bool
+    public function update(AuthUser $authUser, Logbook $logbook): bool
     {
-        return $user->can('update_logbook');
+        return $authUser->can('Update:Logbook');
     }
 
-    /**
-     * Determine whether the user can delete the model.
-     */
-    public function delete(User $user, Logbook $logbook): bool
+    public function delete(AuthUser $authUser, Logbook $logbook): bool
     {
-        return $user->can('delete_logbook');
+        return $authUser->can('Delete:Logbook');
     }
 
-    /**
-     * Determine whether the user can bulk delete.
-     */
-    public function deleteAny(User $user): bool
+    public function deleteAny(AuthUser $authUser): bool
     {
-        return $user->can('delete_any_logbook');
+        return $authUser->can('DeleteAny:Logbook');
     }
 
-    /**
-     * Determine whether the user can permanently delete.
-     */
-    public function forceDelete(User $user, Logbook $logbook): bool
+    public function restore(AuthUser $authUser, Logbook $logbook): bool
     {
-        return $user->can('force_delete_logbook');
+        return $authUser->can('Restore:Logbook');
     }
 
-    /**
-     * Determine whether the user can permanently bulk delete.
-     */
-    public function forceDeleteAny(User $user): bool
+    public function forceDelete(AuthUser $authUser, Logbook $logbook): bool
     {
-        return $user->can('force_delete_any_logbook');
+        return $authUser->can('ForceDelete:Logbook');
     }
 
-    /**
-     * Determine whether the user can restore.
-     */
-    public function restore(User $user, Logbook $logbook): bool
+    public function forceDeleteAny(AuthUser $authUser): bool
     {
-        return $user->can('restore_logbook');
+        return $authUser->can('ForceDeleteAny:Logbook');
     }
 
-    /**
-     * Determine whether the user can bulk restore.
-     */
-    public function restoreAny(User $user): bool
+    public function restoreAny(AuthUser $authUser): bool
     {
-        return $user->can('restore_any_logbook');
+        return $authUser->can('RestoreAny:Logbook');
     }
 
-    /**
-     * Determine whether the user can replicate.
-     */
-    public function replicate(User $user, Logbook $logbook): bool
+    public function replicate(AuthUser $authUser, Logbook $logbook): bool
     {
-        return $user->can('replicate_logbook');
+        return $authUser->can('Replicate:Logbook');
     }
 
-    /**
-     * Determine whether the user can reorder.
-     */
-    public function reorder(User $user): bool
+    public function reorder(AuthUser $authUser): bool
     {
-        return $user->can('reorder_logbook');
+        return $authUser->can('Reorder:Logbook');
     }
+
 }
