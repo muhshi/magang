@@ -3,7 +3,6 @@
 namespace App\Livewire;
 
 use App\Models\Attendance;
-use App\Models\Aturan;
 use App\Models\Leave;
 use App\Models\Schedule;
 use App\Settings\SystemSettings;
@@ -46,14 +45,11 @@ class Presensi extends Component
             $shiftName = $schedule->shift->name;
         }
 
-        // Cek aturan aktif (WFA / Banned)
-        $isWfa    = Aturan::hasActive(Auth::id(), 'WFA');
-        $isBanned = Aturan::hasActive(Auth::id(), 'Banned');
 
         return compact(
             'officeName', 'officeLat', 'officeLng', 'radius',
             'workStart', 'workEnd', 'shiftName',
-            'isWfa', 'isBanned', 'schedule'
+            'schedule'
         );
     }
 
@@ -95,11 +91,6 @@ class Presensi extends Component
             return;
         }
 
-        // Cek banned
-        if ($data['isBanned']) {
-            session()->flash('error', 'Anda diblokir dari sistem presensi. Silakan hubungi admin.');
-            return;
-        }
 
         $attendance = Attendance::where('user_id', Auth::id())
             ->whereDate('created_at', now()->toDateString())
