@@ -228,3 +228,6 @@ This project is open-sourced software licensed under the [MIT license](https://o
 - **Migrasi Filament v5**: Memperbarui namespace pada `GoogleLogin.php`, `InternshipResource.php`, `LeaveResource.php`, dan `ListInternships.php` untuk sesuai dengan arsitektur `Filament\Schemas` yang baru. Menggunakan `Filament\Actions` untuk aksi tabel dan `Filament\Schemas\Components` untuk komponen form.
 - **Pembaruan Admin Panel**: Mengganti `MenuItem` yang telah didepresiasi dengan `Filament\Actions\Action` pada `AdminPanelProvider.php` sesuai standar terbaru.
 - **Modernisasi Sertifikat PDF**: Memperbaiki peringatan IDE pada `CertificateController.php` dengan menambahkan pengecekan `method_exists` yang lebih aman saat mengakses CPDF canvas untuk enkripsi PDF, memastikan kompatibilitas dengan Dompdf v3.
+
+### 16 April 2026
+- **Fix User Menu Error**: Memperbaiki `LogicException` ("Action of class [Filament\Actions\Action] must have a unique name") dengan mengganti penggunaan `Action` kembali menjadi `MenuItem` pada `userMenuItems` di `AdminPanelProvider.php`.
