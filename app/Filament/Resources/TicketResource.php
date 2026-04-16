@@ -178,7 +178,7 @@ class TicketResource extends Resource
                         default => 'warning',
                     })
                     ->action(
-                        Tables\Actions\Action::make('toggleApproval')
+                        \Filament\Actions\Action::make('toggleApproval')
                             ->requiresConfirmation()
                             ->modalHeading(fn ($record) => $record->approval_status === 'approved' ? 'Batalkan Approval?' : 'Approve Tugas?')
                             ->action(function ($record) {
@@ -209,7 +209,7 @@ class TicketResource extends Resource
                     ->searchable()
                     ->placeholder('Belum diset')
                     ->action(
-                        Tables\Actions\Action::make('setAssignee')
+                        \Filament\Actions\Action::make('setAssignee')
                             ->form([
                                 Forms\Components\Select::make('assignee_ids')
                                     ->label('Peserta Magang')
@@ -297,7 +297,7 @@ class TicketResource extends Resource
                     })
                     ->sortable()
                     ->action(
-                        Tables\Actions\Action::make('setStatus')
+                        \Filament\Actions\Action::make('setStatus')
                             ->form([
                                 Forms\Components\Select::make('status')
                                     ->label('Status')
@@ -436,17 +436,17 @@ class TicketResource extends Resource
                     ]),
             ])
             ->actions([
-                Tables\Actions\ViewAction::make()->label('Detail'),
-                Tables\Actions\EditAction::make()
+                \Filament\Actions\ViewAction::make()->label('Detail'),
+                \Filament\Actions\EditAction::make()
                     ->visible(fn () => auth()->user()->hasRole(['super_admin', 'pembimbing', 'Pegawai BPS'])),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make()
+                \Filament\Actions\BulkActionGroup::make([
+                    \Filament\Actions\DeleteBulkAction::make()
                         ->visible(auth()->user()->hasRole(['super_admin'])),
 
                     // Bulk update status
-                    Tables\Actions\BulkAction::make('updateStatus')
+                    \Filament\Actions\BulkAction::make('updateStatus')
                         ->label('Update Status')
                         ->icon('heroicon-o-arrow-path')
                         ->form([
@@ -468,7 +468,7 @@ class TicketResource extends Resource
                         ->visible(fn () => auth()->user()->hasRole(['super_admin', 'pembimbing'])),
 
                     // Bulk assign peserta magang
-                    Tables\Actions\BulkAction::make('assignUsers')
+                    \Filament\Actions\BulkAction::make('assignUsers')
                         ->label('Assign Peserta')
                         ->icon('heroicon-o-user-group')
                         ->form([

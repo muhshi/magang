@@ -176,13 +176,13 @@ class LeaveResource extends Resource
                     ->visible(function (Leave $record): bool {
                         return $record->status === 'pending' || Auth::user()->roles[0]->name === 'super_admin';
                     }),
-                // Tables\Actions\DeleteAction::make()
+                // \Filament\Actions\DeleteAction::make()
                 // ->hidden(Auth::user()->roles[0]->name !== 'super_admin'),
             ])
             ->bulkActions([
                 BulkActionGroup::make([
-                    //Tables\Actions\DeleteBulkAction::make(),
-                    //Tables\Actions\ExportBulkAction::make(),
+                    //\Filament\Actions\DeleteBulkAction::make(),
+                    //\Filament\Actions\ExportBulkAction::make(),
                 ]),
             ]);
     }

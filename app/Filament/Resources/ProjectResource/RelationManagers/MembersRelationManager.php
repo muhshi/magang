@@ -41,18 +41,18 @@ class MembersRelationManager extends RelationManager
                 //
             ])
             ->headerActions([
-                Tables\Actions\AttachAction::make()
+                \Filament\Actions\AttachAction::make()
                     ->preloadRecordSelect()
                     ->recordSelectSearchColumns(['name', 'email'])
                     ->label('Add Member'),
             ])
             ->actions([
-                Tables\Actions\DetachAction::make()
+                \Filament\Actions\DetachAction::make()
                     ->label('Remove'),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DetachBulkAction::make()
+                \Filament\Actions\BulkActionGroup::make([
+                    \Filament\Actions\DetachBulkAction::make()
                         ->label('Remove Selected'),
                 ]),
             ]);

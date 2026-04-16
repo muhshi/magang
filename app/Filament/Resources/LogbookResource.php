@@ -239,15 +239,15 @@ class LogbookResource extends Resource
                     ]),
             ])
             ->actions([
-                Tables\Actions\ViewAction::make()
+                \Filament\Actions\ViewAction::make()
                     ->visible(fn (Logbook $record) => $record->source === 'system'),
-                Tables\Actions\EditAction::make()
+                \Filament\Actions\EditAction::make()
                     ->visible(fn (Logbook $record) =>
                         $record->source === 'manual' &&
                         $record->user_id === Auth::id() &&
                         !auth()->user()->hasRole('Alumni Magang')
                     ),
-                Tables\Actions\DeleteAction::make()
+                \Filament\Actions\DeleteAction::make()
                     ->visible(fn (Logbook $record) =>
                         $record->source === 'manual' &&
                         $record->user_id === Auth::id() &&

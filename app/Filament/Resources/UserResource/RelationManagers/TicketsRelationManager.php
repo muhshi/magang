@@ -99,11 +99,11 @@ class TicketsRelationManager extends RelationManager
 
             ])
             ->actions([
-                Tables\Actions\ViewAction::make()
+                \Filament\Actions\ViewAction::make()
                     ->url(fn ($record) => route('filament.admin.resources.tickets.edit', $record)),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
+                \Filament\Actions\BulkActionGroup::make([
 
                 ]),
             ]);
