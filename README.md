@@ -235,3 +235,4 @@ This project is open-sourced software licensed under the [MIT license](https://o
 ### 16 April 2026
 - **Merge Branch nana-work**: Melakukan pull dan merge terbaru dari branch `nana-work` yang mencakup migrasi ke Filament v5, login Google SSO, fitur aksi cepat cuti, dan optimasi rekapitulasi presensi. Menangani konflik pada file README.md.
 - **Upgrade PHP 8.4 Support**: Melakukan upgrade base image Dockerfile ke `php8.4` (FrankenPHP) dan menambahkan konfigurasi `platform` di `composer.json` untuk mengatasi konflik dependensi Symfony 8.0 pada server.
+- **Fix Dev Script Windows**: Menghapus `laravel/pail` dari script `composer dev` karena membutuhkan ekstensi `pcntl` yang tidak tersedia di Windows, guna memastikan kelancaran development lokal.
