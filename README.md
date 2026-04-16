@@ -230,4 +230,5 @@ This project is open-sourced software licensed under the [MIT license](https://o
 - **Modernisasi Sertifikat PDF**: Memperbaiki peringatan IDE pada `CertificateController.php` dengan menambahkan pengecekan `method_exists` yang lebih aman saat mengakses CPDF canvas untuk enkripsi PDF, memastikan kompatibilitas dengan Dompdf v3.
 
 ### 16 April 2026
-- **Fix User Menu Error**: Memperbaiki `LogicException` ("Action of class [Filament\Actions\Action] must have a unique name") dengan mengganti penggunaan `Action` kembali menjadi `MenuItem` pada `userMenuItems` di `AdminPanelProvider.php`.
+- **Fix User Menu Error**: Memperbaiki `LogicException` dengan memberikan unique name pada `Action::make()` di `userMenuItems` `AdminPanelProvider.php`, sekaligus menyelesaikan *deprecation warning* dengan tetap menggunakan `Action` (menggantikan `MenuItem`).
+- **Update Component Namespaces**: Menyelesaikan error IDE terkait "Use of unknown class" dengan menyesuaikan namespace `Section`, `Grid`, dan `Group` dari `Forms\Components` & `Infolists\Components` menjadi `Filament\Schemas\Components`, serta mengubah `Tables\Actions\Action` menjadi `\Filament\Actions\Action` sesuai arsitektur Filament v5.

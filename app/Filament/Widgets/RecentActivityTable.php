@@ -111,7 +111,7 @@ class RecentActivityTable extends BaseWidget
             ])
             ->filtersFormColumns(2)
             ->actions([
-                Tables\Actions\Action::make('view')
+                \Filament\Actions\Action::make('view')
                     ->label('')
                     ->icon('heroicon-o-arrow-top-right-on-square')
                     ->size('sm')

@@ -13,7 +13,7 @@ use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
-use Filament\Navigation\MenuItem;
+use Filament\Actions\Action;
 use Filament\Pages;
 use Filament\Pages\Dashboard;
 use Filament\Panel;
@@ -46,12 +46,12 @@ class AdminPanelProvider extends PanelProvider
             ->login(GoogleLogin::class)
             ->registration()
             ->userMenuItems([
-                MenuItem::make()
+                Action::make('profile')
                     ->label('Profile')
                     ->url(fn(): string => EditProfile::getUrl())
                     ->icon('heroicon-o-user-circle'),
                 // Menambahkan kembali item menu Logout
-                'logout' => MenuItem::make()->label('Log out'),
+                'logout' => Action::make('logout')->label('Log out'),
             ])
             ->colors([
                 'primary' => Color::Blue,
