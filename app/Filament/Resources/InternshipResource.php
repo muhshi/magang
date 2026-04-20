@@ -91,7 +91,7 @@ class InternshipResource extends Resource
                         Grid::make(2)
                             ->schema([
                                 TextInput::make('school_name')
-                                    ->label('Nama Sekolah/Universitas')
+                                    ->label('Asal Instansi')
                                     ->required(),
 
                                 Select::make('education_level')
@@ -224,6 +224,8 @@ class InternshipResource extends Resource
                 // === KOLOM NORMAL (Pending, Diterima, Ditolak, Semua) ===
                 Tables\Columns\ImageColumn::make('photo_file')
                     ->label('Pas Foto')
+                    ->size(45)
+                    ->circular()
                     ->disk('public')
                     ->hidden(fn ($livewire) => in_array($livewire->activeTab ?? null, $bpsTabs)),
 
@@ -243,7 +245,7 @@ class InternshipResource extends Resource
                     ->hidden(fn ($livewire) => in_array($livewire->activeTab ?? null, $bpsTabs)),
 
                 Tables\Columns\TextColumn::make('school_name')
-                    ->label('Sekolah/Universitas')
+                    ->label('Asal Instansi')
                     ->searchable()
                     ->hidden(fn ($livewire) => in_array($livewire->activeTab ?? null, $bpsTabs)),
 
@@ -279,7 +281,7 @@ class InternshipResource extends Resource
                     ->visible(fn ($livewire) => in_array($livewire->activeTab ?? null, $bpsTabs)),
 
                 TextColumn::make('school_name')
-                    ->label('Universitas')
+                    ->label('Asal Instansi')
                     ->searchable()
                     ->visible(fn ($livewire) => in_array($livewire->activeTab ?? null, $bpsTabs)),
 

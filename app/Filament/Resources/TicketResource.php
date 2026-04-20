@@ -101,6 +101,7 @@ class TicketResource extends Resource
                     ->label('Attachment')
                     ->disk('public')
                     ->directory('task-attachments')
+                    ->imagePreviewHeight('50')
                     ->preserveFilenames()
                     ->openable()
                     ->downloadable()

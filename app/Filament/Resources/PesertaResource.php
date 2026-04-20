@@ -40,7 +40,7 @@ class PesertaResource extends Resource
                     ->sortable(),
 
                 TextColumn::make('internship.school_name')
-                    ->label('Universitas')
+                    ->label('Asal Instansi')
                     ->searchable(),
 
                 TextColumn::make('internship.program_studi')
