@@ -99,6 +99,7 @@ class TicketResource extends Resource
                 // G. Attachment
                 Forms\Components\FileUpload::make('attachment')
                     ->label('Attachment')
+                    ->disk('public')
                     ->directory('task-attachments')
                     ->preserveFilenames()
                     ->openable()

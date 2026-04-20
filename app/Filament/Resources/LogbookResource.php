@@ -99,6 +99,7 @@ class LogbookResource extends Resource
                 Forms\Components\FileUpload::make('lampiran')
                     ->label('Lampiran')
                     ->nullable()
+                    ->disk('public')
                     ->directory('logbook-attachments')
                     ->preserveFilenames(),
             ]),

@@ -153,6 +153,7 @@ class InternshipResource extends Resource
                             ->pdfFitType(PdfViewFit::FIT)
                             ->pdfNavPanes(true)
                             ->acceptedFileTypes(['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'])
+                            ->disk('public')
                             ->directory('magang/letter')
                             ->visibility('public')
                             ->preserveFilenames()
@@ -164,7 +165,9 @@ class InternshipResource extends Resource
                             ->label('Foto (JPG/PNG, Maks. 3MB)')
                             ->image()
                             ->maxSize(3072)
+                            ->disk('public')
                             ->directory('magang/photo')
+                            ->visibility('public')
                             ->preserveFilenames()
                             ->downloadable()
                             ->required()
@@ -201,6 +204,7 @@ class InternshipResource extends Resource
                             ->pdfZoomLevel(100)
                             ->pdfFitType(PdfViewFit::FIT)
                             ->pdfNavPanes(true)
+                            ->disk('public')
                             ->directory('magang/acceptance-letters') // Simpan di direktori terpisah
                             ->visibility('private')
                             //->required(fn(Get $get): bool => $get('status') === 'accepted') // Wajib jika status 'accepted'
@@ -220,6 +224,7 @@ class InternshipResource extends Resource
                 // === KOLOM NORMAL (Pending, Diterima, Ditolak, Semua) ===
                 Tables\Columns\ImageColumn::make('photo_file')
                     ->label('Pas Foto')
+                    ->disk('public')
                     ->hidden(fn ($livewire) => in_array($livewire->activeTab ?? null, $bpsTabs)),
 
                 Tables\Columns\TextColumn::make('full_name')

@@ -78,6 +78,7 @@ class EditProfile extends Page implements HasForms
                         FileUpload::make('photo')
                             ->label('Photo [Digunakan untuk sertifikat]')
                             ->image()
+                            ->disk('public')
                             ->directory('profile-photos')
                             ->imagePreviewHeight('250')
                             ->helperText('Unggah pas foto 4x6 resmi dengan latar belakang merah atau biru.')
