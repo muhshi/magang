@@ -246,3 +246,4 @@ This project is open-sourced software licensed under the [MIT license](https://o
 
 ### 20 April 2026
 - **Perbaikan Masalah File Upload**: Menambahkan konfigurasi `->disk('public')` pada seluruh komponen upload (Internship, Profile, Logbook, Penugasan) untuk memperbaiki masalah file foto dan PDF yang tidak nampil setelah upgrade/rebuild server. Ini memastikan file disimpan dan dibaca dari direktori `storage/app/public` yang dapat diakses publik.
+- **Sinkronisasi Branch**: Melakukan push perubahan lokal ke branch `nana-work` dan kemudian melakukan sinkronisasi ulang agar isi branch identik dengan `main` sesuai instruksi.
