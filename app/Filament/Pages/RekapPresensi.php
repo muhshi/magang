@@ -127,7 +127,7 @@ class RekapPresensi extends Page
             ->with(['internship'])
             ->get();
 
-        $rekap = [];
+        $rekap = ['aktif' => [], 'selesai' => []];
 
         foreach ($users as $user) {
             $attendances = Attendance::where('user_id', $user->id)
@@ -199,7 +199,7 @@ class RekapPresensi extends Page
                 }
             }
 
-            $rekap[] = [
+            $dataRow = [
                 'user_id'         => $user->id,
                 'nama'            => $user->name,
                 'total_hadir'     => $totalHadir,
@@ -211,10 +211,21 @@ class RekapPresensi extends Page
                 'sisa_hari'       => $sisaHari,
                 'sisa_label'      => $sisaLabel,
             ];
+
+            if ($sisaLabel === 'Selesai') {
+                $rekap['selesai'][] = $dataRow;
+            } else {
+                $rekap['aktif'][] = $dataRow;
+            }
         }
 
-        // Urutkan: yang paling banyak hadir di atas
-        usort($rekap, fn($a, $b) => $b['total_hadir'] <=> $a['total_hadir']);
+        // Urutkan Masing-masing grup: yang paling banyak hadir di atas
+        if (!empty($rekap['aktif'])) {
+            usort($rekap['aktif'], fn($a, $b) => $b['total_hadir'] <=> $a['total_hadir']);
+        }
+        if (!empty($rekap['selesai'])) {
+            usort($rekap['selesai'], fn($a, $b) => $b['total_hadir'] <=> $a['total_hadir']);
+        }
 
         return [
             'data'               => $rekap,
