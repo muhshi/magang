@@ -243,3 +243,6 @@ This project is open-sourced software licensed under the [MIT license](https://o
 - **Fix Logout Button**: Memperbaiki tombol "Log out" yang sebelumnya tidak berfungsi di Menu Profil.
 - **Upgrade PHP 8.4 Support**: Melakukan upgrade base image Dockerfile ke `php8.4` (FrankenPHP) dan menambahkan konfigurasi `platform` di `composer.json` untuk mengatasi konflik dependensi Symfony 8.0 pada server.
 - **Fix Dev Script Windows**: Menghapus `laravel/pail` dari script `composer dev` karena membutuhkan ekstensi `pcntl` yang tidak tersedia di Windows.
+
+### 20 April 2026
+- **Perbaikan Masalah File Upload**: Menambahkan konfigurasi `->disk('public')` pada seluruh komponen upload (Internship, Profile, Logbook, Penugasan) untuk memperbaiki masalah file foto dan PDF yang tidak nampil setelah upgrade/rebuild server. Ini memastikan file disimpan dan dibaca dari direktori `storage/app/public` yang dapat diakses publik.
