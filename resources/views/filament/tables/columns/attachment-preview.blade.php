@@ -8,13 +8,13 @@
 
 @if($attachment)
     <a href="{{ $url }}" target="_blank" class="inline-flex items-center gap-1">
-        @if($isImage)
-            <img src="{{ $url }}" alt="preview" class="h-10 w-10 rounded object-cover border border-gray-200 dark:border-gray-700" />
+        @if (in_array(strtolower($extension), ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg']))
+            <img src="{{ $url }}" alt="preview" class="h-10 w-10 rounded object-cover border border-gray-200 dark:border-gray-700" style="width: 40px; height: 40px;" />
         @else
-            <span class="inline-flex items-center gap-1 rounded-md bg-gray-100 dark:bg-gray-800 px-2 py-1 text-xs font-medium text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-700">
-                <x-heroicon-o-document class="h-4 w-4" />
+            <div class="h-10 w-10 rounded bg-gray-100 flex flex-col items-center justify-center p-1 border border-gray-200 dark:bg-gray-800 dark:border-gray-700" style="width: 40px; height: 40px;">
+                <x-heroicon-o-document class="h-4 w-4 text-gray-500" style="width: 16px; height: 16px;" />
                 {{ strtoupper($extension) }}
-            </span>
+            </div>
         @endif
     </a>
 @else

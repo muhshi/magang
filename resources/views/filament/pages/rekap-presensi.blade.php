@@ -39,12 +39,12 @@
             <div class="fi-section-content px-6 py-4">
                 <div class="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm">
                     <div class="flex items-center gap-2">
-                        <x-heroicon-o-calendar-days class="h-5 w-5 text-primary-500" />
+                        <x-heroicon-o-calendar-days class="h-5 w-5 text-primary-500" style="width: 20px; height: 20px;" />
                         <span class="text-gray-600 dark:text-gray-400">Hari Kerja Efektif:</span>
                         <span class="font-semibold text-gray-900 dark:text-white">{{ $totalHariEfektif }} hari</span>
                     </div>
                     <div class="flex items-center gap-2">
-                        <x-heroicon-o-flag class="h-5 w-5 text-danger-500" />
+                        <x-heroicon-o-flag class="h-5 w-5 text-danger-500" style="width: 20px; height: 20px;" />
                         <span class="text-gray-600 dark:text-gray-400">Hari Libur Nasional:</span>
                         <span class="font-semibold text-danger-600 dark:text-danger-400">{{ $holidaysThisMonth->count() }} hari</span>
                     </div>
@@ -75,7 +75,7 @@
                     <div class="fi-section rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10">
                         <div class="fi-section-header px-6 py-4 border-b border-gray-200 dark:border-white/10 flex justify-between items-center">
                             <h3 class="text-base font-semibold text-gray-900 dark:text-white flex items-center gap-2">
-                                <x-heroicon-o-table-cells class="h-5 w-5 {{ $key === 'aktif' ? 'text-primary-500' : 'text-gray-500' }}" />
+                                <x-heroicon-o-table-cells class="h-5 w-5 {{ $key === 'aktif' ? 'text-primary-500' : 'text-gray-500' }}" style="width: 20px; height: 20px;" />
                                 {{ $title }} — {{ \Carbon\Carbon::createFromFormat('Y-m-d', $selectedMonth . '-01')->translatedFormat('F Y') }}
                             </h3>
                             <span class="rounded-full px-2.5 py-0.5 text-xs font-medium {{ $key === 'aktif' ? 'bg-primary-50 text-primary-700 dark:bg-primary-950 dark:text-primary-300' : 'bg-gray-50 text-gray-700 dark:bg-gray-950 dark:text-gray-300' }}">
@@ -105,6 +105,7 @@
                                             <td class="px-4 py-3 font-medium text-gray-900 dark:text-white flex items-center gap-2">
                                                 <x-heroicon-o-chevron-down 
                                                     class="h-4 w-4 text-gray-400 transition-transform duration-200" 
+                                                    style="width: 16px; height: 16px;"
                                                     x-bind:class="{ '-rotate-90': expandedRow !== {{ $row['user_id'] }} }" 
                                                 />
                                                 {{ $row['nama'] }}
