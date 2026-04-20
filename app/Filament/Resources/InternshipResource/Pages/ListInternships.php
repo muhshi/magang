@@ -50,14 +50,30 @@ class ListInternships extends ListRecords
                     ->icon('heroicon-o-x-circle'),
 
                 'magang_bps' => Tab::make('Magang BPS')
-                    ->modifyQueryUsing(fn(Builder $query) => $query->whereHas('user.roles', fn($q) => $q->where('name', 'Magang BPS')))
-                    ->badge(fn() => Internship::query()->whereHas('user.roles', fn($q) => $q->where('name', 'Magang BPS'))->count())
+                    ->modifyQueryUsing(fn(Builder $query) => 
+                        $query->where('status', 'accepted')
+                            ->whereHas('user.roles', fn($q) => $q->where('name', 'Magang BPS'))
+                    )
+                    ->badge(fn() => 
+                        Internship::query()
+                            ->where('status', 'accepted')
+                            ->whereHas('user.roles', fn($q) => $q->where('name', 'Magang BPS'))
+                            ->count()
+                    )
                     ->badgeColor('success')
                     ->icon('heroicon-o-academic-cap'),
 
                 'alumni' => Tab::make('Alumni')
-                    ->modifyQueryUsing(fn(Builder $query) => $query->whereHas('user.roles', fn($q) => $q->where('name', 'Alumni Magang')))
-                    ->badge(fn() => Internship::query()->whereHas('user.roles', fn($q) => $q->where('name', 'Alumni Magang'))->count())
+                    ->modifyQueryUsing(fn(Builder $query) => 
+                        $query->where('status', 'accepted')
+                            ->whereHas('user.roles', fn($q) => $q->where('name', 'Alumni Magang'))
+                    )
+                    ->badge(fn() => 
+                        Internship::query()
+                            ->where('status', 'accepted')
+                            ->whereHas('user.roles', fn($q) => $q->where('name', 'Alumni Magang'))
+                            ->count()
+                    )
                     ->badgeColor('info')
                     ->icon('heroicon-o-user-group'),
 
