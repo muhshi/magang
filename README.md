@@ -247,3 +247,7 @@ This project is open-sourced software licensed under the [MIT license](https://o
 ### 20 April 2026
 - **Perbaikan Masalah File Upload**: Menambahkan konfigurasi `->disk('public')` pada seluruh komponen upload (Internship, Profile, Logbook, Penugasan) untuk memperbaiki masalah file foto dan PDF yang tidak nampil setelah upgrade/rebuild server. Ini memastikan file disimpan dan dibaca dari direktori `storage/app/public` yang dapat diakses publik.
 - **Sinkronisasi Branch**: Melakukan push perubahan lokal ke branch `nana-work` dan kemudian melakukan sinkronisasi ulang agar isi branch identik dengan `main` sesuai instruksi.
+- **Kategorisasi Rekapitulasi Presensi**: Tabel rekapitulasi kini terbagi menjadi dua kategori: **Peserta Aktif** dan **Peserta Selesai** berdasarkan `end_date` untuk memudahkan monitoring.
+- **Otomasi Approval Cuti**: Implementasi *scheduled task* `leaves:auto-approve` yang otomatis memberikan *approval* pada pengajuan cuti berstatus `pending` jika sudah melewati 5 hari kerja tanpa respon admin.
+- **Pembaruan Label "Asal Instansi"**: Mengubah seluruh label "Universitas" atau "Sekolah/Universitas" menjadi **Asal Instansi** pada modul Pendaftaran Magang dan Sertifikat agar lebih inklusif bagi peserta SMA/SMK.
+- **Standarisasi Ukuran UI**: Memperbaiki ukuran icon dan preview media (Pas Foto, Lampiran Logbook, Lampiran Tugas) agar tampil dengan dimensi yang proporsional (fixed size) dan konsisten di seluruh aplikasi.
