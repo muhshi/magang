@@ -6,17 +6,37 @@
     $isImage = in_array($extension, $imageExtensions);
 @endphp
 
-@if($attachment)
-    <a href="{{ $url }}" target="_blank" class="inline-flex items-center gap-1">
-        @if (in_array(strtolower($extension), ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg']))
-            <img src="{{ $url }}" alt="preview" class="h-10 w-10 rounded object-cover border border-gray-200 dark:border-gray-700" style="width: 40px; height: 40px;" />
-        @else
-            <div class="h-10 w-10 rounded bg-gray-100 flex flex-col items-center justify-center p-1 border border-gray-200 dark:bg-gray-800 dark:border-gray-700" style="width: 40px; height: 40px;">
-                <x-heroicon-o-document class="h-4 w-4 text-gray-500" style="width: 16px; height: 16px;" />
-                {{ strtoupper($extension) }}
+<div class="flex items-center">
+    @if($attachment)
+        <x-filament::link
+            :href="$url"
+            target="_blank"
+            color="gray"
+        >
+            <div class="flex items-center gap-2">
+                @if($isImage)
+                    <div class="h-9 w-9 overflow-hidden rounded-lg border border-gray-200 dark:border-white/10">
+                        <img 
+                            src="{{ $url }}" 
+                            alt="preview" 
+                            class="h-full w-full object-cover"
+                        />
+                    </div>
+                @else
+                    <div class="h-9 w-9 flex items-center justify-center rounded-lg bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10">
+                        <x-filament::icon
+                            icon="heroicon-o-document-text"
+                            class="h-5 w-5 text-gray-400"
+                        />
+                    </div>
+                @endif
+                
+                @if(!$isImage)
+                    <span class="text-xs font-bold text-gray-500 uppercase">{{ $extension }}</span>
+                @endif
             </div>
-        @endif
-    </a>
-@else
-    <span class="text-gray-400 text-xs">-</span>
-@endif
+        </x-filament::link>
+    @else
+        <span class="text-gray-400 text-xs">—</span>
+    @endif
+</div>
