@@ -200,7 +200,29 @@
                                             <div x-show="expandedRow === {{ $row['user_id'] }}" x-collapse>
                                                 <div class="border-t border-gray-200 px-6 py-6 dark:border-white/10">
                                                     <div class="mx-auto h-48 w-full max-w-lg"
-                                                         x-data="miniChart({{ $row['total_hadir'] }}, {{ $row['tepat_waktu'] }}, {{ $row['terlambat'] }}, {{ $row['cuti'] }}, {{ $row['tanpa_izin'] }})"
+                                                         x-data="{
+                                                             chartInstance: null,
+                                                             render() {
+                                                                 const canvas = this.$refs.canvas;
+                                                                 if (!canvas || typeof Chart === 'undefined') return;
+                                                                 if (this.chartInstance) this.chartInstance.destroy();
+                                                                 const isDark = document.documentElement.classList.contains('dark');
+                                                                 const gridColor = isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.04)';
+                                                                 const lblColor  = isDark ? '#6b7280' : '#9ca3af';
+                                                                 this.chartInstance = new Chart(canvas, {
+                                                                     type: 'bar',
+                                                                     data: {
+                                                                         labels: ['Total Hadir','Tepat Waktu','Terlambat','Cuti','Tanpa Izin'],
+                                                                         datasets: [{ data: [{{ $row['total_hadir'] }},{{ $row['tepat_waktu'] }},{{ $row['terlambat'] }},{{ $row['cuti'] }},{{ $row['tanpa_izin'] }}], backgroundColor: ['#6366f1','#22c55e','#ef4444','#0ea5e9','#f59e0b'], borderRadius: 4, barThickness: 22 }]
+                                                                     },
+                                                                     options: {
+                                                                         responsive: true, maintainAspectRatio: false,
+                                                                         plugins: { legend: { display: false }, tooltip: { backgroundColor: isDark ? '#1f2937' : '#fff', titleColor: isDark ? '#f9fafb' : '#111827', bodyColor: isDark ? '#9ca3af' : '#6b7280', borderColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.08)', borderWidth: 1, padding: 10 } },
+                                                                         scales: { x: { ticks: { color: lblColor, font: { size: 11 } }, grid: { display: false }, border: { display: false } }, y: { beginAtZero: true, ticks: { color: lblColor, stepSize: 1, font: { size: 11 } }, grid: { color: gridColor }, border: { display: false } } }
+                                                                     }
+                                                                 });
+                                                             }
+                                                         }"
                                                          x-init="$watch('expandedRow', val => { if (val === {{ $row['user_id'] }}) { $nextTick(() => render()); } })">
                                                         @if ($row['total_hadir'] > 0 || $row['tanpa_izin'] > 0 || $row['cuti'] > 0)
                                                             <canvas x-ref="canvas"></canvas>
@@ -235,65 +257,6 @@
 
     </div>
 
-    {{-- ====== CHART.JS ====== --}}
-    @push('scripts')
+    {{-- Chart.js CDN — loaded before Alpine processes x-data so Chart is available --}}
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-    <script>
-        document.addEventListener('alpine:init', () => {
-            Alpine.data('miniChart', (hadir, tepatWaktu, terlambat, cuti, tanpaIzin) => ({
-                chartInstance: null,
-                render() {
-                    const canvas = this.$refs.canvas;
-                    if (!canvas) return;
-                    if (this.chartInstance) this.chartInstance.destroy();
-
-                    const isDark    = document.documentElement.classList.contains('dark');
-                    const gridColor = isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.04)';
-                    const lblColor  = isDark ? '#6b7280' : '#9ca3af';
-
-                    this.chartInstance = new Chart(canvas, {
-                        type: 'bar',
-                        data: {
-                            labels: ['Total Hadir', 'Tepat Waktu', 'Terlambat', 'Cuti', 'Tanpa Izin'],
-                            datasets: [{
-                                data: [hadir, tepatWaktu, terlambat, cuti, tanpaIzin],
-                                backgroundColor: ['#6366f1', '#22c55e', '#ef4444', '#0ea5e9', '#f59e0b'],
-                                borderRadius: 4,
-                                barThickness: 22,
-                            }]
-                        },
-                        options: {
-                            responsive: true,
-                            maintainAspectRatio: false,
-                            plugins: {
-                                legend: { display: false },
-                                tooltip: {
-                                    backgroundColor: isDark ? '#1f2937' : '#fff',
-                                    titleColor: isDark ? '#f9fafb' : '#111827',
-                                    bodyColor: isDark ? '#9ca3af' : '#6b7280',
-                                    borderColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.08)',
-                                    borderWidth: 1,
-                                    padding: 10,
-                                },
-                            },
-                            scales: {
-                                x: {
-                                    ticks: { color: lblColor, font: { size: 11 } },
-                                    grid: { display: false },
-                                    border: { display: false },
-                                },
-                                y: {
-                                    beginAtZero: true,
-                                    ticks: { color: lblColor, stepSize: 1, font: { size: 11 } },
-                                    grid: { color: gridColor },
-                                    border: { display: false },
-                                },
-                            },
-                        },
-                    });
-                }
-            }));
-        });
-    </script>
-    @endpush
 </x-filament-panels::page>
