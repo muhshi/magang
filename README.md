@@ -250,4 +250,11 @@ This project is open-sourced software licensed under the [MIT license](https://o
 - **Kategorisasi Rekapitulasi Presensi**: Tabel rekapitulasi kini terbagi menjadi dua kategori: **Peserta Aktif** dan **Peserta Selesai** berdasarkan `end_date` untuk memudahkan monitoring.
 - **Otomasi Approval Cuti**: Implementasi *scheduled task* `leaves:auto-approve` yang otomatis memberikan *approval* pada pengajuan cuti berstatus `pending` jika sudah melewati 5 hari kerja tanpa respon admin.
 - **Pembaruan Label "Asal Instansi"**: Mengubah seluruh label "Universitas" atau "Sekolah/Universitas" menjadi **Asal Instansi** pada modul Pendaftaran Magang dan Sertifikat agar lebih inklusif bagi peserta SMA/SMK.
-- **Standarisasi Ukuran UI**: Memperbaiki ukuran icon dan preview media (Pas Foto, Lampiran Logbook, Lampiran Tugas) agar tampil dengan dimensi yang proporsional (fixed size) dan konsisten di seluruh aplikasi.
+- **Standarisasi UI dengan Komponen Filament**: Melakukan refaktor total pada halaman Rekapitulasi Presensi dan Preview Lampiran menggunakan komponen Blade bawaan Filament (`x-filament::*`). Ini memastikan tampilan tetap konsisten, responsif, dan mendukung *dark mode* secara native tanpa bergantung pada custom CSS yang rawan berantakan.
+- **Pembersihan Logika Tab**: Memperbarui filter pada tab **Magang BPS** dan **Alumni** di Pendaftaran Magang agar secara eksklusif hanya menampilkan data dengan status `accepted` dan mencocokkan *role* user yang sesuai.
+
+### 21 April 2026
+- **Fix Internal Server Error (Timeout 30 detik)**: Memperbaiki `APP_URL` yang memiliki double protocol (`http://http://`) dan nama domain yang salah di `.env`. Sekaligus memperbaiki `GOOGLE_REDIRECT_URI` agar sesuai domain aktif (`project_februari.test`).
+- **Fix Gate ViewPulse**: Merefaktorisasi definisi `Gate::define('viewPulse')` di `AppServiceProvider.php` agar menggunakan parameter `$user` yang dilewatkan langsung, bukan via facade `Auth`, untuk mencegah potensi rekursi.
+- **Fix InvalidArgumentException (filament::grid)**: Mengganti komponen `<x-filament::grid>` yang sudah dihapus di Filament v5 pada halaman Rekapitulasi Presensi dengan `<div>` biasa menggunakan kelas Tailwind CSS grid (`grid grid-cols-1 sm:grid-cols-2 gap-6`).
+
