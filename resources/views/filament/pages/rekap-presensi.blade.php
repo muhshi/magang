@@ -33,9 +33,7 @@
             {{-- Card: Hari Efektif --}}
             <div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-white/10 rounded-xl p-4 flex items-center gap-4">
                 <div class="flex-shrink-0 w-10 h-10 rounded-lg bg-primary-50 dark:bg-primary-950 flex items-center justify-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-primary-600 dark:text-primary-400" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5" />
-                    </svg>
+                    <span style="font-size:20px;line-height:1;">📅</span>
                 </div>
                 <div>
                     <p class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Hari Kerja Efektif</p>
@@ -46,9 +44,7 @@
             {{-- Card: Libur Nasional --}}
             <div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-white/10 rounded-xl p-4 flex items-center gap-4">
                 <div class="flex-shrink-0 w-10 h-10 rounded-lg bg-danger-50 dark:bg-danger-950 flex items-center justify-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-danger-600 dark:text-danger-400" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 3v1.5M3 21v-6m0 0 2.77-.693a9 9 0 0 1 6.208.682l.108.054a9 9 0 0 0 6.086.71l3.114-.732a48.524 48.524 0 0 1-.005-10.499l-3.11.732a9 9 0 0 1-6.085-.711l-.108-.054a9 9 0 0 0-6.208-.682L3 4.5M3 15V4.5" />
-                    </svg>
+                    <span style="font-size:20px;line-height:1;">🚩</span>
                 </div>
                 <div>
                     <p class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Libur Nasional</p>
@@ -211,9 +207,7 @@
             {{-- Empty State --}}
             @if (count($rekap['aktif']) === 0 && count($rekap['selesai']) === 0)
                 <div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-white/10 rounded-xl p-12 text-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="mx-auto h-12 w-12 text-gray-300 dark:text-gray-600 mb-3" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 13.5h3.86a2.25 2.25 0 0 1 2.012 1.244l.256.512a2.25 2.25 0 0 0 2.013 1.244h3.218a2.25 2.25 0 0 0 2.013-1.244l.256-.512a2.25 2.25 0 0 1 2.013-1.244h3.859m-19.5.338V18a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18v-4.162c0-.224-.034-.447-.1-.661L19.24 5.338a2.25 2.25 0 0 0-2.15-1.588H6.911a2.25 2.25 0 0 0-2.15 1.588L2.1 13.177a2.25 2.25 0 0 0-.1.661Z" />
-                    </svg>
+                    <span style="font-size:48px;line-height:1;display:block;margin-bottom:12px;">📭</span>
                     <p class="text-sm text-gray-500 dark:text-gray-400">Tidak ada data peserta Magang BPS / Alumni untuk bulan ini.</p>
                 </div>
             @endif
