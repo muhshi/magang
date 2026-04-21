@@ -261,6 +261,9 @@ This project is open-sourced software licensed under the [MIT license](https://o
 - **Fix Thumbnail Lampiran (Penugasan & Logbook)**: Kolom Lampiran di tabel Penugasan dan Logbook diperbarui — gambar kini tampil sebagai thumbnail kecil 36×36 inline tanpa mengekspansi tinggi baris, sedangkan file non-gambar cukup tampil sebagai link teks dengan icon lampiran dan nama ekstensi saja.
 - **Fix Oversized Icon di Panel Admin**: Menghapus semua penggunaan `x-filament::icon` dan `x-heroicon-*` pada halaman Rekapitulasi Presensi, dan mengganti chevron expandable row dengan karakter teks `▼`. Root cause: Filament v5 memiliki CSS global yang membuat SVG tanpa atribut `width`/`height` eksplisit menjadi fullscreen di dalam konteks Filament panel.
 - **Restore Fitur Lengkap Rekapitulasi Presensi**: Mengembalikan layout 20 April yang memiliki kolom Cuti, Tanpa Izin, pemisahan Peserta Aktif/Selesai, dan chart Chart.js per baris, dengan perbaikan icon yang bersih.
+- **Layout Penugasan & Logbook**: Mengubah kolom "Yang Ditugaskan" agar menampilkan daftar nama ke bawah (vertikal) setiap ada lebih dari satu orang, menggunakan `listWithLineBreaks`, untuk menghemat ruang kolom secara horizontal.
+- **Verifikasi Tab Magang BPS**: Memastikan filter pada tab Magang BPS di Pendaftaran Magang sudah sesuai regulasi: hanya menampilkan data dengan status `accepted` dan user yang memiliki role `Magang BPS`.
+- **Eksplorasi Dokumentasi**: Menghasilkan diagram alur (flowchart) penggunaan aplikasi dan ERD keseluruhan database dalam format Mermaid.js untuk keperluan dokumentasi teknis.
 
 
 
