@@ -257,4 +257,7 @@ This project is open-sourced software licensed under the [MIT license](https://o
 - **Fix Internal Server Error (Timeout 30 detik)**: Memperbaiki `APP_URL` yang memiliki double protocol (`http://http://`) dan nama domain yang salah di `.env`. Sekaligus memperbaiki `GOOGLE_REDIRECT_URI` agar sesuai domain aktif (`project_februari.test`).
 - **Fix Gate ViewPulse**: Merefaktorisasi definisi `Gate::define('viewPulse')` di `AppServiceProvider.php` agar menggunakan parameter `$user` yang dilewatkan langsung, bukan via facade `Auth`, untuk mencegah potensi rekursi.
 - **Fix InvalidArgumentException (filament::grid)**: Mengganti komponen `<x-filament::grid>` yang sudah dihapus di Filament v5 pada halaman Rekapitulasi Presensi dengan `<div>` biasa menggunakan kelas Tailwind CSS grid (`grid grid-cols-1 sm:grid-cols-2 gap-6`).
+- **Refactor Layout Rekapitulasi Presensi**: Menghapus seluruh komponen custom `x-filament::icon`, `x-filament::grid`, dan Chart.js. Layout dibangun ulang menggunakan HTML tabel standar dengan Tailwind CSS dan inline SVG icons agar konsisten dengan style Filament v5 (dark mode, badge warna, hover effect).
+- **Fix Thumbnail Lampiran (Penugasan & Logbook)**: Kolom Lampiran di tabel Penugasan dan Logbook diperbarui — gambar kini tampil sebagai thumbnail kecil 36×36 inline tanpa mengekspansi tinggi baris, sedangkan file non-gambar cukup tampil sebagai link teks dengan icon lampiran dan nama ekstensi saja.
+
 
