@@ -1,5 +1,6 @@
 <x-filament-panels::page>
-    <div class="space-y-4">
+    <div style="display:flex;flex-direction:column;gap:1rem;">
+
 
         {{-- ====== FILTER BULAN ====== --}}
         <x-filament::section>
