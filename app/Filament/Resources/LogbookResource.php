@@ -138,7 +138,7 @@ class LogbookResource extends Resource
                 Tables\Columns\TextColumn::make('assignees.name')
                     ->label('Yang Ditugaskan')
                     ->badge()
-                    ->separator(','),
+                    ->listWithLineBreaks(),
 
                 Tables\Columns\TextColumn::make('status')
                     ->label('Status')

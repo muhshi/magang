@@ -205,7 +205,7 @@ class TicketResource extends Resource
                 Tables\Columns\TextColumn::make('assignees.name')
                     ->label('Yang Ditugaskan')
                     ->badge()
-                    ->separator(',')
+                    ->listWithLineBreaks()
                     ->limitList(2)
                     ->expandableLimitedList()
                     ->searchable()
