@@ -38,7 +38,7 @@ class AppServiceProvider extends ServiceProvider
         });
 
         Gate::define('viewPulse', function (User $user) {
-            return Auth::user()->roles[0]->name === 'super_admin';
+            return $user->hasRole('super_admin');
         });
         //Livewire::component('edit-comment-modal', EditCommentModal::class);
 

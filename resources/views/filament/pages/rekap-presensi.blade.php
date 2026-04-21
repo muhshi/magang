@@ -33,7 +33,7 @@
 
         {{-- ====== INFO RINGKASAN BULAN ====== --}}
         <x-filament::section>
-            <x-filament::grid default="1" sm="2" md="2" class="gap-6">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <div class="flex items-center gap-3">
                     <div class="p-2 bg-primary-50 dark:bg-primary-950 rounded-lg">
                         <x-filament::icon
@@ -59,7 +59,7 @@
                         <p class="text-xl font-bold text-danger-600 dark:text-danger-400">{{ $holidaysThisMonth->count() }} Hari</p>
                     </div>
                 </div>
-            </x-filament::grid>
+            </div>
 
             @if ($holidaysThisMonth->count() > 0)
                 <div class="mt-6 pt-4 border-t border-gray-100 dark:border-white/10">
