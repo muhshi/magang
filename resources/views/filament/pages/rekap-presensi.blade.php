@@ -3,8 +3,10 @@
 
         {{-- ====== FILTER BULAN ====== --}}
         <x-filament::section>
-            <div class="flex flex-wrap items-center gap-4">
-                <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Filter Bulan:</label>
+            <div class="flex items-center gap-4">
+                <label class="text-sm font-medium text-gray-700 dark:text-gray-300">
+                    Filter Bulan:
+                </label>
                 <div class="w-64">
                     <x-filament::input.select wire:model.live="selectedMonth">
                         @foreach ($this->getMonthOptions() as $value => $label)
@@ -15,13 +17,14 @@
             </div>
         </x-filament::section>
 
-        {{-- ====== DATA KOMPUTASI ====== --}}
+        {{-- ====== TABEL REKAPITULASI ====== --}}
         @php
             $result = $this->getRekapData();
             $rekap = $result['data'];
             $totalHariEfektif = $result['total_hari_efektif'];
             $holidays = $result['holidays'];
 
+            // Hitung jumlah hari libur yang jatuh di bulan ini
             [$filterYear, $filterMonth] = explode('-', $selectedMonth);
             $holidaysThisMonth = collect($holidays)->filter(function ($date) use ($filterYear, $filterMonth) {
                 return str_starts_with($date, "{$filterYear}-{$filterMonth}");
@@ -29,189 +32,266 @@
         @endphp
 
         {{-- ====== INFO RINGKASAN BULAN ====== --}}
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {{-- Card: Hari Efektif --}}
-            <div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-white/10 rounded-xl p-4 flex items-center gap-4">
-                <div class="flex-shrink-0 w-10 h-10 rounded-lg bg-primary-50 dark:bg-primary-950 flex items-center justify-center">
-                    <span style="font-size:20px;line-height:1;">📅</span>
+        <x-filament::section>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <div class="flex items-center gap-3">
+                    <div>
+                        <p class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wider font-semibold">Hari Kerja Efektif</p>
+                        <p class="text-xl font-bold text-gray-900 dark:text-white">{{ $totalHariEfektif }} Hari</p>
+                    </div>
                 </div>
-                <div>
-                    <p class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Hari Kerja Efektif</p>
-                    <p class="text-2xl font-bold text-gray-900 dark:text-white">{{ $totalHariEfektif }} <span class="text-base font-normal text-gray-500">hari</span></p>
+
+                <div class="flex items-center gap-3">
+                    <div>
+                        <p class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wider font-semibold">Libur Nasional</p>
+                        <p class="text-xl font-bold text-danger-600 dark:text-danger-400">{{ $holidaysThisMonth->count() }} Hari</p>
+                    </div>
                 </div>
             </div>
 
-            {{-- Card: Libur Nasional --}}
-            <div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-white/10 rounded-xl p-4 flex items-center gap-4">
-                <div class="flex-shrink-0 w-10 h-10 rounded-lg bg-danger-50 dark:bg-danger-950 flex items-center justify-center">
-                    <span style="font-size:20px;line-height:1;">🚩</span>
-                </div>
-                <div>
-                    <p class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Libur Nasional</p>
-                    <p class="text-2xl font-bold text-danger-600 dark:text-danger-400">{{ $holidaysThisMonth->count() }} <span class="text-base font-normal text-gray-500">hari</span></p>
-                    @if ($holidaysThisMonth->count() > 0)
+            @if ($holidaysThisMonth->count() > 0)
+                <div class="mt-6 pt-4 border-t border-gray-100 dark:border-white/10">
+                    <p class="text-xs font-semibold text-gray-500 dark:text-gray-400 mb-3 uppercase tracking-wider">Daftar Hari Libur:</p>
+                    <div class="flex flex-wrap gap-2">
                         @php
                             $fullHolidays = $this->getHolidaysFull((int) $filterYear);
                             $holidayNames = collect($fullHolidays)->keyBy('date');
                         @endphp
-                        <div class="flex flex-wrap gap-1 mt-1">
-                            @foreach ($holidaysThisMonth as $hDate)
-                                <span class="inline-flex items-center rounded-md bg-danger-50 dark:bg-danger-900/30 px-2 py-0.5 text-xs font-medium text-danger-700 dark:text-danger-300 ring-1 ring-inset ring-danger-200 dark:ring-danger-700">
-                                    {{ \Carbon\Carbon::parse($hDate)->translatedFormat('d M') }} — {{ $holidayNames[$hDate]['name'] ?? '' }}
-                                </span>
-                            @endforeach
-                        </div>
-                    @endif
+                        @foreach ($holidaysThisMonth as $hDate)
+                            <x-filament::badge color="danger" size="sm">
+                                {{ \Carbon\Carbon::parse($hDate)->translatedFormat('d M') }} — {{ $holidayNames[$hDate]['name'] ?? '' }}
+                            </x-filament::badge>
+                        @endforeach
+                    </div>
                 </div>
-            </div>
-        </div>
+            @endif
+        </x-filament::section>
 
         {{-- ====== TABEL PESERTA ====== --}}
-        <div class="space-y-6">
-            @foreach(['aktif' => ['label' => 'Peserta Aktif', 'color' => 'primary'], 'selesai' => ['label' => 'Peserta Selesai', 'color' => 'gray']] as $key => $meta)
+        <div class="space-y-8">
+            @foreach(['aktif' => 'Peserta Aktif', 'selesai' => 'Peserta Selesai'] as $key => $title)
                 @if (count($rekap[$key]) > 0)
-                    <div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-white/10 rounded-xl shadow-sm overflow-hidden">
-                        {{-- Table Header --}}
-                        <div class="flex items-center justify-between px-5 py-3 border-b border-gray-200 dark:border-white/10">
-                            <h3 class="text-sm font-semibold text-gray-900 dark:text-white">
-                                {{ $meta['label'] }} — {{ \Carbon\Carbon::createFromFormat('Y-m', $selectedMonth)->translatedFormat('F Y') }}
-                            </h3>
-                            <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium
-                                {{ $key === 'aktif' ? 'bg-primary-50 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300 ring-1 ring-primary-200 dark:ring-primary-700' : 'bg-gray-100 dark:bg-white/5 text-gray-600 dark:text-gray-400 ring-1 ring-gray-200 dark:ring-white/10' }}">
-                                {{ count($rekap[$key]) }} orang
-                            </span>
-                        </div>
+                    <x-filament::section>
+                        <x-slot name="heading">
+                            <span>{{ $title }} — {{ \Carbon\Carbon::createFromFormat('Y-m-d', $selectedMonth . '-01')->translatedFormat('F Y') }}</span>
+                        </x-slot>
 
-                        {{-- Tabel --}}
-                        <div class="overflow-x-auto">
-                            <table class="min-w-full divide-y divide-gray-200 dark:divide-white/10 text-sm">
-                                <thead class="bg-gray-50 dark:bg-white/[0.03]">
+                        <x-slot name="headerEnd">
+                            <x-filament::badge :color="$key === 'aktif' ? 'primary' : 'gray'">
+                                {{ count($rekap[$key]) }} orang
+                            </x-filament::badge>
+                        </x-slot>
+
+                        <div class="overflow-x-auto -mx-6 mt-4">
+                            <table class="w-full text-sm text-left divide-y divide-gray-200 dark:divide-white/10">
+                                <thead class="bg-gray-50 dark:bg-white/5">
                                     <tr>
-                                        <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Nama</th>
-                                        <th class="px-4 py-3 text-center text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Hari Efektif</th>
-                                        <th class="px-4 py-3 text-center text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Total Hadir</th>
-                                        <th class="px-4 py-3 text-center text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Tepat Waktu</th>
-                                        <th class="px-4 py-3 text-center text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Terlambat</th>
-                                        <th class="px-4 py-3 text-center text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Cuti</th>
-                                        <th class="px-4 py-3 text-center text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Tanpa Izin</th>
-                                        <th class="px-4 py-3 text-center text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Sisa Magang</th>
+                                        <th class="px-6 py-3 font-semibold text-gray-900 dark:text-white">Nama</th>
+                                        <th class="px-4 py-3 font-semibold text-gray-900 dark:text-white text-center">Hari Efektif</th>
+                                        <th class="px-4 py-3 font-semibold text-gray-900 dark:text-white text-center">Total Hadir</th>
+                                        <th class="px-4 py-3 font-semibold text-gray-900 dark:text-white text-center">Tepat Waktu</th>
+                                        <th class="px-4 py-3 font-semibold text-gray-900 dark:text-white text-center">Terlambat</th>
+                                        <th class="px-4 py-3 font-semibold text-gray-900 dark:text-white text-center">Cuti</th>
+                                        <th class="px-4 py-3 font-semibold text-gray-900 dark:text-white text-center">Tanpa Izin</th>
+                                        <th class="px-4 py-3 font-semibold text-gray-900 dark:text-white text-center">Sisa Magang</th>
                                     </tr>
                                 </thead>
-                                <tbody class="bg-white dark:bg-gray-900 divide-y divide-gray-100 dark:divide-white/5">
+                                <tbody class="divide-y divide-gray-100 dark:divide-white/5" x-data="{ expandedRow: null }">
                                     @foreach ($rekap[$key] as $row)
-                                        <tr class="hover:bg-gray-50 dark:hover:bg-white/[0.02] transition-colors duration-150">
-                                            {{-- Nama --}}
-                                            <td class="px-4 py-3 font-medium text-gray-900 dark:text-white whitespace-nowrap">
-                                                {{ $row['nama'] }}
+                                        <tr wire:key="row-{{ $row['user_id'] }}-{{ $selectedMonth }}"
+                                            class="hover:bg-gray-50 dark:hover:bg-white/5 transition-colors cursor-pointer"
+                                            @click="expandedRow = expandedRow === {{ $row['user_id'] }} ? null : {{ $row['user_id'] }}">
+
+                                            <td class="px-6 py-4 font-medium text-gray-900 dark:text-white">
+                                                <div class="flex items-center gap-2">
+                                                    <span class="text-gray-400 text-xs transition-transform duration-200 inline-block"
+                                                          x-bind:style="expandedRow === {{ $row['user_id'] }} ? 'transform:rotate(0deg)' : 'transform:rotate(-90deg)'">▼</span>
+                                                    {{ $row['nama'] }}
+                                                </div>
                                             </td>
 
-                                            {{-- Hari Efektif --}}
-                                            <td class="px-4 py-3 text-center">
-                                                <span class="inline-flex items-center rounded-md bg-gray-100 dark:bg-white/5 px-2 py-0.5 text-xs font-medium text-gray-600 dark:text-gray-300 ring-1 ring-inset ring-gray-200 dark:ring-white/10">
-                                                    {{ $row['hari_efektif'] }}
-                                                </span>
+                                            <td class="px-4 py-4 text-center">
+                                                <x-filament::badge color="gray" size="sm">{{ $row['hari_efektif'] }}</x-filament::badge>
                                             </td>
 
-                                            {{-- Total Hadir --}}
-                                            <td class="px-4 py-3 text-center">
+                                            <td class="px-4 py-4 text-center">
                                                 @if ($row['total_hadir'] > 0)
-                                                    <span class="inline-flex items-center rounded-md bg-primary-50 dark:bg-primary-900/30 px-2 py-0.5 text-xs font-medium text-primary-700 dark:text-primary-300 ring-1 ring-inset ring-primary-200 dark:ring-primary-700">
-                                                        {{ $row['total_hadir'] }}x
-                                                    </span>
+                                                    <x-filament::badge color="primary" size="sm">{{ $row['total_hadir'] }}x</x-filament::badge>
                                                 @else
                                                     <span class="text-gray-400 dark:text-gray-600">–</span>
                                                 @endif
                                             </td>
 
-                                            {{-- Tepat Waktu --}}
-                                            <td class="px-4 py-3 text-center">
+                                            <td class="px-4 py-4 text-center">
                                                 @if ($row['tepat_waktu'] > 0)
-                                                    <span class="inline-flex items-center rounded-md bg-success-50 dark:bg-success-900/30 px-2 py-0.5 text-xs font-medium text-success-700 dark:text-success-300 ring-1 ring-inset ring-success-200 dark:ring-success-700">
-                                                        {{ $row['tepat_waktu'] }}x
-                                                    </span>
+                                                    <x-filament::badge color="success" size="sm">{{ $row['tepat_waktu'] }}x</x-filament::badge>
                                                 @else
                                                     <span class="text-gray-400 dark:text-gray-600">–</span>
                                                 @endif
                                             </td>
 
-                                            {{-- Terlambat --}}
-                                            <td class="px-4 py-3 text-center">
+                                            <td class="px-4 py-4 text-center">
                                                 @if ($row['terlambat'] > 0)
-                                                    <span class="inline-flex items-center rounded-md bg-danger-50 dark:bg-danger-900/30 px-2 py-0.5 text-xs font-medium text-danger-700 dark:text-danger-300 ring-1 ring-inset ring-danger-200 dark:ring-danger-700">
-                                                        {{ $row['terlambat'] }}x
-                                                    </span>
+                                                    <x-filament::badge color="danger" size="sm">{{ $row['terlambat'] }}x</x-filament::badge>
                                                 @else
-                                                    <span class="inline-flex items-center rounded-md bg-success-50 dark:bg-success-900/30 px-2 py-0.5 text-xs font-medium text-success-700 dark:text-success-300 ring-1 ring-inset ring-success-200 dark:ring-success-700">
-                                                        Tepat Waktu
-                                                    </span>
+                                                    <x-filament::badge color="success" size="sm">Tepat Waktu</x-filament::badge>
                                                 @endif
                                             </td>
 
-                                            {{-- Cuti --}}
-                                            <td class="px-4 py-3 text-center">
+                                            <td class="px-4 py-4 text-center">
                                                 @if ($row['cuti'] > 0)
-                                                    <span class="inline-flex items-center rounded-md bg-info-50 dark:bg-info-900/30 px-2 py-0.5 text-xs font-medium text-info-700 dark:text-info-300 ring-1 ring-inset ring-info-200 dark:ring-info-700">
-                                                        {{ $row['cuti'] }}x
-                                                    </span>
+                                                    <x-filament::badge color="info" size="sm">{{ $row['cuti'] }}x</x-filament::badge>
                                                 @else
                                                     <span class="text-gray-400 dark:text-gray-600">–</span>
                                                 @endif
                                             </td>
 
-                                            {{-- Tanpa Izin --}}
-                                            <td class="px-4 py-3 text-center">
+                                            <td class="px-4 py-4 text-center">
                                                 @if ($row['tanpa_izin'] > 0)
-                                                    <span class="inline-flex items-center rounded-md bg-warning-50 dark:bg-warning-900/30 px-2 py-0.5 text-xs font-medium text-warning-700 dark:text-warning-300 ring-1 ring-inset ring-warning-200 dark:ring-warning-700">
-                                                        {{ $row['tanpa_izin'] }}x
-                                                    </span>
+                                                    <x-filament::badge color="warning" size="sm">{{ $row['tanpa_izin'] }}x</x-filament::badge>
                                                 @else
-                                                    <span class="inline-flex items-center rounded-md bg-success-50 dark:bg-success-900/30 px-2 py-0.5 text-xs font-medium text-success-700 dark:text-success-300 ring-1 ring-inset ring-success-200 dark:ring-success-700">
-                                                        Hadir Penuh
-                                                    </span>
+                                                    <x-filament::badge color="success" size="sm">Hadir Penuh</x-filament::badge>
                                                 @endif
                                             </td>
 
-                                            {{-- Sisa Magang --}}
-                                            <td class="px-4 py-3 text-center">
+                                            <td class="px-4 py-4 text-center">
                                                 @if ($row['sisa_label'] === 'Selesai')
-                                                    <span class="inline-flex items-center rounded-md bg-gray-100 dark:bg-white/5 px-2 py-0.5 text-xs font-medium text-gray-500 dark:text-gray-400 ring-1 ring-inset ring-gray-200 dark:ring-white/10">
-                                                        Selesai
-                                                    </span>
+                                                    <x-filament::badge color="gray" size="sm">Selesai</x-filament::badge>
                                                 @elseif ($row['sisa_label'] === '-')
                                                     <span class="text-gray-400 dark:text-gray-600">–</span>
                                                 @else
                                                     @php
                                                         $sisa = $row['sisa_hari'];
-                                                        if ($sisa <= 7) {
-                                                            $badgeClass = 'bg-danger-50 dark:bg-danger-900/30 text-danger-700 dark:text-danger-300 ring-danger-200 dark:ring-danger-700';
-                                                        } elseif ($sisa <= 14) {
-                                                            $badgeClass = 'bg-warning-50 dark:bg-warning-900/30 text-warning-700 dark:text-warning-300 ring-warning-200 dark:ring-warning-700';
-                                                        } else {
-                                                            $badgeClass = 'bg-info-50 dark:bg-info-900/30 text-info-700 dark:text-info-300 ring-info-200 dark:ring-info-700';
-                                                        }
+                                                        $color = $sisa <= 7 ? 'danger' : ($sisa <= 14 ? 'warning' : 'info');
                                                     @endphp
-                                                    <span class="inline-flex items-center rounded-md px-2 py-0.5 text-xs font-medium ring-1 ring-inset {{ $badgeClass }}">
-                                                        {{ $row['sisa_label'] }}
-                                                    </span>
+                                                    <x-filament::badge :color="$color" size="sm">{{ $row['sisa_label'] }}</x-filament::badge>
                                                 @endif
+                                            </td>
+                                        </tr>
+
+                                        {{-- ====== DIAGRAM PER-ORANG ====== --}}
+                                        <tr wire:key="chart-{{ $row['user_id'] }}-{{ $selectedMonth }}" x-show="expandedRow === {{ $row['user_id'] }}" x-cloak>
+                                            <td colspan="8" class="p-0 border-t border-gray-100 dark:border-white/5">
+                                                <div x-show="expandedRow === {{ $row['user_id'] }}" x-collapse>
+                                                    <div class="px-6 py-6 bg-gray-50/50 dark:bg-white/[0.02]">
+                                                        <div class="w-full max-w-xl mx-auto h-56"
+                                                            x-data="miniChart(
+                                                                {{ $row['total_hadir'] }},
+                                                                {{ $row['tepat_waktu'] }},
+                                                                {{ $row['terlambat'] }},
+                                                                {{ $row['cuti'] }},
+                                                                {{ $row['tanpa_izin'] }}
+                                                            )"
+                                                            x-init="$watch('expandedRow', val => { if(val === {{ $row['user_id'] }}) { setTimeout(() => render(), 50); } })"
+                                                        >
+                                                            @if($row['total_hadir'] > 0 || $row['tanpa_izin'] > 0 || $row['cuti'] > 0)
+                                                                <canvas x-ref="canvas"></canvas>
+                                                            @else
+                                                                <div class="flex flex-col items-center justify-center h-full text-gray-400 dark:text-gray-500">
+                                                                    <span class="text-3xl mb-2">📊</span>
+                                                                    <span class="text-sm">Belum ada data kehadiran di bulan ini.</span>
+                                                                </div>
+                                                            @endif
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </td>
                                         </tr>
                                     @endforeach
                                 </tbody>
                             </table>
                         </div>
-                    </div>
+                    </x-filament::section>
                 @endif
             @endforeach
 
-            {{-- Empty State --}}
             @if (count($rekap['aktif']) === 0 && count($rekap['selesai']) === 0)
-                <div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-white/10 rounded-xl p-12 text-center">
-                    <span style="font-size:48px;line-height:1;display:block;margin-bottom:12px;">📭</span>
-                    <p class="text-sm text-gray-500 dark:text-gray-400">Tidak ada data peserta Magang BPS / Alumni untuk bulan ini.</p>
-                </div>
+                <x-filament::section>
+                    <div class="py-12 text-center text-gray-500 dark:text-gray-400">
+                        <p class="text-3xl mb-3">📭</p>
+                        <p class="text-sm">Tidak ada data peserta Magang BPS / Alumni.</p>
+                    </div>
+                </x-filament::section>
             @endif
         </div>
 
     </div>
+
+    {{-- ====== SCRIPT CHART.JS ALPINE ====== --}}
+    @push('scripts')
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script>
+        document.addEventListener('alpine:init', () => {
+            Alpine.data('miniChart', (hadir, tepatWaktu, terlambat, cuti, tanpaIzin) => ({
+                chartInstance: null,
+
+                render() {
+                    const canvas = this.$refs.canvas;
+                    if (!canvas) return;
+
+                    if (this.chartInstance) {
+                        this.chartInstance.destroy();
+                    }
+
+                    const isDark = document.documentElement.classList.contains('dark');
+                    const gridColor  = isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)';
+                    const labelColor = isDark ? '#9ca3af' : '#6b7280';
+
+                    this.chartInstance = new Chart(canvas, {
+                        type: 'bar',
+                        data: {
+                            labels: ['Total Hadir', 'Tepat Waktu', 'Terlambat', 'Cuti', 'Tanpa Izin'],
+                            datasets: [{
+                                data: [hadir, tepatWaktu, terlambat, cuti, tanpaIzin],
+                                backgroundColor: [
+                                    'rgba(99, 102, 241, 0.75)',
+                                    'rgba(34, 197, 94, 0.75)',
+                                    'rgba(239, 68, 68, 0.75)',
+                                    'rgba(14, 165, 233, 0.75)',
+                                    'rgba(245, 158, 11, 0.75)'
+                                ],
+                                borderColor: [
+                                    'rgba(99, 102, 241, 1)',
+                                    'rgba(34, 197, 94, 1)',
+                                    'rgba(239, 68, 68, 1)',
+                                    'rgba(14, 165, 233, 1)',
+                                    'rgba(245, 158, 11, 1)'
+                                ],
+                                borderWidth: 1,
+                                borderRadius: 6,
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: { display: false },
+                                tooltip: {
+                                    borderColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.08)',
+                                    borderWidth: 1,
+                                },
+                            },
+                            scales: {
+                                x: {
+                                    ticks: { color: labelColor, font: { size: 12 } },
+                                    grid:  { display: false },
+                                },
+                                y: {
+                                    beginAtZero: true,
+                                    ticks: {
+                                        color: labelColor,
+                                        stepSize: 1,
+                                        precision: 0
+                                    },
+                                    grid:  { color: gridColor },
+                                },
+                            },
+                        },
+                    });
+                }
+            }));
+        });
+    </script>
+    @endpush
+
 </x-filament-panels::page>
