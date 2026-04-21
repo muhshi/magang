@@ -259,5 +259,8 @@ This project is open-sourced software licensed under the [MIT license](https://o
 - **Fix InvalidArgumentException (filament::grid)**: Mengganti komponen `<x-filament::grid>` yang sudah dihapus di Filament v5 pada halaman Rekapitulasi Presensi dengan `<div>` biasa menggunakan kelas Tailwind CSS grid (`grid grid-cols-1 sm:grid-cols-2 gap-6`).
 - **Refactor Layout Rekapitulasi Presensi**: Menghapus seluruh komponen custom `x-filament::icon`, `x-filament::grid`, dan Chart.js. Layout dibangun ulang menggunakan HTML tabel standar dengan Tailwind CSS dan inline SVG icons agar konsisten dengan style Filament v5 (dark mode, badge warna, hover effect).
 - **Fix Thumbnail Lampiran (Penugasan & Logbook)**: Kolom Lampiran di tabel Penugasan dan Logbook diperbarui — gambar kini tampil sebagai thumbnail kecil 36×36 inline tanpa mengekspansi tinggi baris, sedangkan file non-gambar cukup tampil sebagai link teks dengan icon lampiran dan nama ekstensi saja.
+- **Fix Oversized Icon di Panel Admin**: Menghapus semua penggunaan `x-filament::icon` dan `x-heroicon-*` pada halaman Rekapitulasi Presensi, dan mengganti chevron expandable row dengan karakter teks `▼`. Root cause: Filament v5 memiliki CSS global yang membuat SVG tanpa atribut `width`/`height` eksplisit menjadi fullscreen di dalam konteks Filament panel.
+- **Restore Fitur Lengkap Rekapitulasi Presensi**: Mengembalikan layout 20 April yang memiliki kolom Cuti, Tanpa Izin, pemisahan Peserta Aktif/Selesai, dan chart Chart.js per baris, dengan perbaikan icon yang bersih.
+
 
 
