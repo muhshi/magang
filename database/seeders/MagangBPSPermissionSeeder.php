@@ -14,13 +14,14 @@ class MagangBPSPermissionSeeder extends Seeder
 
         $permissions = [
             // Presensi
-            'view_any_attendance',
-            'view_attendance',
+            'ViewAny:Attendance',
+            'View:Attendance',
+            'Create:Attendance',
 
             // Cuti
-            'view_any_leave',
-            'view_leave',
-            'create_leave',
+            'ViewAny:Leave',
+            'View:Leave',
+            'Create:Leave',
         ];
 
         foreach ($permissions as $permissionName) {

@@ -18,11 +18,11 @@ class LogbookPermissionSeeder extends Seeder
         }
 
         $permissions = [
-            'view_any_logbook',
-            'view_logbook',
-            'create_logbook',
-            'update_logbook',
-            'delete_logbook',
+            'ViewAny:Logbook',
+            'View:Logbook',
+            'Create:Logbook',
+            'Update:Logbook',
+            'Delete:Logbook',
         ];
 
         foreach ($permissions as $permName) {

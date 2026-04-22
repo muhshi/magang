@@ -14,8 +14,8 @@ class AlumniLogbookPermissionSeeder extends Seeder
 
         // Permission yang boleh (hanya lihat)
         $permissions = [
-            'view_any_logbook',
-            'view_logbook',
+            'ViewAny:Logbook',
+            'View:Logbook',
         ];
 
         foreach ($permissions as $permName) {

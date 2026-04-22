@@ -265,5 +265,8 @@ This project is open-sourced software licensed under the [MIT license](https://o
 - **Verifikasi Tab Magang BPS**: Memastikan filter pada tab Magang BPS di Pendaftaran Magang sudah sesuai regulasi: hanya menampilkan data dengan status `accepted` dan user yang memiliki role `Magang BPS`.
 - **Eksplorasi Dokumentasi**: Menghasilkan diagram alur (flowchart) penggunaan aplikasi dan ERD keseluruhan database dalam format Mermaid.js untuk keperluan dokumentasi teknis.
 
+### 22 April 2026
+- **Perbaikan Hak Akses (Permissions)**: Sinkronisasi format penamaan permission antara Seeder dan Policy. Seluruh seeder kini menggunakan format `PascalCase:Resource` (contoh: `ViewAny:Internship`) sesuai standar Filament Shield, memperbaiki isu di mana user baru tidak dapat melihat menu pendaftaran magang dan menu lainnya di sidebar.
+
 
 

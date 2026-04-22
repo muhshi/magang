@@ -12,41 +12,58 @@ class RolePermissionSeeder extends Seeder
     {
         // ===== Calon Magang =====
         // Bisa daftar magang, lihat pendaftarannya sendiri, dan lihat sertifikat
-        $calonMagang = Role::findByName('Calon Magang');
-        $calonMagang->syncPermissions([
-            'view_any_internship',
-            'view_internship',
-            'create_internship',
-            'view_any_certificate',
-            'view_certificate',
-        ]);
+        $calonMagang = Role::firstOrCreate(['name' => 'Calon Magang', 'guard_name' => 'web']);
+        
+        $calonMagangPermissions = [
+            'ViewAny:Internship',
+            'View:Internship',
+            'Create:Internship',
+            'ViewAny:Certificate',
+            'View:Certificate',
+        ];
+
+        foreach ($calonMagangPermissions as $perm) {
+            Permission::firstOrCreate(['name' => $perm, 'guard_name' => 'web']);
+        }
+        $calonMagang->syncPermissions($calonMagangPermissions);
 
         // ===== Magang BPS =====
         // Peserta magang aktif: presensi, cuti, lihat sertifikat + generate PDF
-        $magangBps = Role::findByName('Magang BPS');
-        $magangBps->syncPermissions([
+        $magangBps = Role::firstOrCreate(['name' => 'Magang BPS', 'guard_name' => 'web']);
+        
+        $magangBpsPermissions = [
             // Presensi
-            'view_any_attendance',
-            'view_attendance',
-            'page_Presensi',
+            'ViewAny:Attendance',
+            'View:Attendance',
             // Cuti
-            'view_any_leave',
-            'view_leave',
-            'create_leave',
-            // Sertifikat (hanya view, create oleh super_admin)
-            'view_any_certificate',
-            'view_certificate',
-        ]);
+            'ViewAny:Leave',
+            'View:Leave',
+            'Create:Leave',
+            // Sertifikat
+            'ViewAny:Certificate',
+            'View:Certificate',
+        ];
+
+        foreach ($magangBpsPermissions as $perm) {
+            Permission::firstOrCreate(['name' => $perm, 'guard_name' => 'web']);
+        }
+        $magangBps->syncPermissions($magangBpsPermissions);
 
         // ===== Alumni Magang =====
         // Alumni: lihat data dan sertifikat
-        $alumni = Role::findByName('Alumni Magang');
-        $alumni->syncPermissions([
-            'view_any_internship',
-            'view_internship',
-            'view_any_certificate',
-            'view_certificate',
-        ]);
+        $alumni = Role::firstOrCreate(['name' => 'Alumni Magang', 'guard_name' => 'web']);
+        
+        $alumniPermissions = [
+            'ViewAny:Internship',
+            'View:Internship',
+            'ViewAny:Certificate',
+            'View:Certificate',
+        ];
+
+        foreach ($alumniPermissions as $perm) {
+            Permission::firstOrCreate(['name' => $perm, 'guard_name' => 'web']);
+        }
+        $alumni->syncPermissions($alumniPermissions);
 
         $this->command->info('✅ Permission untuk Calon Magang, Magang BPS, dan Alumni Magang berhasil di-assign.');
     }
