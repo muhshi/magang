@@ -268,5 +268,7 @@ This project is open-sourced software licensed under the [MIT license](https://o
 ### 22 April 2026
 - **Perbaikan Hak Akses (Permissions)**: Sinkronisasi format penamaan permission antara Seeder dan Policy. Seluruh seeder kini menggunakan format `PascalCase:Resource` (contoh: `ViewAny:Internship`) sesuai standar Filament Shield, memperbaiki isu di mana user baru tidak dapat melihat menu pendaftaran magang dan menu lainnya di sidebar.
 
-
+### 28 April 2026
+- **Integrasi Laravel ERD**: Menambahkan package `recca0120/laravel-erd` (dev) untuk mem-generate Entity-Relationship Diagram (ERD).
+- **Generate ERD**: Menghasilkan file diagram database `erd.svg` yang ditempatkan di root folder. Menggunakan patch untuk mendukung OS Windows dengan binary path yang telah disesuaikan di `config/laravel-erd.php`.
 
