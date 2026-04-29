@@ -41,6 +41,7 @@ class AdminPanelProvider extends PanelProvider
             ->default()
             ->id('admin')
             ->path('admin')
+            ->brandLogo(fn () => view('filament.logo'))
 
             ->login()
             ->registration()
@@ -105,6 +106,10 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->passwordReset()
             ->emailVerification()
+            ->renderHook(
+                \Filament\View\PanelsRenderHook::AUTH_LOGIN_FORM_AFTER,
+                fn (): string => Blade::render('@include("auth.sso-button")'),
+            )
             ->renderHook(
                 'panels::body.end',
                 fn (): string => auth()->check() && !auth()->user()->hasRole('super_admin')

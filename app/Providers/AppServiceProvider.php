@@ -43,5 +43,12 @@ class AppServiceProvider extends ServiceProvider
         //Livewire::component('edit-comment-modal', EditCommentModal::class);
 
         User::observe(UserObserver::class);
+
+        // Registrasi SIPETRA SSO Socialite Driver
+        $socialite = $this->app->make(\Laravel\Socialite\Contracts\Factory::class);
+        $socialite->extend('sipetra', function ($app) use ($socialite) {
+            $config = $app['config']['services.sipetra'];
+            return $socialite->buildProvider(\App\Providers\SipetraSocialiteProvider::class, $config);
+        });
     }
 }
