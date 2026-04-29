@@ -1,6 +1,7 @@
 <?php
 
 use App\Exports\AttendanceExport;
+use App\Http\Controllers\Auth\SsoController;
 use App\Http\Controllers\CertificateController;
 use App\Livewire\Presensi;
 use Illuminate\Support\Facades\Route;
@@ -68,6 +69,10 @@ Route::get('/sertifikat/{uuid}', [CertificateController::class, 'verify'])
 
 Route::get('/sertifikat/{uuid}/download', [CertificateController::class, 'download'])
     ->name('certificate.download');
+
+// SIPETRA SSO Routes
+Route::get('/auth/sipetra/redirect', [SsoController::class, 'redirect'])->name('sipetra.login');
+Route::get('/auth/sipetra/callback', [SsoController::class, 'callback']);
 
 Route::get('/login', function () {
     return redirect('admin/login');

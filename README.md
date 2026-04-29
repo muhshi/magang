@@ -272,3 +272,11 @@ This project is open-sourced software licensed under the [MIT license](https://o
 - **Integrasi Laravel ERD**: Menambahkan package `recca0120/laravel-erd` (dev) untuk mem-generate Entity-Relationship Diagram (ERD).
 - **Generate ERD**: Menghasilkan file diagram database `erd.svg` yang ditempatkan di root folder. Menggunakan patch untuk mendukung OS Windows dengan binary path yang telah disesuaikan di `config/laravel-erd.php`.
 
+### 29 April 2026
+- **Integrasi SIPETRA SSO (OAuth2)**: Mengimplementasikan fitur Login dengan SIPETRA SSO menggunakan Laravel Socialite dan custom provider. Meliputi:
+  - Konfigurasi environment variabel (`SIPETRA_CLIENT_ID`, `SIPETRA_CLIENT_SECRET`, `SIPETRA_REDIRECT_URI`, `SIPETRA_BASE_URL`)
+  - Registrasi service SIPETRA di `config/services.php` dengan scope `identity_pegawai:read`, `employee:read`, `contact:read`, `roles:read`
+  - Custom Socialite Provider (`SipetraSocialiteProvider.php`) untuk menangani protokol OAuth2 SIPETRA
+  - Migrasi database menambahkan kolom `sipetra_id`, `sipetra_token`, `sipetra_refresh_token`, `nip`, `jabatan` ke tabel `users`
+  - Controller `SsoController` untuk redirect dan callback SSO (user baru otomatis dibuat dengan role `pegawai`)
+  - Tombol "Masuk dengan SIPETRA SSO" di halaman login Filament via render hook

@@ -25,6 +25,11 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'sipetra_id',
+        'sipetra_token',
+        'sipetra_refresh_token',
+        'nip',
+        'jabatan',
     ];
 
     /**
