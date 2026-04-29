@@ -280,3 +280,7 @@ This project is open-sourced software licensed under the [MIT license](https://o
   - Migrasi database menambahkan kolom `sipetra_id`, `sipetra_token`, `sipetra_refresh_token`, `nip`, `jabatan` ke tabel `users`
   - Controller `SsoController` untuk redirect dan callback SSO (user baru otomatis dibuat dengan role `pegawai`)
   - Tombol "Masuk dengan SIPETRA SSO" di halaman login Filament via render hook
+- **Redesign Halaman Auth**: Mengubah tampilan default login/register Filament menjadi layout *Split Screen Card*.
+  - Sisi kiri: Form login/register dengan styling yang lebih clean.
+  - Sisi kanan: Logo Mangga Muda berukuran besar dengan drop shadow interaktif dan latar belakang putih.
+  - Membungkus seluruh konten ke dalam sebuah Card di tengah layar dengan background gradasi yang estetik.

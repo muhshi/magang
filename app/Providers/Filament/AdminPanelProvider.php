@@ -41,6 +41,7 @@ class AdminPanelProvider extends PanelProvider
             ->default()
             ->id('admin')
             ->path('admin')
+            ->brandLogo(fn () => view('filament.logo'))
 
             ->login()
             ->registration()
