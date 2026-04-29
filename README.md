@@ -277,6 +277,7 @@ This project is open-sourced software licensed under the [MIT license](https://o
 - **Generate ERD**: Menghasilkan file diagram database `erd.svg` yang ditempatkan di root folder. Menggunakan patch untuk mendukung OS Windows dengan binary path yang telah disesuaikan di `config/laravel-erd.php`.
 
 ### 29 April 2026
+- **Merge Branch nana-work**: Melakukan pull dan merge terbaru dari branch `nana-work` yang mencakup integrasi SIPETRA SSO (OAuth2), desain ulang halaman autentikasi (Split Screen Card), dan pembaruan ERD.
 - **Integrasi SIPETRA SSO (OAuth2)**: Mengimplementasikan fitur Login dengan SIPETRA SSO menggunakan Laravel Socialite dan custom provider. Meliputi:
   - Konfigurasi environment variabel (`SIPETRA_CLIENT_ID`, `SIPETRA_CLIENT_SECRET`, `SIPETRA_REDIRECT_URI`, `SIPETRA_BASE_URL`)
   - Registrasi service SIPETRA di `config/services.php` dengan scope `identity_pegawai:read`, `employee:read`, `contact:read`, `roles:read`
