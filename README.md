@@ -274,6 +274,7 @@ This project is open-sourced software licensed under the [MIT license](https://o
 
 ### 30 April 2026
 - **Fix Error Buat Penugasan**: Memperbaiki `Class "Filament\Forms\Components\Grid" not found` saat membuka halaman create Penugasan dan Logbook. Di Filament v5, `Grid` dipindah ke namespace `Filament\Schemas\Components\Grid`. Seluruh penggunaan `Forms\Components\Grid` di `TicketResource.php` dan `LogbookResource.php` telah diperbarui.
+- **Fix Error Detail Logbook & Penugasan**: Memperbaiki `Class "Filament\Infolists\Components\Section" not found` saat membuka halaman detail Logbook dan Penugasan. Di Filament v5, seluruh komponen `Infolists\Components` (`Section`, `Grid`, `TextEntry`, `ViewEntry`) dipindah ke `Filament\Schemas\Components`. `ViewLogbook.php` dan `ViewTicket.php` telah diperbarui.
 
 ### 29 April 2026
 - **Integrasi SIPETRA SSO (OAuth2)**: Mengimplementasikan fitur Login dengan SIPETRA SSO menggunakan Laravel Socialite dan custom provider. Meliputi:
