@@ -50,7 +50,7 @@ class TicketResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\Grid::make(2)
+                \Filament\Schemas\Components\Grid::make(2)
                     ->schema([
                         // A. Pembuat (dari tabel employees)
                         Forms\Components\Select::make('employee_id')
@@ -74,7 +74,7 @@ class TicketResource extends Resource
                     ->rows(4)
                     ->columnSpanFull(),
 
-                Forms\Components\Grid::make(3)
+                \Filament\Schemas\Components\Grid::make(3)
                     ->schema([
                         // D. Prioritas
                         Forms\Components\Select::make('priority')

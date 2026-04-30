@@ -55,7 +55,7 @@ class LogbookResource extends Resource
         $isAdmin = auth()->user()->hasRole(['super_admin', 'pembimbing']);
 
         return $form->schema([
-            Forms\Components\Grid::make(2)->schema([
+            \Filament\Schemas\Components\Grid::make(2)->schema([
                 Forms\Components\DatePicker::make('tanggal_pengisian')
                     ->label('Tanggal Pengisian')
                     ->required()
@@ -84,7 +84,7 @@ class LogbookResource extends Resource
                 ->default(fn () => [Auth::id()])
                 ->columnSpanFull(),
 
-            Forms\Components\Grid::make(2)->schema([
+            \Filament\Schemas\Components\Grid::make(2)->schema([
                 Forms\Components\Select::make('status')
                     ->label('Status')
                     ->options([
