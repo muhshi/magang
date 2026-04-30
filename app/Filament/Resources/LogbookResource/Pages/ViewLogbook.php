@@ -3,10 +3,10 @@
 namespace App\Filament\Resources\LogbookResource\Pages;
 
 use App\Filament\Resources\LogbookResource;
-use Filament\Infolists\Components\Grid;
-use Filament\Infolists\Components\Section;
-use Filament\Infolists\Components\TextEntry;
-use Filament\Infolists\Components\ViewEntry;
+use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\TextEntry;
+use Filament\Schemas\Components\ViewEntry;
 use Filament\Schemas\Schema;
 use Filament\Resources\Pages\ViewRecord;
 
