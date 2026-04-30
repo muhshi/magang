@@ -277,6 +277,7 @@ This project is open-sourced software licensed under the [MIT license](https://o
 - **Generate ERD**: Menghasilkan file diagram database `erd.svg` yang ditempatkan di root folder. Menggunakan patch untuk mendukung OS Windows dengan binary path yang telah disesuaikan di `config/laravel-erd.php`.
 
 ### 30 April 2026
+- **Merge Branch nana-work**: Melakukan pull dan merge terbaru dari branch `nana-work` untuk sinkronisasi fitur dan perbaikan terbaru.
 - **Fix Error Buat Penugasan**: Memperbaiki `Class "Filament\Forms\Components\Grid" not found` saat membuka halaman create Penugasan dan Logbook. Di Filament v5, `Grid` dipindah ke namespace `Filament\Schemas\Components\Grid`. Seluruh penggunaan `Forms\Components\Grid` di `TicketResource.php` dan `LogbookResource.php` telah diperbarui.
 
 ### 29 April 2026
