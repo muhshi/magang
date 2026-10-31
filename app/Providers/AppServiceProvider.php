@@ -3,13 +3,15 @@
 namespace App\Providers;
 
 use App\Filament\Resources\TicketResource\Pages\EditCommentModal;
+use App\Http\Responses\SsoLogoutResponse;
+use App\Models\User;
 use App\Observers\UserObserver;
+use BezhanSalleh\LanguageSwitch\LanguageSwitch;
+use Filament\Auth\Http\Responses\Contracts\LogoutResponse;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
-use App\Models\User;
-use BezhanSalleh\LanguageSwitch\LanguageSwitch;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Gate;
+use Laravel\Socialite\Contracts\Factory;
 use Livewire\Livewire;
 
 class AppServiceProvider extends ServiceProvider
@@ -19,7 +21,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        if (interface_exists(LogoutResponse::class)) {
+            $this->app->singleton(LogoutResponse::class, SsoLogoutResponse::class);
+        }
     }
 
     /**
@@ -40,15 +44,16 @@ class AppServiceProvider extends ServiceProvider
         Gate::define('viewPulse', function (User $user) {
             return $user->hasRole('super_admin');
         });
-        //Livewire::component('edit-comment-modal', EditCommentModal::class);
+        // Livewire::component('edit-comment-modal', EditCommentModal::class);
 
         User::observe(UserObserver::class);
 
         // Registrasi SIPETRA SSO Socialite Driver
-        $socialite = $this->app->make(\Laravel\Socialite\Contracts\Factory::class);
+        $socialite = $this->app->make(Factory::class);
         $socialite->extend('sipetra', function ($app) use ($socialite) {
             $config = $app['config']['services.sipetra'];
-            return $socialite->buildProvider(\App\Providers\SipetraSocialiteProvider::class, $config);
+
+            return $socialite->buildProvider(SipetraSocialiteProvider::class, $config);
         });
     }
 }
