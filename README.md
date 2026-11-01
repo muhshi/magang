@@ -156,6 +156,34 @@ This project is open-sourced software licensed under the [MIT license](https://o
 
 ## Changelog
 
+### 1 November 2026
+- **Keamanan & Perapian Route**:
+  - Menghapus route debug dan informasi sensitif publik (`/info`, `/debug-log-config`, `/test-write`, `/test-log`, `/old-home`) pada `routes/web.php` untuk mencegah information disclosure di level production.
+  - Memperbarui route `attendance/export` agar menggunakan `response()->streamDownload()` dan `Excel::raw()` yang kompatibel dan hemat memori pada Laravel Octane / FrankenPHP.
+- **Server-Side Geofencing Presensi**:
+  - Mengimplementasikan validasi jarak GPS di sisi server menggunakan formula Haversine pada komponen `Presensi` untuk menghitung jarak akurat koordinat user terhadap kantor. Presensi di luar radius kantor otomatis ditolak dan tidak dapat di-bypass dari frontend.
+  - Menambahkan database locking (`lockForUpdate`) untuk mencegah race condition double-submit presensi pada hari yang sama.
+- **Standardisasi Role SIPETRA SSO**:
+  - Menyelaraskan pemberian role akun baru pada `SsoController` menjadi `Pegawai BPS` (sebelumnya `pegawai`) agar sinkron dengan hak akses modul penugasan dan verifikasi pendaftaran magang.
+  - Memperbaiki pengecekan role yang rentan crash (`roles[0]->name`) menjadi `auth()->user()->hasRole()` di `AttendanceResource`, `InternshipResource`, `LeaveResource`, `ScheduleResource`, `CertificateResource`, dan `ListInternships`.
+  - Membuka limit dropdown user pada form jadwal `ScheduleResource` agar mendukung pencarian seluruh user (sebelumnya dibatasi hanya 5 user terakhir).
+- **Perbaikan Widget Dashboard & Sinkronisasi Penugasan**:
+  - Memperbaiki bug tanggal pada widget `InternDashboard` yang sebelumnya membandingkan kolom `start_time` (SQL time) dengan tanggal, diganti menjadi `whereDate('created_at', '>=', $bulanIni)` sehingga angka kehadiran tampil akurat.
+  - Memperbarui widget `StatsOverview` agar selaras dengan simplifikasi penugasan: menghitung status enum (`belum`, `proses`, `revisi`, `selesai`), mendeteksi penugasan overdue dengan benar, dan membersihkan dependensi modul `Project` serta relasi status lama yang tidak lagi dipakai.
+  - Memperbaiki label dataset `'Blog posts'` menjadi `'Pendaftar Magang'` pada `InternshipBarChart`, serta memetakan label jenis kelamin `'L'`/`'P'` menjadi `'Laki-laki'`/`'Perempuan'` pada `InternshipPieChart`.
+  - Memperbarui `UserStatisticsTable` dan `RecentActivityTable` agar menampilkan aktivitas penugasan dan logbook peserta secara real-time.
+- **Optimasi Performa & Eliminasi N+1 Query**:
+  - Mengimplementasikan *batch querying* pada `RekapPresensi.php`: data kehadiran dan cuti seluruh peserta magang diambil sekaligus dalam query berindeks dan dikelompokkan dengan `groupBy('user_id')`, memangkas puluhan query berulang per render halaman.
+  - Menambahkan eager loading `with(['employee', 'assignees'])` pada `TicketResource` dan `with(['assignees'])` pada `LogbookResource` untuk mengoptimalkan rendering tabel.
+  - Menghapus tab relasi dan filter proyek lama dari `UserResource` serta menambahkan eager loading roles.
+- **Peningkatan UX Modul Penugasan (Assignee & Status Langsung di Form)**:
+  - Menambahkan isian `Yang Ditugaskan (assignee_ids)` dan pilihan `Status` langsung ke dalam form pembuatan dan pengeditan `TicketResource`.
+  - Implementasi *hook* `afterCreate` dan `afterSave` yang otomatis membuat, memperbarui, atau membersihkan data `Logbook` sistem untuk setiap peserta yang ditugaskan tanpa perlu klik modal aksi tabel terpisah.
+- **Deduplikasi Kode Sertifikat**:
+  - Mengekstrak method helper `buildCertificatePdfResponse()` pada `CertificateController` untuk menyatukan logika render template Dompdf dan enkripsi password sertifikat antara fungsi view dan download.
+- **Suite Pengujian Otomatis**:
+  - Menambahkan pengujian Feature untuk geofencing presensi, proteksi route, konsistensi role SSO, integritas widget dashboard, eager loading query, dan alur penugasan dengan logbook.
+
 ### 31 Oktober 2026
 - **Profil & Password Terpusat SIPETRA & Sinkronisasi 1-Klik**:
   - Menambahkan menu "Profil & Password (SIPETRA)" pada dropdown user Filament yang membuka modal pengaturan akun terpusat di `https://bpsdemak.com/account`.
