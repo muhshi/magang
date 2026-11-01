@@ -29,7 +29,7 @@ class InternshipBarChart extends ChartWidget
         return [
             'datasets' => [
                 [
-                    'label' => 'Blog posts',
+                    'label' => 'Pendaftar Magang',
                     'data' => $data->map(fn(TrendValue $value) => $value->aggregate),
                 ],
             ],

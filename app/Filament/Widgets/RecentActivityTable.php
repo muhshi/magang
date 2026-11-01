@@ -26,46 +26,53 @@ class RecentActivityTable extends BaseWidget
         return $table
             ->query(
                 TicketHistory::query()
-                    ->with(['ticket.project', 'user', 'status'])
-                    ->when(!auth()->user()->hasRole('super_admin'), function ($query) {
-                        $query->whereHas('ticket.project.members', function ($subQuery) {
-                            $subQuery->where('user_id', auth()->id());
+                    ->with(['ticket.employee', 'user'])
+                    ->when(!auth()->user()?->hasRole('super_admin'), function ($query) {
+                        $query->where(function ($subQuery) {
+                            $subQuery->where('user_id', auth()->id())
+                                ->orWhereHas('ticket.assignees', fn($q) => $q->where('users.id', auth()->id()));
                         });
                     })
                     ->latest()
             )
             ->columns([
                 Tables\Columns\TextColumn::make('activity_summary')
-                    ->label('Activity')
+                    ->label('Aktivitas')
                     ->state(function (TicketHistory $record): string {
-                        $ticketName = $record->ticket->name ?? 'Unknown ticket';
+                        $ticketName = $record->ticket->name ?? 'Tugas';
                         $trimmedName = strlen($ticketName) > 40 ? substr($ticketName, 0, 40) . '...' : $ticketName;
-                        $userName = $record->user->name ?? 'Unknown user';
-                        return "<span class='text-primary-600 font-medium'>{$userName}</span> changed \"{$trimmedName}\"";
+                        $userName = $record->user->name ?? 'User';
+                        return "<span class='text-primary-600 font-medium'>{$userName}</span> mengubah status \"{$trimmedName}\"";
                     })
                     ->description(function (TicketHistory $record): string {
                         $isToday = $record->created_at->isToday();
                         $time = $isToday 
                             ? $record->created_at->format('H:i')
                             : $record->created_at->format('M d, H:i');
-                        $project = $record->ticket->project->name ?? 'No Project';
+                        $pembuat = $record->ticket->employee->name ?? 'BPS Demak';
                         $uuid = $record->ticket->uuid ?? '';
-                        return "{$time} • {$uuid} • {$project}";
+                        return "{$time} • {$uuid} • {$pembuat}";
                     })
                     ->html()
                     ->searchable(['users.name', 'tickets.name', 'tickets.uuid'])
                     ->weight('medium'),
-                Tables\Columns\TextColumn::make('status.name')
+                Tables\Columns\TextColumn::make('ticket.status')
                     ->label('Status')
                     ->badge()
                     ->alignEnd()
-                    ->color(fn (TicketHistory $record): string => match($record->status->name ?? '') {
-                        'To Do', 'Backlog' => 'gray',
-                        'In Progress', 'Doing' => 'warning', 
-                        'Review', 'Testing' => 'info',
-                        'Done', 'Completed' => 'success',
-                        'Cancelled', 'Blocked' => 'danger',
-                        default => 'primary',
+                    ->formatStateUsing(fn (?string $state): string => match($state) {
+                        'belum' => 'Belum',
+                        'proses' => 'Proses',
+                        'revisi' => 'Revisi',
+                        'selesai' => 'Selesai',
+                        default => $state ?? '-',
+                    })
+                    ->color(fn (?string $state): string => match($state) {
+                        'belum' => 'gray',
+                        'proses' => 'info',
+                        'revisi' => 'warning',
+                        'selesai' => 'success',
+                        default => 'gray',
                     }),
             ])
             ->defaultSort('created_at', 'desc')

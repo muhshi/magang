@@ -31,33 +31,21 @@ class UserStatisticsTable extends BaseWidget
                         $query->where('id', auth()->id());
                     })
                     ->withCount([
-                        'projects as total_projects',
-                        'assignedTickets as total_assigned_tickets'
+                        'assignedTickets as total_assigned_tickets',
+                        'attendances as total_attendances',
                     ])
                     ->orderBy('name')
             )
             ->columns([
                 Tables\Columns\TextColumn::make('name')
-                    ->label('User')
+                    ->label('Nama Peserta / Pengguna')
                     ->searchable()
                     ->sortable()
                     ->weight('medium')
                     ->icon('heroicon-o-user'),
                 
-                Tables\Columns\TextColumn::make('total_projects')
-                    ->label('Total Projects')
-                    ->alignCenter()
-                    ->sortable()
-                    ->badge()
-                    ->color(fn (int $state): string => match (true) {
-                        $state === 0 => 'gray',
-                        $state <= 2 => 'warning',
-                        $state <= 5 => 'success',
-                        default => 'primary',
-                    }),
-                
                 Tables\Columns\TextColumn::make('total_assigned_tickets')
-                    ->label('Total Tickets')
+                    ->label('Total Penugasan')
                     ->alignCenter()
                     ->sortable()
                     ->badge()
@@ -67,6 +55,13 @@ class UserStatisticsTable extends BaseWidget
                         $state <= 10 => 'warning',
                         default => 'danger',
                     }),
+
+                Tables\Columns\TextColumn::make('total_attendances')
+                    ->label('Total Presensi')
+                    ->alignCenter()
+                    ->sortable()
+                    ->badge()
+                    ->color('info'),
                 
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Joined')

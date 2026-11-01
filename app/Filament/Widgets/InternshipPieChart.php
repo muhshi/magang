@@ -18,20 +18,26 @@ class InternshipPieChart extends ChartWidget
     {
         $data = Internship::selectRaw('gender, COUNT(*) as total')
             ->groupBy('gender')
-            ->pluck('total', 'gender'); // hasil: ['Laki-laki' => 10, 'Perempuan' => 15]
+            ->pluck('total', 'gender');
+
+        $labels = $data->keys()->map(fn($gender) => match ($gender) {
+            'L' => 'Laki-laki',
+            'P' => 'Perempuan',
+            default => $gender ?? 'Lainnya',
+        });
 
         return [
             'datasets' => [
                 [
                     'label' => 'Jumlah',
-                    'data' => $data->values(), // ambil jumlahnya saja
+                    'data' => $data->values(),
                     'backgroundColor' => [
                         '#36A2EB', // biru
                         '#FF6384', // merah
                     ],
                 ],
             ],
-            'labels' => $data->keys(), // ambil label gender
+            'labels' => $labels,
         ];
     }
 

@@ -50,7 +50,7 @@ class InternDashboard extends BaseWidget
         $bulanIni = Carbon::now()->startOfMonth();
         $hariKerja = Carbon::now()->startOfMonth()->diffInWeekdays(Carbon::now()); // Approx hari kerja
         $presensiCount = Attendance::where('user_id', $user->id)
-            ->where('start_time', '>=', $bulanIni)
+            ->whereDate('created_at', '>=', $bulanIni)
             ->count();
 
         // Cuti/izin bulan ini
