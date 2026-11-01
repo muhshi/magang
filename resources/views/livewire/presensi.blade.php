@@ -11,7 +11,7 @@
             <h1 class="presensi-title">Presensi Magang</h1>
             <p class="presensi-subtitle">Sistem Absensi Digital BPS Kabupaten Demak</p>
             <div class="presensi-clock-container">
-                <div id="presensiTime" class="presensi-clock-time">--:--:-- WIB</div>
+                <div id="presensiTime" class="presensi-clock-time">--:-- WIB</div>
                 <div id="presensiDate" class="presensi-clock-date">Memuat waktu...</div>
             </div>
         </div>
@@ -29,7 +29,7 @@
                 </div>
                 <div class="presensi-info-item">
                     <span class="presensi-info-label">Shift</span>
-                    <span class="presensi-info-value">{{ $presensiData['shiftName'] }} ({{ $presensiData['workStart'] }} - {{ $presensiData['workEnd'] }}) WIB</span>
+                    <span class="presensi-info-value">{{ $presensiData['shiftName'] }} ({{ substr($presensiData['workStart'], 0, 5) }} - {{ substr($presensiData['workEnd'], 0, 5) }}) WIB</span>
                 </div>
                 <div class="presensi-info-item">
                     <span class="presensi-info-label">Status</span>
@@ -48,7 +48,7 @@
         <div class="presensi-time-row">
             <div class="presensi-card presensi-time-card">
                 <span class="presensi-time-label">Jam Datang</span>
-                <span class="presensi-time-value">{{ $attendance ? $attendance->start_time : '-' }}</span>
+                <span class="presensi-time-value">{{ $attendance ? substr($attendance->start_time, 0, 5) . ' WIB' : '-' }}</span>
                 @if ($attendance)
                     <span class="presensi-status-pill {{ $attendance->isLate() ? 'pill-late' : 'pill-ontime' }}">
                         {{ $attendance->isLate() ? '🔴 Terlambat' : '🟢 Tepat Waktu' }}
@@ -58,7 +58,7 @@
             <div class="presensi-card presensi-time-card">
                 <span class="presensi-time-label">Jam Pulang</span>
                 <span class="presensi-time-value">
-                    {{ ($attendance && $attendance->hasCheckedOut()) ? $attendance->end_time : '-' }}
+                    {{ ($attendance && $attendance->hasCheckedOut()) ? substr($attendance->end_time, 0, 5) . ' WIB' : '-' }}
                 </span>
                 @if ($attendance)
                     @if ($attendance->hasCheckedOut())
@@ -567,8 +567,7 @@
             const now = new Date();
             const hours = String(now.getHours()).padStart(2, '0');
             const minutes = String(now.getMinutes()).padStart(2, '0');
-            const seconds = String(now.getSeconds()).padStart(2, '0');
-            timeEl.textContent = `${hours}:${minutes}:${seconds} WIB`;
+            timeEl.textContent = `${hours}:${minutes} WIB`;
 
             const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
             dateEl.textContent = now.toLocaleDateString('id-ID', options);

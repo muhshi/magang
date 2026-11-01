@@ -344,7 +344,7 @@ This project is open-sourced software licensed under the [MIT license](https://o
 - **Auto-Select Identitas Pembuat Tugas**: Form Penugasan (`TicketResource`) kini otomatis memilih Pegawai BPS yang sedang login sebagai pembuat tugas default (`employee_id`).
 - **Role-Aware Smart Badge Penugasan**: Badge counter pada menu sidebar Penugasan kini otomatis beradaptasi: peserta `Magang BPS` hanya melihat jumlah tugas aktif miliknya yang belum selesai (`status != 'selesai'`), sedangkan admin/pembimbing melihat total tugas aktif di sistem.
 - **Redesign & Optimalisasi UI/UX Presensi**:
-  - Jam digital real-time (WIB) dengan tanggal otomatis di kartu header.
+  - Jam digital real-time simpel (format `HH:mm WIB` tanpa detik) di kartu header serta penyederhanaan tampilan jam shift, jam datang, dan jam pulang tanpa detik.
   - Badge status kedatangan (Tepat Waktu / Terlambat) dan kepulangan (Belum Pulang / Selesai Pulang).
   - Kotak deteksi jarak interaktif yang menginformasikan jarak presisi peserta dari kantor dalam satuan meter dan radius toleransi.
   - Diferensiasi visual tombol: warna gradien hijau untuk Presensi Masuk (Datang) dan warna gradien amber untuk Presensi Pulang.
