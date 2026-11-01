@@ -329,3 +329,24 @@ This project is open-sourced software licensed under the [MIT license](https://o
   - Sisi kiri: Form login/register dengan styling yang lebih clean.
   - Sisi kanan: Logo Mangga Muda berukuran besar dengan drop shadow interaktif dan latar belakang putih.
   - Membungkus seluruh konten ke dalam sebuah Card di tengah layar dengan background gradasi yang estetik.
+
+### 1 November 2026
+- **Keamanan & Perbaikan Rute Debug**: Menghapus rute debug dan pengujian yang terekspos ke publik (`/info`, `/debug-log-config`, `/test-write`, `/test-log`, `/old-home`) untuk mencegah kebocoran informasi server (`phpinfo`).
+- **Server-Side Geofencing Presensi**: Memperkuat validasi presensi di sisi server (`app/Livewire/Presensi.php`) menggunakan kalkulasi jarak Haversine (bukan hanya bergantung pada validasi client-side), serta menambahkan DB transaction lock (`sharedLock`) untuk mencegah race condition / double-tap check-in.
+- **Export Presensi Aman**: Mengamankan endpoint `attendance/export` dengan otentikasi role `super_admin` dan `response()->streamDownload()` yang kompatibel dengan FrankenPHP / Octane.
+- **Standardisasi Role SSO & Perlindungan Hak Akses**: Menyelaraskan assignment role pada `SsoController` ke `Pegawai BPS` dan merefaktor pengecekan role yang rapuh (`$user->roles[0]->name`) pada 7 resource menjadi `hasRole()` yang aman terhadap user tanpa role.
+- **Perbaikan Query Dashboard Intern**: Memperbaiki pengecekan absensi hari ini pada `InternDashboard` dari `where('start_time', ...)` menjadi `whereDate('created_at', ...)`.
+- **Aliansi Widget Dashboard ke Simplified Penugasan**: Mengeliminasi ketergantungan widget analitik dashboard (`StatsOverview`, `InternshipBarChart`, `InternshipPieChart`, `UserStatisticsTable`, `RecentActivityTable`) dari model legacy proyek (`Project`, `Epic`, `TicketStatus`) beralih ke tabel `tickets` (Penugasan) dan `users`.
+- **Eliminasi N+1 Query & Eager Loading**: Merefaktor penghitungan presensi di `RekapPresensi.php` menggunakan batch `whereIn` dan `groupBy('user_id')`, serta menambahkan eager loading relasi `employee` dan `assignees` pada `TicketResource` dan `LogbookResource`.
+- **Sinkronisasi Otomatis Penugasan & Logbook**: Menambahkan field langsung `assignee_ids` dan `status` pada form Penugasan (`TicketResource`) dengan sinkronisasi otomatis ke `Logbook` saat tiket dibuat maupun diperbarui.
+- **Refactor DRY Sertifikat PDF**: Mengekstrak logika rendering dan proteksi PDF di `CertificateController.php` ke private method `buildCertificatePdfResponse()`.
+- **Otomasi Status Alumni Magang (`interns:update-status`)**: Menambahkan scheduled artisan command harian yang otomatis mengevaluasi tanggal selesai magang (`end_date`). Peserta yang telah selesai otomatis dialihkan statusnya ke Alumni dan rolenya diperbarui dari `Magang BPS` menjadi `Alumni Magang`.
+- **Auto-Select Identitas Pembuat Tugas**: Form Penugasan (`TicketResource`) kini otomatis memilih Pegawai BPS yang sedang login sebagai pembuat tugas default (`employee_id`).
+- **Role-Aware Smart Badge Penugasan**: Badge counter pada menu sidebar Penugasan kini otomatis beradaptasi: peserta `Magang BPS` hanya melihat jumlah tugas aktif miliknya yang belum selesai (`status != 'selesai'`), sedangkan admin/pembimbing melihat total tugas aktif di sistem.
+- **Redesign & Optimalisasi UI/UX Presensi**:
+  - Jam digital real-time (WIB) dengan tanggal otomatis di kartu header.
+  - Badge status kedatangan (Tepat Waktu / Terlambat) dan kepulangan (Belum Pulang / Selesai Pulang).
+  - Kotak deteksi jarak interaktif yang menginformasikan jarak presisi peserta dari kantor dalam satuan meter dan radius toleransi.
+  - Diferensiasi visual tombol: warna gradien hijau untuk Presensi Masuk (Datang) dan warna gradien amber untuk Presensi Pulang.
+  - Kartu notifikasi sukses presensi lengkap ketika peserta telah presensi datang & pulang di hari yang sama.
+  - Dukungan styling Dark Mode lengkap untuk seluruh komponen presensi.

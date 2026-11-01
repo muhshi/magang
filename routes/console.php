@@ -10,3 +10,4 @@ Artisan::command('inspire', function () {
 
 Schedule::command('chat:prune')->daily();
 Schedule::command('leaves:auto-approve')->daily();
+Schedule::command('interns:update-status')->daily();

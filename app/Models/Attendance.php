@@ -38,8 +38,17 @@ class Attendance extends Model
         return $startTime->greaterThan($scheduleStartTime);
     }
 
+    public function hasCheckedOut(): bool
+    {
+        return !empty($this->end_time) && $this->end_time !== $this->start_time;
+    }
+
     public function workDuration()
     {
+        if (!$this->hasCheckedOut()) {
+            return 'Belum Pulang';
+        }
+
         $startTime = Carbon::parse($this->start_time);
         $endTime = Carbon::parse($this->end_time);
 

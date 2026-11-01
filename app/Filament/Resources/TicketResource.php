@@ -56,6 +56,14 @@ class TicketResource extends Resource
                         Forms\Components\Select::make('employee_id')
                             ->label('Pembuat')
                             ->relationship('employee', 'name')
+                            ->default(function () {
+                                $user = auth()->user();
+                                if ($user) {
+                                    $employee = Employee::where('name', $user->name)->first();
+                                    return $employee?->id;
+                                }
+                                return null;
+                            })
                             ->required()
                             ->searchable()
                             ->preload(),
@@ -608,9 +616,33 @@ class TicketResource extends Resource
 
     public static function getNavigationBadge(): ?string
     {
-        $query = static::getEloquentQuery();
+        $user = auth()->user();
+        if (!$user) {
+            return null;
+        }
 
-        return $query->count();
+        // Untuk peserta magang: tampilkan hanya tugas aktif mereka yang belum selesai
+        if ($user->hasRole('Magang BPS')) {
+            $count = Ticket::whereHas('assignees', fn($q) => $q->where('users.id', $user->id))
+                ->where(fn($q) => $q->whereNull('status')->orWhereNotIn('status', ['selesai']))
+                ->count();
+
+            return $count > 0 ? (string) $count : null;
+        }
+
+        // Untuk super_admin, pembimbing, dan pegawai: tampilkan tugas aktif
+        if ($user->hasRole(['super_admin', 'pembimbing', 'Pegawai BPS'])) {
+            $count = Ticket::where(fn($q) => $q->whereNull('status')->orWhereNotIn('status', ['selesai']))->count();
+
+            return $count > 0 ? (string) $count : null;
+        }
+
+        return null;
+    }
+
+    public static function getNavigationBadgeColor(): ?string
+    {
+        return 'warning';
     }
 
     // Hanya Pembimbing, Pegawai BPS, dan Super Admin yang bisa create

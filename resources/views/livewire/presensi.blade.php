@@ -10,6 +10,10 @@
             </div>
             <h1 class="presensi-title">Presensi Magang</h1>
             <p class="presensi-subtitle">Sistem Absensi Digital BPS Kabupaten Demak</p>
+            <div class="presensi-clock-container">
+                <div id="presensiTime" class="presensi-clock-time">--:--:-- WIB</div>
+                <div id="presensiDate" class="presensi-clock-date">Memuat waktu...</div>
+            </div>
         </div>
 
         {{-- Info Peserta --}}
@@ -45,10 +49,24 @@
             <div class="presensi-card presensi-time-card">
                 <span class="presensi-time-label">Jam Datang</span>
                 <span class="presensi-time-value">{{ $attendance ? $attendance->start_time : '-' }}</span>
+                @if ($attendance)
+                    <span class="presensi-status-pill {{ $attendance->isLate() ? 'pill-late' : 'pill-ontime' }}">
+                        {{ $attendance->isLate() ? '🔴 Terlambat' : '🟢 Tepat Waktu' }}
+                    </span>
+                @endif
             </div>
             <div class="presensi-card presensi-time-card">
                 <span class="presensi-time-label">Jam Pulang</span>
-                <span class="presensi-time-value">{{ $attendance ? $attendance->end_time : '-' }}</span>
+                <span class="presensi-time-value">
+                    {{ ($attendance && $attendance->hasCheckedOut()) ? $attendance->end_time : '-' }}
+                </span>
+                @if ($attendance)
+                    @if ($attendance->hasCheckedOut())
+                        <span class="presensi-status-pill pill-done">🏁 Selesai Pulang</span>
+                    @else
+                        <span class="presensi-status-pill pill-waiting">⏳ Belum Pulang</span>
+                    @endif
+                @endif
             </div>
         </div>
 
@@ -73,28 +91,58 @@
                 </h2>
                 <div id="map" class="presensi-map" wire:ignore></div>
 
+                <div id="distanceBox" class="presensi-distance-box hidden">
+                    <span id="distanceText"></span>
+                </div>
+
                 @if (session()->has('error'))
                     <div class="presensi-error-alert">
                         <strong>Error!</strong> {{ session('error') }}
                     </div>
                 @endif
 
-                <form action="" class="presensi-actions" wire:submit="store" enctype="multipart/form-data">
-                    <button type="button" onclick="tagLocation()" class="presensi-btn presensi-btn-tag">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <polygon points="3 11 22 2 13 21 11 13 3 11"/>
+                @if ($attendance && $attendance->hasCheckedOut())
+                    <div class="presensi-completed-card">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="presensi-completed-icon">
+                            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                            <polyline points="22 4 12 14.01 9 11.01"></polyline>
                         </svg>
-                        Tag Location
-                    </button>
-                    @if ($isWithinRadius)
-                        <button type="submit" class="presensi-btn presensi-btn-submit">
+                        <div class="presensi-completed-text">
+                            <strong>Presensi Hari Ini Lengkap</strong>
+                            <p>Anda sudah melakukan presensi datang & pulang. Selamat beristirahat!</p>
+                        </div>
+                    </div>
+                @else
+                    <form action="" class="presensi-actions" wire:submit="store" enctype="multipart/form-data">
+                        <button type="button" onclick="tagLocation()" class="presensi-btn presensi-btn-tag">
                             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <polyline points="20 6 9 17 4 12"/>
+                                <polygon points="3 11 22 2 13 21 11 13 3 11"/>
                             </svg>
-                            Submit Presensi
+                            Deteksi Lokasi Saya
                         </button>
-                    @endif
-                </form>
+                        @if ($isWithinRadius)
+                            @if (!$attendance)
+                                <button type="submit" class="presensi-btn presensi-btn-submit presensi-btn-in">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/>
+                                        <polyline points="10 17 15 12 10 7"/>
+                                        <line x1="15" y1="12" x2="3" y2="12"/>
+                                    </svg>
+                                    Presensi Masuk (Datang)
+                                </button>
+                            @else
+                                <button type="submit" class="presensi-btn presensi-btn-submit presensi-btn-out">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                                        <polyline points="16 17 21 12 16 7"/>
+                                        <line x1="21" y1="12" x2="9" y2="12"/>
+                                    </svg>
+                                    Presensi Pulang
+                                </button>
+                            @endif
+                        @endif
+                    </form>
+                @endif
             </div>
         @else
             <div class="presensi-card presensi-banned-card">
@@ -161,7 +209,105 @@
             margin: 0;
         }
 
-        /* Info Grid */
+        /* Clock */
+        .presensi-clock-container {
+            margin-top: 8px;
+            padding: 6px 12px;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(8px);
+            border-radius: 8px;
+            display: inline-block;
+        }
+        .presensi-clock-time {
+            font-size: 18px;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            font-variant-numeric: tabular-nums;
+        }
+        .presensi-clock-date {
+            font-size: 11px;
+            opacity: 0.9;
+            font-weight: 500;
+        }
+
+        /* Status Pills */
+        .presensi-status-pill {
+            display: inline-block;
+            margin-top: 4px;
+            padding: 2px 8px;
+            border-radius: 999px;
+            font-size: 10px;
+            font-weight: 600;
+        }
+        .pill-ontime {
+            background: #dcfce7;
+            color: #15803d;
+        }
+        .pill-late {
+            background: #fee2e2;
+            color: #b91c1c;
+        }
+        .pill-waiting {
+            background: #fef3c7;
+            color: #b45309;
+        }
+        .pill-done {
+            background: #e0e7ff;
+            color: #4338ca;
+        }
+
+        /* Distance Box */
+        .presensi-distance-box {
+            margin-bottom: 8px;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 11px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.3s ease;
+        }
+        .presensi-distance-box.hidden {
+            display: none;
+        }
+        .presensi-distance-ok {
+            background: #ecfdf5;
+            border: 1px solid #a7f3d0;
+            color: #065f46;
+        }
+        .presensi-distance-fail {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            color: #991b1b;
+        }
+
+        /* Completed Card */
+        .presensi-completed-card {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            border-radius: 10px;
+            padding: 12px 14px;
+            color: #166534;
+        }
+        .presensi-completed-icon {
+            flex-shrink: 0;
+            color: #16a34a;
+        }
+        .presensi-completed-text strong {
+            display: block;
+            font-size: 13px;
+            font-weight: 700;
+            margin-bottom: 2px;
+        }
+        .presensi-completed-text p {
+            margin: 0;
+            font-size: 11px;
+            color: #15803d;
+        }
         .presensi-info-grid {
             display: flex;
             flex-direction: column;
@@ -296,22 +442,31 @@
             height: 14px;
         }
         .presensi-btn-tag {
-            background: #3b82f6;
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
             color: white;
         }
         .presensi-btn-tag:hover {
-            background: #2563eb;
+            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
             transform: translateY(-1px);
             box-shadow: 0 4px 12px rgba(59, 130, 246, 0.35);
         }
-        .presensi-btn-submit {
-            background: #22c55e;
+        .presensi-btn-in {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
             color: white;
         }
-        .presensi-btn-submit:hover {
-            background: #16a34a;
+        .presensi-btn-in:hover {
+            background: linear-gradient(135deg, #059669 0%, #047857 100%);
             transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(34, 197, 94, 0.35);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.35);
+        }
+        .presensi-btn-out {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            color: white;
+        }
+        .presensi-btn-out:hover {
+            background: linear-gradient(135deg, #d97706 0%, #b45309 100%);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.35);
         }
 
         /* Banned Card */
@@ -379,7 +534,50 @@
             color: #fca5a5;
         }
         .dark .presensi-banned-sub { color: #fca5a5; }
+        .dark .presensi-completed-card {
+            background: #064e3b;
+            border-color: #047857;
+            color: #a7f3d0;
+        }
+        .dark .presensi-completed-text p {
+            color: #6ee7b7;
+        }
+        .dark .presensi-distance-ok {
+            background: #064e3b;
+            border-color: #047857;
+            color: #a7f3d0;
+        }
+        .dark .presensi-distance-fail {
+            background: #450a0a;
+            border-color: #7f1d1d;
+            color: #fca5a5;
+        }
+        .dark .pill-ontime { background: #064e3b; color: #a7f3d0; }
+        .dark .pill-late { background: #450a0a; color: #fca5a5; }
+        .dark .pill-waiting { background: #451a03; color: #fcd34d; }
+        .dark .pill-done { background: #1e1b4b; color: #a5b4fc; }
     </style>
+
+    <script>
+        function updatePresensiClock() {
+            const timeEl = document.getElementById('presensiTime');
+            const dateEl = document.getElementById('presensiDate');
+            if (!timeEl || !dateEl) return;
+
+            const now = new Date();
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+            timeEl.textContent = `${hours}:${minutes}:${seconds} WIB`;
+
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            dateEl.textContent = now.toLocaleDateString('id-ID', options);
+        }
+
+        setInterval(updatePresensiClock, 1000);
+        updatePresensiClock();
+        document.addEventListener('livewire:navigated', updatePresensiClock);
+    </script>
 
     @if (!$presensiData['isBanned'])
         <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
@@ -414,6 +612,9 @@
             function tagLocation() {
                 if (!map) initPresensiMap();
 
+                const distBox = document.getElementById('distanceBox');
+                const distText = document.getElementById('distanceText');
+
                 if (navigator.geolocation) {
                     navigator.geolocation.getCurrentPosition((position) => {
                         lat = position.coords.latitude;
@@ -428,6 +629,22 @@
                             map.setView([lat, lng], 16);
                         }
 
+                        const isWfa = @json($presensiData['isWfa']);
+                        const distance = Math.round(map.distance([lat, lng], office));
+
+                        if (distBox && distText) {
+                            distBox.classList.remove('hidden');
+                            if (isWfa || distance <= radius) {
+                                distBox.className = 'presensi-distance-box presensi-distance-ok';
+                                distText.innerHTML = isWfa
+                                    ? '📍 Status WFA Aktif: Lokasi presensi fleksibel.'
+                                    : `🎯 Jarak Anda: <strong>${distance} meter</strong> dari kantor (Maks ${radius}m). Lokasi valid!`;
+                            } else {
+                                distBox.className = 'presensi-distance-box presensi-distance-fail';
+                                distText.innerHTML = `⚠️ Jarak Anda: <strong>${distance} meter</strong> dari kantor (Maks ${radius}m). Di luar jangkauan presensi!`;
+                            }
+                        }
+
                         if (isWithinRadius(lat, lng, office, radius)) {
                             component.set('isWithinRadius', true);
                             component.set('latitude', lat);
@@ -437,9 +654,11 @@
                             alert("Anda berada di luar radius lokasi presensi.");
                         }
 
-                    })
+                    }, (err) => {
+                        alert("Gagal mendeteksi lokasi: " + err.message);
+                    });
                 } else {
-                    alert("Tidak bisa tag location.");
+                    alert("Browser Anda tidak mendukung geolokasi.");
                 }
             }
 
