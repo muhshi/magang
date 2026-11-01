@@ -43,7 +43,7 @@ class TicketResource extends Resource
 
     public static function getEloquentQuery(): Builder
     {
-        return parent::getEloquentQuery();
+        return parent::getEloquentQuery()->with(['employee', 'assignees']);
     }
 
     public static function form(Schema $form): Schema

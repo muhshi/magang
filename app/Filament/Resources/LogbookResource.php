@@ -37,6 +37,11 @@ class LogbookResource extends Resource
         return auth()->user()->hasRole(['super_admin', 'pembimbing', 'Magang BPS', 'Alumni Magang']);
     }
 
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()->with(['assignees']);
+    }
+
     // Helper: get intern users for dropdown
     private static function getInternOptions(): array
     {

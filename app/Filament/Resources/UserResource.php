@@ -27,6 +27,11 @@ class UserResource extends Resource
 
     protected static ?string $navigationLabel = 'Users';
 
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()->with(['roles']);
+    }
+
     public static function form(Schema $form): Schema
     {
         return $form
@@ -74,12 +79,6 @@ class UserResource extends Resource
                     ->tooltip(fn(User $record): string => $record->roles->pluck('name')->join(', ') ?: 'No Roles')
                     ->sortable(),
 
-                Tables\Columns\TextColumn::make('projects_count')
-                    ->label('Projects')
-                    ->counts('projects')
-                    ->tooltip(fn(User $record): string => $record->projects->pluck('name')->join(', ') ?: 'No Projects')
-                    ->sortable(),
-
                 Tables\Columns\TextColumn::make('email_verified_at')
                     ->dateTime()
                     ->sortable()
@@ -96,10 +95,6 @@ class UserResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                Tables\Filters\Filter::make('has_projects')
-                    ->label('Has Projects')
-                    ->query(fn(Builder $query): Builder => $query->whereHas('projects')),
-
                 // Filter by role
                 Tables\Filters\SelectFilter::make('roles')
                     ->relationship('roles', 'name')
@@ -179,9 +174,7 @@ class UserResource extends Resource
 
     public static function getRelations(): array
     {
-        return [
-            RelationManagers\ProjectsRelationManager::class,
-        ];
+        return [];
     }
 
     public static function getPages(): array

@@ -122,18 +122,38 @@ class RekapPresensi extends Page
         // Hitung total hari kerja efektif untuk bulan penuh (sebelum clamp per user)
         $totalHariEfektifBulan = $this->countWorkingDays($monthStart, $effectiveEnd, $holidays);
 
-        // Ambil semua user dengan role Magang BPS
+        // Ambil semua user dengan role Magang BPS & Alumni
         $users = User::whereHas('roles', fn($q) => $q->whereIn('name', ['Magang BPS', 'Alumni Magang']))
             ->with(['internship'])
             ->get();
 
+        $userIds = $users->pluck('id');
+
+        // Batch fetch seluruh presensi untuk user-user ini pada bulan yang dipilih
+        $allAttendances = Attendance::whereIn('user_id', $userIds)
+            ->whereYear('created_at', $year)
+            ->whereMonth('created_at', $month)
+            ->get()
+            ->groupBy('user_id');
+
+        // Batch fetch seluruh cuti yang disetujui untuk user-user ini pada bulan yang dipilih
+        $allLeaves = Leave::whereIn('user_id', $userIds)
+            ->where('status', 'approved')
+            ->where(function ($q) use ($monthStart, $monthEnd) {
+                $q->whereBetween('start_date', [$monthStart, $monthEnd])
+                  ->orWhereBetween('end_date', [$monthStart, $monthEnd])
+                  ->orWhere(function ($q2) use ($monthStart, $monthEnd) {
+                      $q2->where('start_date', '<', $monthStart)
+                         ->where('end_date', '>', $monthEnd);
+                  });
+            })
+            ->get()
+            ->groupBy('user_id');
+
         $rekap = ['aktif' => [], 'selesai' => []];
 
         foreach ($users as $user) {
-            $attendances = Attendance::where('user_id', $user->id)
-                ->whereYear('created_at', $year)
-                ->whereMonth('created_at', $month)
-                ->get(); // returns Attendance model collection
+            $attendances = $allAttendances->get($user->id, collect());
 
             $totalHadir     = $attendances->count();
             $totalTerlambat = $attendances->filter(fn(Attendance $a) => $a->isLate())->count();
@@ -160,17 +180,8 @@ class RekapPresensi extends Page
 
             $hariEfektifUser = $this->countWorkingDays($userStart, $userEnd, $holidays);
 
-            // Ambil data cuti yang disetujui untuk user ini pada bulan berjalan
-            $leaves = Leave::where('user_id', $user->id)
-                ->where('status', 'approved')
-                ->where(function ($q) use ($monthStart, $monthEnd) {
-                    $q->whereBetween('start_date', [$monthStart, $monthEnd])
-                      ->orWhereBetween('end_date', [$monthStart, $monthEnd])
-                      ->orWhere(function ($q2) use ($monthStart, $monthEnd) {
-                          $q2->where('start_date', '<', $monthStart)
-                             ->where('end_date', '>', $monthEnd);
-                      });
-                })->get();
+            // Ambil data cuti yang disetujui untuk user ini pada bulan berjalan dari cache batch
+            $leaves = $allLeaves->get($user->id, collect());
 
             $totalCuti = 0;
             foreach ($leaves as $leave) {
