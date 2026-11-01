@@ -35,10 +35,8 @@ class ScheduleResource extends Resource
             ->schema([
                 Forms\Components\Select::make('user_id')
                     ->relationship('user', 'name')
-                    ->options(
-                        User::latest()->take(5)->get()->pluck('name', 'id')
-                    )
                     ->searchable()
+                    ->preload()
                     ->native(false)
                     ->required(),
                 Forms\Components\Select::make('shift_id')
@@ -58,8 +56,7 @@ class ScheduleResource extends Resource
     {
         return $table
             ->modifyQueryUsing(function (Builder $query) {
-                //if(Auth::user()->hasRole('Doctor')) -> pakai ini bisa tapi terdeteksi error sama intelephense
-                if (Auth::user()->roles[0]->name != 'super_admin') {
+                if (!auth()->user()?->hasRole('super_admin')) {
                     $query->where('user_id', Auth::user()->id);
                 }
             })
@@ -70,7 +67,7 @@ class ScheduleResource extends Resource
                     ->sortable(),
                 Tables\Columns\TextColumn::make('user.email')
                     ->label('Email'),
-                Auth::user()->roles[0]->name == 'super_admin' ?
+                auth()->user()?->hasRole('super_admin') ?
                 Tables\Columns\ToggleColumn::make('is_banned')
                     ->label('Banned') :
                 Tables\Columns\TextColumn::make('is_banned')
@@ -87,10 +84,10 @@ class ScheduleResource extends Resource
                     ->description(fn(Schedule $record): string => $record->shift->start_time . ' - ' . $record->shift->end_time)
                     ->sortable(),
                 //setting WFA toggle untuk admin, tapi icon untuk pegawai
-                Auth::user()->roles[0]->name == 'super_admin' ?
+                auth()->user()?->hasRole('super_admin') ?
                 Tables\Columns\ToggleColumn::make('is_wfa')
                     ->label('WFA')
-                    ->visible(fn() => Auth::user()->roles[0]->name == 'super_admin') :
+                    ->visible(fn() => auth()->user()?->hasRole('super_admin')) :
                 Tables\Columns\IconColumn::make('is_wfa')
                     ->label('WFA')
                     ->boolean()

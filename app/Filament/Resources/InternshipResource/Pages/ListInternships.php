@@ -29,7 +29,7 @@ class ListInternships extends ListRecords
      */
     public function getTabs(): array
     {
-        if (Auth::user()->roles[0]->name === 'super_admin' || Auth::user()->roles[0]->name === 'Pegawai BPS') {
+        if (auth()->user()?->hasAnyRole(['super_admin', 'Pegawai BPS'])) {
             return [
                 'pending' => Tab::make('Pending')
                     ->modifyQueryUsing(fn(Builder $query) => $query->where('status', 'pending'))

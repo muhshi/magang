@@ -211,7 +211,7 @@ class InternshipResource extends Resource
                             ->visible(fn(Get $get): bool => $get('status') === 'accepted'), // Muncul jika status 'accepted'
 
                     ])
-                    ->hidden(Auth::user()->roles[0]->name !== 'super_admin'),
+                    ->hidden(!auth()->user()?->hasRole('super_admin')),
             ]);
     }
 
@@ -325,14 +325,14 @@ class InternshipResource extends Resource
                 EditAction::make()
                     ->button()
                     ->label(function (Internship $record): string {
-                        if (Auth::user()->roles[0]->name === 'super_admin') {
+                        if (auth()->user()?->hasRole('super_admin')) {
                             if ($record->status === 'accepted') return 'Accepted';
                             if ($record->status === 'rejected') return 'Rejected';
                         }
                         return 'Approval';
                     })
                     ->color(function (Internship $record): string {
-                        if (Auth::user()->roles[0]->name === 'super_admin') {
+                        if (auth()->user()?->hasRole('super_admin')) {
                             if ($record->status === 'accepted') return 'success';
                             if ($record->status === 'rejected') return 'danger';
                         }
@@ -340,7 +340,7 @@ class InternshipResource extends Resource
                     })
                     ->visible(function (Internship $record, $livewire): bool {
                         if (in_array($livewire->activeTab ?? null, ['magang_bps', 'alumni'])) return false;
-                        if (Auth::user()->roles[0]->name === 'super_admin') return true;
+                        if (auth()->user()?->hasRole('super_admin')) return true;
                         return $record->status === 'pending';
                     }),
             ])
@@ -366,7 +366,7 @@ class InternshipResource extends Resource
         $query = parent::getEloquentQuery();
 
         // Jika user BUKAN super_admin...
-        if (Auth::user()->roles[0]->name !== 'super_admin') {
+        if (!auth()->user()?->hasRole('super_admin')) {
             // ...tampilkan hanya pendaftaran miliknya sendiri.
             $query->where('user_id', Auth::user()->id);
         }

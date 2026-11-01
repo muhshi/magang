@@ -85,7 +85,7 @@ class LeaveResource extends Resource
                             Forms\Components\Textarea::make('note')->columnSpanFull(),
                         ]
                     )
-                    ->hidden(Auth::user()->roles[0]->name !== 'super_admin'),
+                    ->hidden(!auth()->user()?->hasRole('super_admin')),
             ]);
     }
 
@@ -93,8 +93,7 @@ class LeaveResource extends Resource
     {
         return $table
             ->modifyQueryUsing(function (Builder $query) {
-                //if(Auth::user()->hasRole('super_admin')) -> pakai ini bisa tapi terdeteksi error sama intelephense
-                if (Auth::user()->roles[0]->name != 'super_admin') {
+                if (!auth()->user()?->hasRole('super_admin')) {
                     $query->where('user_id', Auth::user()->id);
                 }
             })
@@ -139,7 +138,7 @@ class LeaveResource extends Resource
                     ->icon('heroicon-m-check-circle')
                     ->color('success')
                     ->action(fn (Leave $record) => $record->update(['status' => 'approved']))
-                    ->visible(fn (Leave $record): bool => $record->status === 'pending' && Auth::user()->roles[0]->name === 'super_admin'),
+                    ->visible(fn (Leave $record): bool => $record->status === 'pending' && auth()->user()?->hasRole('super_admin')),
 
                 Action::make('reject')
                     ->label('Tolak')
@@ -147,7 +146,7 @@ class LeaveResource extends Resource
                     ->icon('heroicon-m-x-circle')
                     ->color('danger')
                     ->action(fn (Leave $record) => $record->update(['status' => 'rejected']))
-                    ->visible(fn (Leave $record): bool => $record->status === 'pending' && Auth::user()->roles[0]->name === 'super_admin'),
+                    ->visible(fn (Leave $record): bool => $record->status === 'pending' && auth()->user()?->hasRole('super_admin')),
 
                 ViewAction::make()
                     ->form([
@@ -174,7 +173,7 @@ class LeaveResource extends Resource
                     ]),
                 EditAction::make()
                     ->visible(function (Leave $record): bool {
-                        return $record->status === 'pending' || Auth::user()->roles[0]->name === 'super_admin';
+                        return $record->status === 'pending' || auth()->user()?->hasRole('super_admin');
                     }),
                 // \Filament\Actions\DeleteAction::make()
                 // ->hidden(Auth::user()->roles[0]->name !== 'super_admin'),

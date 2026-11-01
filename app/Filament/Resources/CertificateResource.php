@@ -122,7 +122,7 @@ class CertificateResource extends Resource
     {
         $query = parent::getEloquentQuery();
 
-        if (Auth::user()->roles[0]->name !== 'super_admin') {
+        if (!auth()->user()?->hasRole('super_admin')) {
             $query->whereHas('internship', function (Builder $q) {
                 $q->where('user_id', Auth::user()->id);
             });

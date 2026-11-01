@@ -50,7 +50,7 @@ class SsoController extends Controller
 
             // Assign role default (Spatie Permission)
             if (method_exists($user, 'assignRole')) {
-                $user->assignRole('pegawai');
+                $user->assignRole('Pegawai BPS');
             }
         }
 
