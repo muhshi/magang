@@ -74,7 +74,7 @@ class TicketResource extends Resource
                     ->rows(4)
                     ->columnSpanFull(),
 
-                \Filament\Schemas\Components\Grid::make(3)
+                \Filament\Schemas\Components\Grid::make(4)
                     ->schema([
                         // D. Prioritas
                         Forms\Components\Select::make('priority')
@@ -87,6 +87,18 @@ class TicketResource extends Resource
                             ->default('flexible')
                             ->required(),
 
+                        // Status
+                        Forms\Components\Select::make('status')
+                            ->label('Status')
+                            ->options([
+                                'belum' => 'Belum Dikerjakan',
+                                'proses' => 'Sedang Proses',
+                                'revisi' => 'Perlu Revisi',
+                                'selesai' => 'Selesai',
+                            ])
+                            ->default('belum')
+                            ->required(),
+
                         // E. Mulai
                         Forms\Components\DatePicker::make('start_date')
                             ->label('Mulai'),
@@ -95,6 +107,23 @@ class TicketResource extends Resource
                         Forms\Components\DatePicker::make('due_date')
                             ->label('Target Selesai'),
                     ]),
+
+                // Assignee (Peserta Magang)
+                Forms\Components\Select::make('assignee_ids')
+                    ->label('Yang Ditugaskan (Peserta Magang)')
+                    ->multiple()
+                    ->options(function () {
+                        $acceptedUserIds = Internship::where('status', 'accepted')->pluck('user_id');
+                        return User::where(function ($query) use ($acceptedUserIds) {
+                            $query->whereHas('roles', fn ($q) => $q->where('name', 'Magang BPS'))
+                                  ->orWhereIn('id', $acceptedUserIds);
+                        })
+                        ->whereDoesntHave('roles', fn ($q) => $q->where('name', 'Alumni Magang'))
+                        ->pluck('name', 'id')->toArray();
+                    })
+                    ->searchable()
+                    ->preload()
+                    ->columnSpanFull(),
 
                 // G. Attachment
                 Forms\Components\FileUpload::make('attachment')
