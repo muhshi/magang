@@ -343,6 +343,7 @@ This project is open-sourced software licensed under the [MIT license](https://o
 - **Otomasi Status Alumni Magang (`interns:update-status`)**: Menambahkan scheduled artisan command harian yang otomatis mengevaluasi tanggal selesai magang (`end_date`). Peserta yang telah selesai otomatis dialihkan statusnya ke Alumni dan rolenya diperbarui dari `Magang BPS` menjadi `Alumni Magang`.
 - **Auto-Select Identitas Pembuat Tugas**: Form Penugasan (`TicketResource`) kini otomatis memilih Pegawai BPS yang sedang login sebagai pembuat tugas default (`employee_id`).
 - **Role-Aware Smart Badge Penugasan**: Badge counter pada menu sidebar Penugasan kini otomatis beradaptasi: peserta `Magang BPS` hanya melihat jumlah tugas aktif miliknya yang belum selesai (`status != 'selesai'`), sedangkan admin/pembimbing melihat total tugas aktif di sistem.
+- **Fix Bug SSO SIPETRA (Integrity Constraint Violation Password Null)**: Memperbaiki error saat pegawai pertama kali login via SIPETRA SSO di mana database MySQL menolak pembuatan user baru karena kolom `password` bernilai null (`Column 'password' cannot be null`). Kini password otomatis diisi hash acak yang aman (`Hash::make(Str::random(32))`) dan email ditandai `email_verified_at`.
 - **Redesign & Optimalisasi UI/UX Presensi**:
   - Jam digital real-time simpel (format `HH:mm WIB` tanpa detik) di kartu header serta penyederhanaan tampilan jam shift, jam datang, dan jam pulang tanpa detik.
   - Badge status kedatangan (Tepat Waktu / Terlambat) dan kepulangan (Belum Pulang / Selesai Pulang).

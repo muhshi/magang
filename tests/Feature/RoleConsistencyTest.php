@@ -23,5 +23,7 @@ class RoleConsistencyTest extends TestCase
         $controllerContent = file_get_contents(app_path('Http/Controllers/Auth/SsoController.php'));
         $this->assertStringContainsString("assignRole('Pegawai BPS')", $controllerContent);
         $this->assertStringNotContainsString("assignRole('pegawai')", $controllerContent);
+        $this->assertStringNotContainsString("\$data['password'] = null;", $controllerContent);
+        $this->assertStringContainsString("Hash::make(Str::random(32))", $controllerContent);
     }
 }

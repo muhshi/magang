@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 use Laravel\Socialite\Facades\Socialite;
 
 class SsoController extends Controller
@@ -45,7 +47,8 @@ class SsoController extends Controller
         if ($user) {
             $user->update($data);
         } else {
-            $data['password'] = null;
+            $data['password'] = Hash::make(Str::random(32));
+            $data['email_verified_at'] = now();
             $user = User::create($data);
 
             // Assign role default (Spatie Permission)
